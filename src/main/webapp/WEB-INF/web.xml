@@ -3,4 +3,36 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     version="2.5">
+
+  <filter>
+    <filter-name>DealingFilter</filter-name>
+    <filter-class>to.kit.sas.filter.DealingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>DealingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>DealingServlet</servlet-name>
+    <servlet-class>to.kit.sas.servlet.DealingServlet</servlet-class>
+    <init-param>
+      <param-name>controllerRoot</param-name>
+      <param-value>to.kit</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>DealingServlet</servlet-name>
+    <url-pattern>*.cont</url-pattern>
+  </servlet-mapping>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name></web-resource-name>
+      <url-pattern>*.jsp</url-pattern>
+    </web-resource-collection>
+    <auth-constraint></auth-constraint>
+  </security-constraint>
 </web-app>

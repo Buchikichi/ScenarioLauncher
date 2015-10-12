@@ -1,10 +1,9 @@
 package to.kit.scenario.launcher.controller;
 
-import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.imageio.ImageIO;
+import org.apache.commons.io.IOUtils;
 
 import to.kit.sas.control.Controller;
 
@@ -18,12 +17,12 @@ public class ActorController implements Controller<Object> {
 	 * @param path パス
 	 * @return バックグラウンドイメージ
 	 */
-	public RenderedImage image(String path) {
-		RenderedImage image = null;
+	public byte[] image(String path) {
+		byte[] image = null;
 		String name = "/" + path + ".png";
 
 		try (InputStream in = ActorController.class.getResourceAsStream(name)) {
-			image = ImageIO.read(in);
+			image = IOUtils.toByteArray(in);
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// nop
 		}

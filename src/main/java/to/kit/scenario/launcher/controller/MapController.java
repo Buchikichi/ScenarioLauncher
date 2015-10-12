@@ -1,10 +1,7 @@
 package to.kit.scenario.launcher.controller;
 
-import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
 
@@ -21,12 +18,12 @@ public class MapController implements Controller<MapRequestDto> {
 	 * @param path パス
 	 * @return 上層部イメージ
 	 */
-	public RenderedImage upstairs(String path) {
-		RenderedImage image = null;
+	public byte[] upstairs(String path) {
+		byte[] image = null;
 		String name = "/" + path + "st.png";
 
 		try (InputStream in = MapController.class.getResourceAsStream(name)) {
-			image = ImageIO.read(in);
+			image = IOUtils.toByteArray(in);
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// nop
 		}
@@ -38,12 +35,12 @@ public class MapController implements Controller<MapRequestDto> {
 	 * @param path パス
 	 * @return バックグラウンドイメージ
 	 */
-	public RenderedImage background(String path) {
-		RenderedImage image = null;
+	public byte[] background(String path) {
+		byte[] image = null;
 		String name = "/" + path + "bg.png";
 
 		try (InputStream in = MapController.class.getResourceAsStream(name)) {
-			image = ImageIO.read(in);
+			image = IOUtils.toByteArray(in);
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// nop
 		}

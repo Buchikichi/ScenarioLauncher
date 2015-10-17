@@ -1,3 +1,5 @@
+var mng = new SceneManager();
+
 $(document).ready(function() {
 	init();
 });
@@ -7,11 +9,6 @@ var STRIDE = 8;
  * 初期処理.
  */
 function init() {
-	var field = new Field('map100');
-	var view = $('#view');
-
-	view.prop('field', field);
-//	view.resizable();
 	initProtagonist();
 	initCover();
 	draw();
@@ -26,10 +23,8 @@ function initProtagonist() {
 
 	protagonist.width(width);
 	protagonist.height(height);
-	protagonist.css('background-image', 'url(/actor/image/chr001)');
 	protagonist.css('top', (centerY - height / 2) + 'px');
 	protagonist.css('left', (centerX - width / 2) + 'px');
-	drawActor();
 }
 function initCover() {
 	var cover = $('#cover');
@@ -46,6 +41,10 @@ function touch(e) {
 	var view = $('#view');
 	var isMouse = e.type.match(/^mouse/);
 
+	if (mng.field.loading) {
+		leave();
+		return;
+	}
 	if (isMouse && e.buttons == 0) {
 		return;
 	}
@@ -69,7 +68,7 @@ function move() {
 	if (!view.prop('touch')) {
 		return false;
 	}
-	var field = view.prop('field');
+	var field = mng.field;
 	var x = field.protagonist.x;
 	var y = field.protagonist.y;
 	var d = field.protagonist.d;
@@ -81,7 +80,6 @@ function move() {
 	var svX = x;
 	var svY = y;
 	var hit = false;
-	var ev = 0;
 
 //console.log('x:' + x + '/y:' + y);
 	if (field.BRICK_WIDTH < Math.abs(diffX)) {
@@ -93,11 +91,6 @@ function move() {
 			d = 2;
 		}
 	}
-	ev = field.getEvent(x, y);
-	if (field.hitWall(x, y)) {
-		x = svX;
-		hit = true;
-	}
 	if (x == svX) {
 		if (field.BRICK_WIDTH < Math.abs(diffY)) {
 			if (0 < y && diffY < 0) {
@@ -108,17 +101,15 @@ function move() {
 				d = 0;
 			}
 		}
-		ev = field.getEvent(x, y);
-		if (field.hitWall(x, y)) {
-			y = svY;
-			hit = true;
-		}
+	}
+	if (field.hitWall(x, y)) {
+		x = svX;
+		y = svY;
+		hit = true;
 	}
 	if (!hit && x == svX && y == svY) {
 		return false;
 	}
-	// event
-	field.mapEvent = ev;
 
 	// finish
 	s = (++s) % 2;
@@ -132,47 +123,10 @@ function move() {
 }
 function draw() {
 	if (move()) {
-		var view = $('#view');
-		var field = view.prop('field');
-		var bg = $('#bg');
-		var st = $('#upstairs');
-		var vx = field.viewX * STRIDE;
-		var vy = field.viewY * STRIDE;
-		var position = -vx + 'px ' + -vy + 'px';
-
-		bg.css('background-position', position);
-		st.css('background-position', position);
-		drawActor();
-		doEvent();
+		mng.field.show();
+		mng.verifyEvent();
 	}
 	setTimeout(function() {
 		draw();
 	}, 66);
-}
-function drawActor() {
-	var view = $('#view');
-	var field = view.prop('field');
-	var protagonist = $('#protagonist');
-	var bg = $('#bg');
-	var top = (field.protagonist.y - field.viewY) * STRIDE;
-	var left = (field.protagonist.x - field.viewX) * STRIDE;
-	var d = field.protagonist.d;
-	var s = field.protagonist.s;
-	var posX = d * 64 + s * 32;
-	var position = -posX + 'px 0px';
-
-	protagonist.offset({ top: top, left: left });
-	protagonist.css('background-position', position);
-}
-function doEvent() {
-	var view = $('#view');
-	var field = view.prop('field');
-	var ev = field.mapEvent;
-
-	if (!ev || ev == field.lastEvent) {
-		return;
-	}
-	field.lastEvent = ev;
-	field.mapEvent = null;
-//	console.log('event:' + ev);
 }

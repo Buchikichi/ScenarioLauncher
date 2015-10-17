@@ -1,56 +1,102 @@
 /**
  * Field.
  */
-function Field(mapId) {
+function Field(mapId, x, y) {
 	this.id = mapId;
+	this.bg = $('#bg');
+	this.up = $('#upstairs');
 	this.protagonist = new Actor('protagonist', 'chr001');
-	this.loadImage();
-	this.loadMap();
+	this.events = {};
+	this.wall = [];
+	this.loadMap(x, y);
+	this.mapEvent = null;
+	this.lastEvent = null;
 }
 Field.prototype.BRICK_WIDTH = 16;
 Field.prototype.SCROLL_WIDTH = Field.prototype.BRICK_WIDTH * 4;
 Field.prototype.SCROLL_HEIGHT = Field.prototype.BRICK_WIDTH * 2;
 
-Field.prototype.loadImage = function() {
-	var bg = $('#bg');
-	var upstairs = $('#upstairs');
-	var bgUri = '/map/background/' + this.id;
-	var stUri = '/map/upstairs/' + this.id;
-
-	bg.css('background-image', 'url(' + bgUri + ')');
-	upstairs.css('background-image', 'url(' + stUri + ')');
-}
-Field.prototype.loadMap = function() {
+Field.prototype.loadMap = function(x, y) {
+	var view = $('#view');
 	var field = this;
 
-	$.ajax('/map/', {
-		'type': 'POST',
-		'data': {'mapId':this.id},
-		'success': function(data) {
-			var wall = data.wall;
-			var pos = data.pos;
-			var events = {};
+	this.loading = true;
+	view.fadeOut(function() {
+		field.loadImage();
+		$.ajax('/map/', {
+			'type': 'POST',
+			'data': {'mapId': field.id},
+			'success': function(data) {
+				var wall = data.wall;
+				var pos = data.pos;
+				var events = {};
 
-			$.each(data.eventList, function(ix, ev) {
-				events[ev.position] = ev.eventNum;
-			});
-			field.height = wall.length;
-			field.width = wall[0].length;
-			field.wall = wall;
-			field.events = events;
-			// protagonist
-			field.protagonist.x = pos.x;
-			field.protagonist.y = pos.y;
-			field.protagonist.d = 0; // direction
-			field.protagonist.s = 0; // step
-field.protagonist.x = 7; // TODO 削除
-field.protagonist.y = 14; // TODO 削除
-			// view
-			field.viewX = 0;
-			field.viewY = 0;
-			field.viewZ = 0;
-		}
+				$.each(data.eventList, function(ix, ev) {
+					events[ev.position] = ev.eventId;
+				});
+				field.height = wall.length;
+				field.width = wall[0].length;
+				field.wall = wall;
+				field.events = events;
+				view.fadeIn();
+				field.jump(x, y);
+				field.loading = false;
+			}
+		});
 	});
+}
+Field.prototype.loadImage = function() {
+	var bgUri = '/map/background/' + this.id;
+	var upUri = '/map/upstairs/' + this.id;
+
+	this.bg.css('background-image', 'url(' + bgUri + ')');
+	this.up.css('background-image', 'url(' + upUri + ')');
+}
+Field.prototype.jump = function(mapX, mapY) {
+	var view = $('#view');
+	var viewWidth = view.width() / this.protagonist.STRIDE;
+	var viewHeight = view.height() / this.protagonist.STRIDE;
+	var centerX = viewWidth / 2;
+	var centerY = viewHeight / 2;
+	var multiplicand = this.BRICK_WIDTH / this.protagonist.STRIDE;
+	var x = mapX * multiplicand;
+	var y = mapY * multiplicand;
+
+	this.viewX = x - centerX;
+	this.viewY = y - centerY;
+	this.viewZ = 0;
+	this.limitScroll();
+	this.protagonist.jump(x, y);
+	this.show();
+	// event
+	this.checkEvent(x, y);
+	this.lastEvent = this.mapEvent;
+	this.mapEvent = null;
+}
+Field.prototype.limitScroll = function() {
+	var view = $('#view');
+	var viewWidth = view.width() / this.protagonist.STRIDE;
+	var viewHeight = view.height() / this.protagonist.STRIDE;
+	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
+	var maxX = this.width * divisor - viewWidth;
+	var maxY = this.height * divisor - viewHeight;
+
+	if (maxX < 0) {
+		maxX = 0;
+	}
+	if (maxY < 0) {
+		maxY = 0;
+	}
+	if (this.viewX < 0) {
+		this.viewX = 0;
+	} else if (maxX < this.viewX) {
+		this.viewX = maxX;
+	}
+	if (this.viewY < 0) {
+		this.viewY = 0;
+	} else if (maxY < this.viewY) {
+		this.viewY = maxY;
+	}
 }
 Field.prototype.hitWall = function(x, y) {
 	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
@@ -59,9 +105,13 @@ Field.prototype.hitWall = function(x, y) {
 	var ty = parseInt(y / divisor) + 1;
 	var by = parseInt((y + 1) / divisor) + 1;
 
-	if (this.width - 1 < rx || this.height < by) {
+	if (this.width <= rx || this.height <= by) {
 		return true;
 	}
+	if (this.wall.length == 0) {
+		return true;
+	}
+	this.checkEvent(x, y);
 	var brickTL = this.wall[ty][lx];
 	var brickTR = this.wall[ty][rx];
 	var brickBL = this.wall[by][lx];
@@ -69,13 +119,24 @@ Field.prototype.hitWall = function(x, y) {
 
 	return brickTL == 1 || brickTR == 1 || brickBL == 1 || brickBR == 1;
 }
-Field.prototype.getEvent = function(x, y) {
+Field.prototype.checkEvent = function(x, y) {
 	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
 	var lx = parseInt(x / divisor);
+	var rx = parseInt((x + 1) / divisor);
 	var ty = parseInt(y / divisor);
 	var position = lx + '-' + ty;
+	var ev = this.events[position];
 
-	return this.events[position];
+	if (!ev) {
+		position = rx + '-' + ty;
+		ev = this.events[position];
+	}
+	if (ev == this.lastEvent) {
+		ev = null;
+	} else {
+		this.lastEvent = ev;
+	}
+	this.mapEvent = ev;
 }
 Field.prototype.scroll = function() {
 	var view = $('#view');
@@ -87,17 +148,28 @@ Field.prototype.scroll = function() {
 	var dy = top - centerY;
 
 	if (this.SCROLL_WIDTH < Math.abs(dx)) {
-		if (0 < this.viewX && dx < 0) {
+		if (dx < 0) {
 			this.viewX--;
 		} else if (0 < dx) {
 			this.viewX++;
 		}
 	}
 	if (this.SCROLL_HEIGHT < Math.abs(dy)) {
-		if (0 < this.viewY && dy < 0) {
+		if (dy < 0) {
 			this.viewY--;
 		} else if (0 < dy) {
 			this.viewY++;
 		}
 	}
+	this.limitScroll();
+}
+Field.prototype.show = function() {
+	var vx = this.viewX * this.protagonist.STRIDE;
+	var vy = this.viewY * this.protagonist.STRIDE;
+	var position = -vx + 'px ' + -vy + 'px';
+
+	this.bg.css('background-position', position);
+	this.up.css('background-position', position);
+
+	this.protagonist.show(this.viewX, this.viewY);
 }

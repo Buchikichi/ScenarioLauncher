@@ -43,3 +43,33 @@
 	z-index: 100;
 /*	border: 1px black dashed;*/
 }
+#dialog {
+/*	position: absolute;*/
+	background-color: transparent;
+	z-index: 200;
+}
+#dialogImage {
+	max-width: 80px;
+	float: left;
+	margin-right: 4px;
+}
+#dialogText {
+	white-space: pre-wrap;
+}
+#dialog > div {
+	font-size: small;
+	padding: 4px;
+	width: 290px;
+	max-width: 290px;
+	max-height: 180px;
+	overflow: auto;
+}
+#dialog span.item {
+	color: cyan;
+}
+#dialog span.chara {
+	color: orange;
+}
+#dialog span.place {
+	color: lime;
+}

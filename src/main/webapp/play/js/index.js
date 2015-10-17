@@ -1,6 +1,7 @@
-var mng = new SceneManager();
+var mng;
 
 $(document).ready(function() {
+	mng = new SceneManager();
 	init();
 });
 var STRIDE = 8;
@@ -122,7 +123,7 @@ function move() {
 	return true;
 }
 function draw() {
-	if (move()) {
+	if (!mng.isInEvent && move()) {
 		mng.field.show();
 		mng.verifyEvent();
 	}

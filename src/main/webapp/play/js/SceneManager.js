@@ -4,6 +4,7 @@
 function SceneManager() {
 	// variables
 	this.progress = 0;
+	this.iHeso = 0;
 
 	// member
 	this.field = null;
@@ -53,8 +54,8 @@ SceneManager.prototype.call = function(eventId) {
 SceneManager.prototype.jump = function(mapId, x, y) {
 	this.field = new Field(mapId, x, y);
 }
-SceneManager.prototype.actor = function(id, x, y, step, name) {
-	console.log('**actor');
+SceneManager.prototype.actor = function(id, charNum, x, y, ptn, ev) {
+	this.field.addActor(id, charNum, x, y, ptn, ev);
 }
 SceneManager.prototype.openDialog = function() {
 	$('#dialog').popup('open');

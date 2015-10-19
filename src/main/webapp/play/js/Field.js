@@ -6,6 +6,7 @@ function Field(mapId, x, y) {
 	this.bg = $('#bg');
 	this.up = $('#upstairs');
 	this.protagonist = new Actor('protagonist', 'chr001');
+	this.actors = [];
 	this.events = {};
 	this.wall = [];
 	this.loadMap(x, y);
@@ -44,6 +45,10 @@ Field.prototype.loadMap = function(x, y) {
 			}
 		});
 	});
+	$('.actor').each(function(ix, actor) {
+		$(actor).remove();
+	})
+	this.actors = [];
 }
 Field.prototype.loadImage = function() {
 	var bgUri = '/map/background/' + this.id;
@@ -51,6 +56,15 @@ Field.prototype.loadImage = function() {
 
 	this.bg.css('background-image', 'url(' + bgUri + ')');
 	this.up.css('background-image', 'url(' + upUri + ')');
+}
+Field.prototype.addActor = function(charId, charNum, mapX, mapY, ptn, ev) {
+	var multiplicand = this.BRICK_WIDTH / this.protagonist.STRIDE;
+	var x = mapX * multiplicand;
+	var y = mapY * multiplicand;
+	var actor = new Actor(charId, charNum);
+
+	actor.jump(x, y);
+	this.actors.push(actor);
 }
 Field.prototype.jump = function(mapX, mapY) {
 	var view = $('#view');
@@ -172,4 +186,10 @@ Field.prototype.show = function() {
 	this.up.css('background-position', position);
 
 	this.protagonist.show(this.viewX, this.viewY);
+
+	// actor
+	var field = this;
+	$.each(this.actors, function(ix, actor) {
+		actor.show(field.viewX, field.viewY);
+	})
 }

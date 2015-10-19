@@ -22,8 +22,6 @@ function initProtagonist() {
 	var height = 32;
 	var protagonist = $('#protagonist');
 
-	protagonist.width(width);
-	protagonist.height(height);
 	protagonist.css('top', (centerY - height / 2) + 'px');
 	protagonist.css('left', (centerX - width / 2) + 'px');
 }
@@ -123,7 +121,7 @@ function move() {
 	return true;
 }
 function draw() {
-	if (!mng.isInEvent && move()) {
+	if (!mng.isInEvent && !mng.isDialogOpen && move()) {
 		mng.field.show();
 		mng.verifyEvent();
 	}

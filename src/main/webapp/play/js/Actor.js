@@ -12,7 +12,7 @@ function Actor(charId, charNum) {
 		div = $('<div></div>');
 		div.attr('id', charId);
 		div.addClass('actor');
-		$('#view').add(div);
+		$('#view').append(div);
 	}
 	this.element = div;
 	this.element.hide();

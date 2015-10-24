@@ -48,10 +48,25 @@ function touch(e) {
 		return;
 	}
 	var isTouch = e.type.match(/^touch/);
-if (isTouch) {
-console.log('type:' + e.type);
-console.log(e);
-}
+	if (isTouch) {
+		var px;
+		var py;
+		if (e.originalEvent.touches) {
+			var touches = e.originalEvent.touches[0];
+			px = touches.pageX;
+			py = touches.pageY;
+		} else {
+			px = e.pageX;
+			py = e.pageY;
+		}
+//		console.log('x:' + px + '/x:' + py);
+//		console.log('type:' + e.type);
+//		console.log(e);
+		view.prop('touch', true);
+		view.prop('touchX', px);
+		view.prop('touchY', py);
+		return;
+	}
 	view.prop('touch', true);
 	view.prop('touchX', e.offsetX);
 	view.prop('touchY', e.offsetY);

@@ -2,6 +2,7 @@
 * {
 	margin: 0px;
 	padding: 0px;
+	-webkit-user-select: none;
 }
 #view {
 	position: relative;

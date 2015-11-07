@@ -83,54 +83,44 @@ function move() {
 		return false;
 	}
 	var field = mng.field;
-	var x = field.protagonist.x;
-	var y = field.protagonist.y;
-	var d = field.protagonist.d;
-	var s = field.protagonist.s;
-	var top = (field.protagonist.y - field.viewY) * STRIDE + field.BRICK_WIDTH;
-	var left = (field.protagonist.x - field.viewX) * STRIDE + field.BRICK_WIDTH;
+	var player = field.protagonist;
+	var top = (player.y - field.viewY) * STRIDE + field.BRICK_WIDTH;
+	var left = (player.x - field.viewX) * STRIDE + field.BRICK_WIDTH;
 	var diffX = view.prop('touchX') - left;
 	var diffY = view.prop('touchY') - top;
-	var svX = x;
-	var svY = y;
-	var hit = false;
 
 //console.log('x:' + x + '/y:' + y);
 	if (field.BRICK_WIDTH < Math.abs(diffX)) {
-		if (0 < x && diffX < 0) {
-			x--;
-			d = 1;
-		} else if (0 < diffX) {
-			x++;
-			d = 2;
+		if (diffX < 0) {
+			player.d = 1;
+			player.walk();
+		} else {
+			player.d = 2;
+			player.walk();
 		}
 	}
-	if (x == svX) {
+	if (!player.isMove()) {
 		if (field.BRICK_WIDTH < Math.abs(diffY)) {
-			if (0 < y && diffY < 0) {
-				y--;
-				d = 3;
+			if (diffY < 0) {
+				player.d = 3;
+				player.walk();
 			} else {
-				y++;
-				d = 0;
+				player.d = 0;
+				player.walk();
 			}
 		}
 	}
-	if (field.hitWall(x, y)) {
-		x = svX;
-		y = svY;
-		hit = true;
-	}
-	if (!hit && x == svX && y == svY) {
+	field.checkEvent();
+	var x = player.x;
+	var y = player.y;
+	var hit = field.hitWall(x, y) || field.hitActor(x, y);
+
+	if (!hit && !player.isMove()) {
 		return false;
 	}
-
-	// finish
-	field.protagonist.x = x;
-	field.protagonist.y = y;
-	field.protagonist.d = d;
-	field.protagonist.step();
-
+	if (hit) {
+		player.back();
+	}
 	field.scroll();
 	return true;
 }

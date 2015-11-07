@@ -1,15 +1,14 @@
 /**
  * Field.
  */
-function Field(mapId, x, y) {
-	this.id = mapId;
+function Field() {
+	this.id = '';
 	this.bg = $('#bg');
 	this.up = $('#upstairs');
 	this.protagonist = new Actor('protagonist', 'chr001');
 	this.actors = [];
 	this.events = {};
 	this.wall = [];
-	this.loadMap(x, y);
 	this.mapEvent = null;
 	this.lastEvent = null;
 }
@@ -17,11 +16,19 @@ Field.prototype.BRICK_WIDTH = 16;
 Field.prototype.SCROLL_WIDTH = Field.prototype.BRICK_WIDTH * 4;
 Field.prototype.SCROLL_HEIGHT = Field.prototype.BRICK_WIDTH * 2;
 
+Field.prototype.change = function(mapId, x, y) {
+	if (this.id == mapId) {
+		this.jump(x, y);
+	} else {
+		this.loadMap(x, y);
+		this.id = mapId;
+	}
+}
 Field.prototype.loadMap = function(x, y) {
 	var view = $('#view');
 	var field = this;
 
-	this.loading = true;
+	this.wall = [];
 	view.fadeOut(function() {
 		field.loadImage();
 		$.ajax('/map/', {
@@ -41,14 +48,13 @@ Field.prototype.loadMap = function(x, y) {
 				field.events = events;
 				view.fadeIn();
 				field.jump(x, y);
-				field.loading = false;
 			}
 		});
 	});
 	$('.actor').each(function(ix, actor) {
 		$(actor).remove();
 	})
-	this.actors = [];
+	field.actors = [];
 }
 Field.prototype.loadImage = function() {
 	var bgUri = '/map/background/' + this.id;
@@ -61,7 +67,7 @@ Field.prototype.addActor = function(charId, charNum, mapX, mapY, ptn, ev) {
 	var multiplicand = this.BRICK_WIDTH / this.protagonist.STRIDE;
 	var x = mapX * multiplicand;
 	var y = mapY * multiplicand;
-	var actor = new Actor(charId, charNum);
+	var actor = new Actor(charId, charNum, ptn, ev);
 
 	actor.jump(x, y);
 	this.actors.push(actor);
@@ -112,6 +118,20 @@ Field.prototype.limitScroll = function() {
 		this.viewY = maxY;
 	}
 }
+Field.prototype.hitActor = function(x, y) {
+	var field = this;
+	var d = field.protagonist.d;
+	var ev;
+
+	$.each(this.actors, function(ix, actor) {
+		if (actor.isHit(x, y, d)) {
+			ev = actor.ev;
+			return false;
+		}
+	});
+	this.mapEvent = ev;
+	return ev;
+}
 Field.prototype.hitWall = function(x, y) {
 	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
 	var lx = parseInt(x / divisor);
@@ -123,6 +143,9 @@ Field.prototype.hitWall = function(x, y) {
 		return true;
 	}
 	if (this.wall.length == 0) {
+		return true;
+	}
+	if (this.hitActor(x, y)) {
 		return true;
 	}
 	this.checkEvent(x, y);
@@ -178,6 +201,9 @@ Field.prototype.scroll = function() {
 	this.limitScroll();
 }
 Field.prototype.show = function() {
+	if (this.wall.length == 0) {
+		return;
+	}
 	var vx = this.viewX * this.protagonist.STRIDE;
 	var vy = this.viewY * this.protagonist.STRIDE;
 	var position = -vx + 'px ' + -vy + 'px';
@@ -190,6 +216,7 @@ Field.prototype.show = function() {
 	// actor
 	var field = this;
 	$.each(this.actors, function(ix, actor) {
+		actor.walk();
 		actor.show(field.viewX, field.viewY);
 	})
 }

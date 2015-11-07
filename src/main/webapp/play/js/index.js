@@ -40,12 +40,12 @@ function touch(e) {
 	var view = $('#view');
 	var isMouse = e.type.match(/^mouse/);
 
-	if (mng.field.loading) {
-		leave();
-		return;
-	}
+//	if (mng.field.loading) {
+//		leave();
+//		return false;
+//	}
 	if (isMouse && e.buttons == 0) {
-		return;
+		return false;
 	}
 	var isTouch = e.type.match(/^touch/);
 	if (isTouch) {
@@ -65,7 +65,7 @@ function touch(e) {
 		view.prop('touch', true);
 		view.prop('touchX', px);
 		view.prop('touchY', py);
-		return;
+		return false;
 	}
 	view.prop('touch', true);
 	view.prop('touchX', e.offsetX);
@@ -79,7 +79,7 @@ function leave() {
 function move() {
 	var view = $('#view');
 
-	if (!view.prop('touch')) {
+	if (!view.prop('touch') || mng.isDialogOpen) {
 		return false;
 	}
 	var field = mng.field;
@@ -126,19 +126,20 @@ function move() {
 	}
 
 	// finish
-	s = (++s) % 2;
 	field.protagonist.x = x;
 	field.protagonist.y = y;
 	field.protagonist.d = d;
-	field.protagonist.s = s;
+	field.protagonist.step();
 
 	field.scroll();
 	return true;
 }
 function draw() {
-	if (!mng.isInEvent && !mng.isDialogOpen && move()) {
-		mng.field.show();
+	if (!mng.nextEvent() && move()) {
 		mng.verifyEvent();
+	}
+	if (mng.field && !mng.isDialogOpen) {
+		mng.field.show();
 	}
 	setTimeout(function() {
 		draw();

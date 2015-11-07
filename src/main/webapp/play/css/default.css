@@ -83,3 +83,11 @@ div.actor {
 #dialog span.place {
 	color: lime;
 }
+#dialog span.choose span {
+/*	color: white;*/
+	background-color: #505050;
+	border: 1px solid black;
+	margin: 0px 4px;
+	padding: 0px 2px;
+	cursor: pointer;
+}

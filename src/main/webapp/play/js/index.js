@@ -3,6 +3,10 @@ var mng;
 $(document).ready(function() {
 	mng = new SceneManager();
 	init();
+//	setTimeout(function() {
+//		mng.cntProgress = 13;
+//		mng.reservedEvent = 'w131to132';
+//	}, 300);
 });
 var STRIDE = 8;
 
@@ -10,20 +14,16 @@ var STRIDE = 8;
  * 初期処理.
  */
 function init() {
-	initProtagonist();
+	initControls();
 	initCover();
 	draw();
 }
-function initProtagonist() {
-	var view = $('#view');
-	var centerX = view.width() / 2;
-	var centerY = view.height() / 2;
-	var width = 32;
-	var height = 32;
-	var protagonist = $('#protagonist');
+function initControls() {
+	var itemBtn = $('#itemBtn');
 
-	protagonist.css('top', (centerY - height / 2) + 'px');
-	protagonist.css('left', (centerX - width / 2) + 'px');
+	itemBtn.click(function() {
+		mng.showItems();
+	});
 }
 function initCover() {
 	var cover = $('#cover');

@@ -24,12 +24,17 @@ Field.prototype.change = function(mapId, x, y) {
 		this.id = mapId;
 	}
 }
+Field.prototype.check = function(mapId, x, y) {
+	this.change(mapId, x, y);
+	this.protagonist.d = 0;
+}
 Field.prototype.loadMap = function(x, y) {
 	var view = $('#view');
 	var field = this;
 
 	this.wall = [];
 	view.fadeOut(function() {
+		view.prop('show', false);
 		field.loadImage();
 		$.ajax('/map/', {
 			'type': 'POST',
@@ -46,7 +51,6 @@ Field.prototype.loadMap = function(x, y) {
 				field.width = wall[0].length;
 				field.wall = wall;
 				field.events = events;
-				view.fadeIn();
 				field.jump(x, y);
 			}
 		});
@@ -72,6 +76,23 @@ Field.prototype.addActor = function(charId, charNum, mapX, mapY, ptn, ev) {
 	actor.jump(x, y);
 	this.actors.push(actor);
 }
+Field.prototype.getActor = function(charId) {
+	var actor = null;
+	$.each(this.actors, function(ix, obj) {
+		if (obj.id == charId) {
+			actor = obj;
+			return false;
+		}
+	});
+	return actor;
+}
+Field.prototype.removeActor = function(charId) {
+	var actor = this.getActor(charId);
+
+	if (actor != null) {
+		actor.element.remove();
+	}
+}
 Field.prototype.jump = function(mapX, mapY) {
 	var view = $('#view');
 	var viewWidth = view.width() / this.protagonist.STRIDE;
@@ -84,10 +105,8 @@ Field.prototype.jump = function(mapX, mapY) {
 
 	this.viewX = x - centerX;
 	this.viewY = y - centerY;
-	this.viewZ = 0;
 	this.limitScroll();
 	this.protagonist.jump(x, y);
-	this.show();
 	// event
 	this.checkEvent(x, y);
 	this.lastEvent = this.mapEvent;
@@ -121,7 +140,7 @@ Field.prototype.limitScroll = function() {
 Field.prototype.hitActor = function(x, y) {
 	var field = this;
 	var d = field.protagonist.d;
-	var ev;
+	var ev = '';
 
 	$.each(this.actors, function(ix, actor) {
 		if (actor.isHit(x, y, d)) {
@@ -129,10 +148,26 @@ Field.prototype.hitActor = function(x, y) {
 			return false;
 		}
 	});
-	if (ev) {
+	if (this.mapEvent == null) {
 		this.mapEvent = ev;
 	}
-	return ev;
+	return this.mapEvent;
+}
+Field.prototype.checkEvent = function() {
+	var x = this.protagonist.x;
+	var y = this.protagonist.y;
+	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
+	var lx = parseInt(x / divisor);
+	var rx = parseInt((x + 1) / divisor);
+	var ty = parseInt(y / divisor);
+	var position = lx + '-' + ty;
+	var ev = this.events[position];
+
+	if (!ev) {
+		position = rx + '-' + ty;
+		ev = this.events[position];
+	}
+	this.mapEvent = ev;
 }
 Field.prototype.hitWall = function(x, y) {
 	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
@@ -154,26 +189,13 @@ Field.prototype.hitWall = function(x, y) {
 
 	return brickTL == 1 || brickTR == 1 || brickBL == 1 || brickBR == 1;
 }
-Field.prototype.checkEvent = function() {
-	var x = this.protagonist.x;
-	var y = this.protagonist.y;
-	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
-	var lx = parseInt(x / divisor);
-	var rx = parseInt((x + 1) / divisor);
-	var ty = parseInt(y / divisor);
-	var position = lx + '-' + ty;
-	var ev = this.events[position];
-
-	if (!ev) {
-		position = rx + '-' + ty;
-		ev = this.events[position];
-	}
-	if (ev === this.lastEvent) {
-		ev = null;
+Field.prototype.hitEvent = function() {
+	if (this.mapEvent === this.lastEvent) {
+		this.mapEvent = null;
 	} else {
-		this.lastEvent = ev;
+		this.lastEvent = this.mapEvent;
 	}
-	this.mapEvent = ev;
+	return this.mapEvent;
 }
 Field.prototype.scroll = function() {
 	var view = $('#view');
@@ -210,13 +232,12 @@ Field.prototype.show = function() {
 
 	this.bg.css('background-position', position);
 	this.up.css('background-position', position);
-
 	this.protagonist.show(this.viewX, this.viewY);
-
+	$('#view').fadeIn();
 	// actor
 	var field = this;
 	$.each(this.actors, function(ix, actor) {
-		actor.walk();
+		actor.walk(field.protagonist);
 		if (typeof actor.x == 'undefined') {
 			return;
 		}

@@ -53,7 +53,9 @@ public class MapController implements Controller<MapRequestDto> {
 		String name = "/" + form.getMapId() + ".map";
 
 		try (InputStream in = MapController.class.getResourceAsStream(name)) {
-			wall = IOUtils.toString(in);
+			if (in != null) {
+				wall = IOUtils.toString(in);
+			}
 		} catch (@SuppressWarnings("unused") IOException e) {
 			// nop
 		}

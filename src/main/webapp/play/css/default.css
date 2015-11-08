@@ -12,6 +12,7 @@
 	top: 50px;
 	left: 50px;
 */
+	padding: 0px;
 	overflow: hidden;
 	z-index: 0;
 }
@@ -51,18 +52,15 @@ div.actor {
 	z-index: 9000;
 /*	border: 1px black dashed;*/
 }
+
+/*
+ * Dialog
+ */
 #dialog {
 /*	position: absolute;*/
+	top: 40px;
 	background-color: transparent;
 	z-index: 9900;
-}
-#dialogImage {
-	max-width: 80px;
-	float: left;
-	margin-right: 4px;
-}
-#dialogText {
-	white-space: pre-wrap;
 }
 #dialog > div {
 	font-size: small;
@@ -72,20 +70,36 @@ div.actor {
 	max-height: 180px;
 	overflow: auto;
 }
-#dialog span.item {
+#dialogImage {
+	max-width: 80px;
+	float: left;
+	margin-right: 4px;
+}
+#dialogImage span {
+	display: inline-block;
+	width: 100%;
+	background-color: #303030;
+}
+#dialogText {
+	white-space: pre-wrap;
+}
+#dialogText span.item {
 	color: cyan;
 }
-#dialog span.chara {
+#dialogText span.chara {
 	color: orange;
 }
-#dialog span.place {
+#dialogText span.place {
 	color: lime;
 }
-#dialog span.choose span {
+#dialogText span.choose span {
 /*	color: white;*/
 	background-color: #505050;
 	border: 1px solid black;
 	margin: 0px 4px;
 	padding: 0px 2px;
 	cursor: pointer;
+}
+#dialog-screen {
+	opacity: 0.7;
 }

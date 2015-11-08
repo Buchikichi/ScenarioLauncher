@@ -41,10 +41,24 @@ Actor.prototype.makeDecision = function() {
 	this.distance = Math.random() * 20;
 	this.cnt = 0;
 }
+Actor.prototype.chase = function(px, py) {
+	var diffX = px - this.x;
+	var diffY = py - this.y;
+
+	if (diffY < 0) {
+		this.d = 3;
+	} else if (0 < diffY) {
+		this.d = 0;
+	} else if (diffX < 0) {
+		this.d = 1;
+	} else if (0 < diffX) {
+		this.d = 2;
+	}
+}
 Actor.prototype.step = function() {
 	this.s = (++this.s) % 2;
 }
-Actor.prototype.walk = function() {
+Actor.prototype.walk = function(player) {
 	if (!this.isPlayer()) {
 		this.cnt++;
 		if (this.cnt < 5) {
@@ -54,6 +68,9 @@ Actor.prototype.walk = function() {
 	}
 	// stride
 	if (1 < this.ptn) {
+		if (this.ptn == 7) {
+			this.chase(player.x, player.y);
+		}
 		if (this.d == 0) {
 			this.y++;
 		} else if (this.d == 1) {
@@ -79,8 +96,11 @@ Actor.prototype.back = function() {
 	this.makeDecision();
 }
 Actor.prototype.show = function(viewX, viewY) {
-	var top = (this.y - viewY) * this.STRIDE;
-	var left = (this.x - viewX) * this.STRIDE;
+	var viewOffset = $('#bg').offset();
+	var vLeft = viewOffset.left;
+	var vTop = viewOffset.top;
+	var top = vTop + (this.y - viewY) * this.STRIDE;
+	var left = vLeft + (this.x - viewX) * this.STRIDE;
 	var posX = this.d * 64 + this.s * 32;
 	var position = -posX + 'px 0px';
 
@@ -93,7 +113,7 @@ Actor.prototype.show = function(viewX, viewY) {
 }
 Actor.prototype.isHit = function(x, y, d) {
 	var hitX = x - 2 <= this.x && this.x <= x + 2;
-	var hitY = y <= this.y && this.y <= y + 3;
+	var hitY = y - 1 <= this.y && this.y <= y + 1;
 	var isHit = hitX && hitY;
 
 	if (isHit && this.ptn == 2) {

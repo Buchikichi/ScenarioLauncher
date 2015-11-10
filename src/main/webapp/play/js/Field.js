@@ -15,6 +15,7 @@ function Field() {
 Field.prototype.BRICK_WIDTH = 16;
 Field.prototype.SCROLL_WIDTH = Field.prototype.BRICK_WIDTH * 4;
 Field.prototype.SCROLL_HEIGHT = Field.prototype.BRICK_WIDTH * 2;
+Field.prototype.DIVISOR = Field.prototype.BRICK_WIDTH / Actor.prototype.STRIDE;
 
 Field.prototype.change = function(mapId, x, y) {
 	if (this.id == mapId) {
@@ -116,9 +117,8 @@ Field.prototype.limitScroll = function() {
 	var view = $('#view');
 	var viewWidth = view.width() / this.protagonist.STRIDE;
 	var viewHeight = view.height() / this.protagonist.STRIDE;
-	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
-	var maxX = this.width * divisor - viewWidth;
-	var maxY = this.height * divisor - viewHeight;
+	var maxX = this.width * this.DIVISOR - viewWidth;
+	var maxY = this.height * this.DIVISOR - viewHeight;
 
 	if (maxX < 0) {
 		maxX = 0;
@@ -156,10 +156,9 @@ Field.prototype.hitActor = function(x, y) {
 Field.prototype.checkEvent = function() {
 	var x = this.protagonist.x;
 	var y = this.protagonist.y;
-	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
-	var lx = parseInt(x / divisor);
-	var rx = parseInt((x + 1) / divisor);
-	var ty = parseInt(y / divisor);
+	var lx = parseInt(x / this.DIVISOR);
+	var rx = parseInt((x + 1) / this.DIVISOR);
+	var ty = parseInt(y / this.DIVISOR);
 	var position = lx + '-' + ty;
 	var ev = this.events[position];
 
@@ -170,11 +169,11 @@ Field.prototype.checkEvent = function() {
 	this.mapEvent = ev;
 }
 Field.prototype.hitWall = function(x, y) {
-	var divisor = this.BRICK_WIDTH / this.protagonist.STRIDE;
-	var lx = parseInt(x / divisor);
-	var rx = parseInt((x + 3) / divisor);
-	var ty = parseInt(y / divisor) + 1;
-	var by = parseInt((y + 1) / divisor) + 1;
+	var lx = parseInt(x / this.DIVISOR);
+	var mx = parseInt((x + 2) / this.DIVISOR);
+	var rx = parseInt((x + 3) / this.DIVISOR);
+	var ty = parseInt(y / this.DIVISOR) + 1;
+	var by = parseInt((y + 1) / this.DIVISOR) + 1;
 
 	if (x < 0 || this.width <= rx || y < 0 || this.height <= by) {
 		return true;
@@ -183,11 +182,12 @@ Field.prototype.hitWall = function(x, y) {
 		return true;
 	}
 	var brickTL = this.wall[ty][lx];
+	var brickTM = this.wall[ty][mx];
 	var brickTR = this.wall[ty][rx];
 	var brickBL = this.wall[by][lx];
 	var brickBR = this.wall[by][rx];
 
-	return brickTL == 1 || brickTR == 1 || brickBL == 1 || brickBR == 1;
+	return brickTL || brickTM || brickTR || brickBL || brickBR;
 }
 Field.prototype.hitEvent = function() {
 	if (this.mapEvent === this.lastEvent) {
@@ -246,4 +246,115 @@ Field.prototype.show = function() {
 		}
 		actor.show(field.viewX, field.viewY);
 	})
+}
+/**
+ * 方向を求める.
+ * @param sx start X
+ * @param sy start Y
+ * @param gx goal X
+ * @param gy goal Y
+ */
+Field.prototype.getDirection = function(sx, sy, gx, gy) {
+	var diffX = gx - sx;
+	var diffY = gy - sy;
+	var d = null;
+
+	if (0 < Math.abs(diffX)) {
+		if (diffX < 0) {
+			d = 1;
+		} else if (0 < diffX) {
+			d = 2;
+		}
+	} else if (0 < Math.abs(diffY)) {
+		if (diffY < 0) {
+			d = 3;
+		} else if (0 < diffY) {
+			d = 0;
+		}
+	}
+	return d;
+}
+/**
+ * 方向を求める.
+ * @param sx start X
+ * @param sy start Y
+ * @param gx goal X
+ * @param gy goal Y
+ */
+Field.prototype.decideDirection = function(sx, sy, gx, gy) {
+	var shadow = new Actor(null, null, 2);
+	var goalNode = new AStarNode(gx, gy, 0, sx, sy);
+	var keySet = [goalNode.getKey()];
+	var nodeList = [goalNode];
+	var min = 10000;
+	var goal = null;
+
+	for (var cnt = 0; cnt < 100; cnt++) {
+		var newList = [];
+		var nextMin = 10000;
+
+		for (var ix = 0; ix < nodeList.length; ix++) {
+			var node = nodeList[ix];
+
+			if (min < node.s) {
+				newList.push(node);
+				continue;
+			}
+			for (var d = 0; d < 4; d++) {
+				shadow.jump(node.x, node.y);
+				shadow.d = d;
+				shadow.walk();
+				var x = shadow.x;
+				var y = shadow.y;
+				var isHit = this.hitWall(x, y);
+	
+				shadow.back();
+				if (isHit) {
+					continue;
+				}
+				var nextNode = new AStarNode(x, y, d, sx, sy);
+				var key = nextNode.getKey();
+				if (keySet.indexOf(key) != -1) {
+					continue;
+				}
+				nextNode.setParent(node);
+				keySet.push(key);
+				newList.push(nextNode);
+				if (x == sx && y == sy) {
+					goal = nextNode;
+					break;
+				}
+				if (nextNode.s < nextMin) {
+					nextMin = nextNode.s;
+				}
+			}
+			if (goal) {
+				break;
+			}
+		}
+		if (newList.length == 0 || goal) {
+			break;
+		}
+		nodeList = newList;
+		min = nextMin;
+	}
+//	console.log('----- goal:' + cnt);
+	if (goal) {
+//		var target = goal;
+//		for (var ix = 0; ix < cnt; ix++) {
+//			var x = target.x;
+//			var y = target.y;
+//
+//			var act = new Actor('dummy' + ix, 'chr001', 2);
+//			act.jump(x, y);
+//			act.show(this.viewX, this.viewX);
+//			console.log('target[' + x + ',' + y + ']c:' + target.c + '/s:' + target.s + '/h:' + target.h);
+//			if (!target.parent) {
+//				break;
+//			}
+//			target = $.extend(true, {}, target.parent);
+//		}
+		return 3 - goal.d;
+	}
+	return this.getDirection(sx, sy, gx, gy);
 }

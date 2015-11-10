@@ -10,6 +10,9 @@ function Actor(charId, charNum, pattern, event) {
 	this.s = 0; // step
 	this.cnt = 0; // walking
 
+	if (!charId) {
+		return;
+	}
 	var div = $('#' + charId);
 	if (div.length == 0) {
 		div = $('<div></div>');
@@ -120,4 +123,15 @@ Actor.prototype.isHit = function(x, y, d) {
 		this.d = 3 - d;
 	}
 	return isHit;
+}
+Actor.prototype.turnLeft = function() {
+	if (this.d == 0) {
+		this.d = 2;
+	} else if (this.d == 1) {
+		this.d = 0;
+	} else if (this.d == 2) {
+		this.d = 3;
+	} else {
+		this.d = 1;
+	}
 }

@@ -8,7 +8,6 @@ $(document).ready(function() {
 //		mng.reservedEvent = 'w131to132';
 //	}, 300);
 });
-var STRIDE = 8;
 
 /**
  * 初期処理.
@@ -84,31 +83,16 @@ function move() {
 	}
 	var field = mng.field;
 	var player = field.protagonist;
-	var top = (player.y - field.viewY) * STRIDE + field.BRICK_WIDTH;
-	var left = (player.x - field.viewX) * STRIDE + field.BRICK_WIDTH;
-	var diffX = view.prop('touchX') - left;
-	var diffY = view.prop('touchY') - top;
+	var tx = view.prop('touchX') - field.BRICK_WIDTH + player.STRIDE / 2;
+	var ty = view.prop('touchY') - field.BRICK_WIDTH + player.STRIDE / 2;
+	var gx = field.viewX + parseInt(tx / player.STRIDE);
+	var gy = field.viewY + parseInt(ty / player.STRIDE);
+	var d = field.decideDirection(player.x, player.y, gx, gy);
 
 //console.log('x:' + x + '/y:' + y);
-	if (field.BRICK_WIDTH < Math.abs(diffX)) {
-		if (diffX < 0) {
-			player.d = 1;
-			player.walk();
-		} else {
-			player.d = 2;
-			player.walk();
-		}
-	}
-	if (!player.isMove()) {
-		if (field.BRICK_WIDTH < Math.abs(diffY)) {
-			if (diffY < 0) {
-				player.d = 3;
-				player.walk();
-			} else {
-				player.d = 0;
-				player.walk();
-			}
-		}
+	if (d != null) {
+		player.d = d;
+		player.walk();
 	}
 	field.checkEvent();
 	var x = player.x;

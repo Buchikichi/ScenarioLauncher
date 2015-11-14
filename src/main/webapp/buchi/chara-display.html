@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ScenarioLauncher</title>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+
+<body>
+  <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
+    <a href="./" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-btn-icon-notext ui-icon-arrow-l"></a>
+    <h1>「ぶちきちの大冒険」の作り方 - キャラクターを表示する</h1>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>キャラクター画像</h3></div>
+    <div class="ui-body ui-body-a">
+      <pre>マップの表示と同じような方法で、大きな画像の一部分を表示しています。
+画像の表示開始位置を少しずつ変えて、歩いているように見せています。</pre>
+      <img src="img/chr001.png"/>
+      <pre>(キャラクター画像は1枚の画像です。)</pre>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>キャラクターが歩く方向</h3></div>
+    <div class="ui-body ui-body-a">
+      <pre>キャラクターが歩く方向について、プログラム内部では、
+    0:下, 1:左, 2:右, 3:上
+という決めごとをしています。
+実は、これはとても便利なのです。
+逆向きを表現したい時、現在の方向を変数 D とすると、
+    逆向き = 3 - D
+という式で求める事が出来ます。</pre>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>押している所まで歩く</h3></div>
+    <div class="ui-body ui-body-a">
+      <pre>画面上の指定した位置までキャラクターを移動させるという処理を行なっています。
+進むことが出来ない壁などをちゃんと避けて、目的の場所まで移動します。</pre>
+      <img src="img/moving.png"/>
+      <pre>JavaScriptのプログラム内で<a href="https://ja.wikipedia.org/wiki/A*" target="_blank">A*(エースター)</a>というアルゴリズムを使用しています。</pre>
+    </div>
+  </div>
+</body>
+</html>

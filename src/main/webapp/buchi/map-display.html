@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ScenarioLauncher</title>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+<script type="text/javascript">
+<!--
+$(document).ready(function() {
+	var div = $('#map');
+
+	div.prop('mX', 0);
+	div.prop('mY', 0);
+	scroll();
+});
+function scroll() {
+	var div = $('#map');
+	var mX = div.prop('mX');
+	var mY = div.prop('mY');
+	var position = -mX + 'px ' + -mY + 'px';
+
+	div.css('background-position', position);
+	mX += 8;
+	mY += 1;
+	div.prop('mX', mX);
+	div.prop('mY', mY);
+	setTimeout(scroll, 100);
+}
+-->
+</script>
+<style type="text/css">
+<!--
+#map {
+	width: 320px;
+	height: 240px;
+	background-image: url("img/map100bg.png");
+}
+-->
+</style>
+</head>
+
+<body>
+  <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
+    <a href="#" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-btn-icon-notext ui-icon-arrow-l"></a>
+    <h1>「ぶちきちの大冒険」の作り方 - マップを表示する</h1>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>マップ画像</h3></div>
+    <div class="ui-body ui-body-a">
+      <p>二次元のマップ上を動き回るタイプのゲームは、画面をスクロールさせる事が当たり前のようになっています。<br/>
+「ぶちきちの大冒険」では、ブラウザー内でスクロールしているように見えるのですが、大きな画像の一部分を表示して、表示開始位置を少しずつずらす事でスクロールのように見せています。</p>
+      <div id="map"></div>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>プログラムソース(JavaScript, スタイルシート)</h3></div>
+    <div class="ui-body ui-body-a">
+      <pre class="prettyprint">$(document).ready(function() {
+	var div = $('#map');
+
+	div.prop('mX', 0);
+	div.prop('mY', 0);
+	scroll();
+});
+function scroll() {
+	var div = $('#map');
+	var mX = div.prop('mX');
+	var mY = div.prop('mY');
+	var position = -mX + 'px ' + -mY + 'px';
+
+	div.css('background-position', position);
+	mX += 8;
+	mY += 1;
+	div.prop('mX', mX);
+	div.prop('mY', mY);
+	setTimeout(scroll, 100);
+}</pre>
+      <pre class="prettyprint">#map {
+	width: 320px;
+	height: 240px;
+	background-image: url("img/map100bg.png");
+}</pre>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ScenarioLauncher</title>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+
+<body>
+  <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
+    <a href="./" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-btn-icon-notext ui-icon-arrow-l"></a>
+    <h1>「ぶちきちの大冒険」の作り方 - マップを作る</h1>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>マップデータ</h3></div>
+    <div class="ui-body ui-body-a">
+      <p>画面にマップを表示するにはマップデータが必要で、マップデータを作るためのエディタープログラムを作る事もあります。<br/>
+テキストエディターで"人間側が理解しやすい"マップデータを作っておいて、コンバータープログラムで"プログラム側が理解しやすい"マップデータに変換する方法もあります。<br/>
+どんなゲームでもマップを表示するゲームは、何かしらのエディターでマップを作ります。<br/>
+画像は、今回作成したマップエディターの画面です。</p>
+      <img src="./img/editor.png"/>
+      <p>マップエディターは、Javaを使って作ってあり、プログラムソースを、<a href="https://github.com/">GitHub</a>に置いています。<br/>
+      <a href="https://github.com/Buchikichi/ScenarioEditor">ScenarioEditor</a></p>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>2000年頃に作った古いマップエディター</h3></div>
+    <div class="ui-body ui-body-a">
+    <p>本来は、マップを最初から作るようなエディターを作るべきなのですが、2000年頃にC++を使って作成した、マップエディターによる作成済みのマップがあります。<br/>
+なので、ここでの「マップエディター」は、古いマップを新しい形式に変換するプログラムなのです。</p>
+    <img src="./img/editor_old.png"/>
+    <p>古いマップエディターはダサすぎます。それに、使い方を忘れてしまって正しく画面が出ません。</p>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>当たり判定</h3></div>
+    <div class="ui-body ui-body-a">
+    <p>マップ上の壁や木などの通過できない場所に印をつけておいて、プログラムで判定する必要があります。<br/>
+今回作成したマップエディターでは、その印を数字で表示しています。<br/>
+マップの指定場所に到着したら、イベントを発生させるという印も必要です。赤い字で表示しています。</p>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>ブロック型</h3></div>
+    <div class="ui-body ui-body-a">
+      <p>シナリオランチャーは、あらかじめ画像編集ソフトで作っておいたブロック画像を、一つずつ置いていく「ブロック型」のマップ構成を採用しています。<br/>
+大抵は、デザイナーさんに画像を作ってもらいます。</p>
+      <img src="./img/map101.png"/>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>背景画像と前景画像</h3></div>
+    <div class="ui-body ui-body-a">
+      <p>マップ画像は、背景画像と前景画像に分けて保存しています。<br/>
+ゲーム画面で、背景画像、キャラクター、前景画像の順に重ねて表示しています。<br/>
+表示の重なりの順番は、スタイルシートのz-indexで指定しています。</p>
+      <p>(背景画像)</p>
+      <img src="./img/map101bg.png"/>
+      <p>(前景画像)</p>
+      <img src="./img/map101st.png"/>
+      <p></p>
+    </div>
+  </div>
+</body>
+</html>

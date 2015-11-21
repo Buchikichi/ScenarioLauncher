@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ScenarioLauncher</title>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=js&skin=Sons-Of-Obsidian"></script>
+<style type="text/css">
+pre.linenums li {list-style-type: decimal;}
+</style>
+</head>
+
+<body>
+  <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
+    <a href="./" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-btn-icon-notext ui-icon-arrow-l"></a>
+    <h1>「ぶちきちの大冒険」の作り方 - イベントを実行する</h1>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>マップ上で発生するイベント</h3></div>
+    <div class="ui-body ui-body-a">
+      <pre>もともと、ザウルス版ではイベントをXMLで記述していました。
+以下は、古いプログラム(のようなもの)。</pre>
+      <pre class="prettyprint linenums">
+&lt;function id="lookChest" title="チェスト">
+	&lt;if true="iHeso == 0">
+		:@cKuro姉ちゃんの@iHesoがある
+		:もらっちゃう?
+		{@yes, @no}
+		&lt;if true="dialog == 1">
+			:@6 @$300@0手に入れた
+			&lt;add to="$" val="300" />
+			&lt;set to="iHeso" val="1" />
+		&lt;/if>
+	&lt;else else="" />
+		:変わったものは特にない
+	&lt;/if>
+&lt;/function></pre>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>SceneManager</h3></div>
+    <div class="ui-body ui-body-a">
+      <p>マップ上で発生するイベントは、JavaScriptで処理する、という方針にしました。<br/>
+XML内に記述しているプログラムっぽい部分を、ブラウザーで動かせるJavaScriptに変換しています。<br/>
+そして、シナリオの状態を管理するクラス(のようなもの) SceneManager を作成し、インスタンスを変数 mng に割り当てています。<br/>
+マップイベントスクリプトは、mng オブジェクトにアクセスするように記述します。</p>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>JavaScriptのイベント</h3></div>
+    <div class="ui-body ui-body-a">
+      <pre>マップ上に置いた印はイベント番号で、そのイベント番号をAjaxでサーバーに問い合わせます。
+サーバー側のプログラムは、イベント番号に対応するJavaScriptを返します。
+クライアント側(ブラウザー)のプログラムは、受け取ったJavaScriptを、eval()関数で実行します。
+以下は、古いプログラムを変換してJavaScriptにしたプログラム。</pre>
+      <pre class="prettyprint linenums">
+if (mng.iHeso == 0) {
+	mng.print('&lt;span class="chara">くろきち&lt;/span>姉ちゃんの&lt;span class="item">ヘソクリ&lt;/span>がある\n');
+	mng.print('もらっちゃう?\n');
+	mng.choose(['&lt;span class="item">はい&lt;/span>', '&lt;span class="item">いいえ&lt;/span>']);
+	yield;
+	if (mng.dialog == 1) {
+		mng.print('&lt;span class="currency">300Gold&lt;/span>手に入れた\n');
+		mng.gold += 300
+		mng.iHeso = 1
+	}
+} else {
+	mng.print('変わったものは特にない\n');
+}</pre>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>自作のダイアログ処理</h3></div>
+    <div class="ui-body ui-body-a">
+      <p>JavaScriptでのダイアログ処理に、alert() や confirm() があります。これらは、ユーザーがダイアログ内のボタンを押すまで、処理が停止しています。<br/>
+ダイアログは、HTMLの記述によって作成する事も可能です。</p>
+      <img src="img/event_dialog.png"/>
+      <pre>自作のダイアログでは、画面をブラウザーに表示後、ボタンのクリックイベント等を処理します。
+confirm() のように処理は止まらないため、スクリプトを上から順に処理して最後まで到達してしまいます。
+先ほどのプログラムの4行目 "mng.choose()" の所で選択ダイアログを表示します。
+ここで処理が止まって欲しいのですが、通常のJavaScriptでは、そのまま処理を続行します。
+      </pre>
+    </div>
+  </div>
+  <div class="ui-corner-all custom-corners">
+    <div class="ui-bar ui-bar-a"><h3>Generator:ジェネレーター</h3></div>
+    <div class="ui-body ui-body-a">
+      <pre>先ほどのプログラムの5行目に "yield;" という記述があります。
+この yield の所で、プログラムを一時停止する事が可能です。これはジェネレーターという機能の中の一部です。
+「一時停止」といっても処理が停止して何かを待つわけではありません。
+やはり処理は非同期なので、setTimeout() を使ってちょっとずつプログラムを実行させます。
+<strong>しかし、</strong>Generatorは、<a href="https://ja.wikipedia.org/wiki/ECMAScript" target="_blank">ECMAScript 6</a> から利用可能になります。
+2015年11月時点で、対応しているブラウザーは、Firefox、Edgeくらいなのです。
+Edgeは、ユーザーの手で有効にする必要があるので、純粋に「対応している」とは言い切れません。
+</pre>
+    </div>
+  </div>
+</body>
+</html>

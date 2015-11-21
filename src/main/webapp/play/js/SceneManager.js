@@ -27,6 +27,7 @@ SceneManager.prototype.nextEvent = function() {
 	var gen = this.eventStack[len - 1];
 	var res = gen.next();
 
+//	console.log('yield:' + res.value);
 	if (res.done) {
 		this.eventStack.pop();
 		if (this.eventStack.length == 0 && this.unread == 0) {
@@ -153,7 +154,7 @@ SceneManager.prototype.call = function(eventId) {
 		'success': function(data) {
 			var contents = 'function* gen() {' + data.contents + '}';
 
-			//console.log(contents);
+//			console.log(contents);
 			eval(contents);
 			mng.eventStack.push(gen());
 		}
@@ -198,10 +199,9 @@ SceneManager.prototype.wait = function() {
 }
 SceneManager.prototype.choose = function(choices) {
 	var mng = this;
-	var dialogText = $('#dialogText');
 	var span = $('<span class="choose waiting"></span>');
 
-	dialogText.append(span);
+	$('#dialogText').append(span);
 	this.isChoose = true;
 	$.each(choices, function(ix, elm) {
 		var btn = $(elm);
@@ -213,6 +213,7 @@ SceneManager.prototype.choose = function(choices) {
 			return false;
 		});
 		span.append(btn);
+		span.append('\n');
 	});
 }
 SceneManager.prototype.gameOver = function() {

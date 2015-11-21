@@ -112,7 +112,7 @@ function draw() {
 	if (!mng.nextEvent() && move()) {
 		mng.verifyEvent();
 	}
-	if (mng.field && !mng.isDialogOpen) {
+	if (!mng.isDialogOpen) {
 		mng.field.show();
 	}
 	setTimeout(function() {

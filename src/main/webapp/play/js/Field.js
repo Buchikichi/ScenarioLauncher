@@ -18,24 +18,30 @@ Field.prototype.SCROLL_HEIGHT = Field.prototype.BRICK_WIDTH * 2;
 Field.prototype.DIVISOR = Field.prototype.BRICK_WIDTH / Actor.prototype.STRIDE;
 
 Field.prototype.change = function(mapId, x, y) {
+	var field = this;
+
 	if (this.id == mapId) {
 		this.jump(x, y);
 	} else {
-		this.loadMap(x, y);
 		this.id = mapId;
+		var p = new Promise(function(resolve, reject) {
+			field.loadMap(resolve, reject);
+		});
+		p.then(function() {
+			field.jump(x, y);
+			field.show();
+		});
 	}
 }
 Field.prototype.check = function(mapId, x, y) {
 	this.change(mapId, x, y);
 	this.protagonist.d = 0;
 }
-Field.prototype.loadMap = function(x, y) {
-	var view = $('#view');
+Field.prototype.loadMap = function(resolve, reject) {
 	var field = this;
 
 	this.wall = [];
-	view.fadeOut(function() {
-		view.prop('show', false);
+	$('#view').fadeOut(function() {
 		field.loadImage();
 		$.ajax('/map/', {
 			'type': 'POST',
@@ -52,7 +58,7 @@ Field.prototype.loadMap = function(x, y) {
 				field.width = wall[0].length;
 				field.wall = wall;
 				field.events = events;
-				field.jump(x, y);
+				resolve();
 			}
 		});
 	});

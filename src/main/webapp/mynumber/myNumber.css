@@ -1,0 +1,26 @@
+@CHARSET "UTF-8";
+pre.linenums li {
+	list-style-type: decimal;
+}
+blockquote {
+	color:gray;
+	font-style:italic;
+	border:2px lightgray dotted;
+}
+table.numeric {
+	text-align:right;
+	border-collapse: collapse;
+}
+table.numeric th:first-child {
+	background-color: gray;
+}
+table.numeric tbody td {
+	width: 2em;
+	border:1px gray solid;
+}
+table.numeric tbody.spec td:nth-child(6) {
+	border-right: 1px dashed blue;
+}
+table.numeric tbody.spec td:nth-child(7) {
+	border-left: 1px dashed blue;
+}

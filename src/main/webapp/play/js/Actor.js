@@ -44,24 +44,112 @@ Actor.prototype.makeDecision = function() {
 	this.distance = Math.random() * 20;
 	this.cnt = 0;
 }
-Actor.prototype.chase = function(px, py) {
-	var diffX = px - this.x;
-	var diffY = py - this.y;
+/**
+ * 方向を求める.
+ * @param gx goal X
+ * @param gy goal Y
+ */
+Actor.prototype.getDirection = function(gx, gy) {
+	var diffX = gx - this.x;
+	var diffY = gy - this.y;
+	var d = null;
 
-	if (diffY < 0) {
-		this.d = 3;
-	} else if (0 < diffY) {
-		this.d = 0;
-	} else if (diffX < 0) {
-		this.d = 1;
-	} else if (0 < diffX) {
-		this.d = 2;
+	if (0 < Math.abs(diffX)) {
+		if (diffX < 0) {
+			d = 1;
+		} else if (0 < diffX) {
+			d = 2;
+		}
+	} else if (0 < Math.abs(diffY)) {
+		if (diffY < 0) {
+			d = 3;
+		} else if (0 < diffY) {
+			d = 0;
+		}
 	}
+	return d;
+}
+Actor.prototype.chase = function(field, gx, gy) {
+	var shadow = new Actor(null, null, 2);
+	var goalNode = new AStarNode(gx, gy, 0, this.x, this.y);
+	var keySet = [goalNode.getKey()];
+	var nodeList = [goalNode];
+	var min = 10000;
+	var goal = null;
+
+	for (var cnt = 0; cnt < 100; cnt++) {
+		var newList = [];
+		var nextMin = 10000;
+
+		for (var ix = 0; ix < nodeList.length; ix++) {
+			var node = nodeList[ix];
+
+			if (min < node.s) {
+				newList.push(node);
+				continue;
+			}
+			for (var d = 0; d < 4; d++) {
+				shadow.jump(node.x, node.y);
+				shadow.d = d;
+				shadow.walk();
+				var x = shadow.x;
+				var y = shadow.y;
+				var isHit = field.hitWall(x, y);
+	
+				shadow.back();
+				if (isHit) {
+					continue;
+				}
+				var nextNode = new AStarNode(x, y, d, this.x, this.y);
+				var key = nextNode.getKey();
+				if (keySet.indexOf(key) != -1) {
+					continue;
+				}
+				nextNode.setParent(node);
+				keySet.push(key);
+				newList.push(nextNode);
+				if (x == this.x && y == this.y) {
+					goal = nextNode;
+					break;
+				}
+				if (nextNode.s < nextMin) {
+					nextMin = nextNode.s;
+				}
+			}
+			if (goal) {
+				break;
+			}
+		}
+		if (newList.length == 0 || goal) {
+			break;
+		}
+		nodeList = newList;
+		min = nextMin;
+	}
+//	console.log('----- goal:' + cnt);
+	if (goal) {
+//		var target = goal;
+//		for (var ix = 0; ix < cnt; ix++) {
+//			var x = target.x;
+//			var y = target.y;
+//
+//			var act = new Actor('dummy' + ix, 'chr001', 2);
+//			act.jump(x, y);
+//			act.show(this.viewX, this.viewX);
+//			console.log('target[' + x + ',' + y + ']c:' + target.c + '/s:' + target.s + '/h:' + target.h);
+//			if (!target.parent) {
+//				break;
+//			}
+//			target = $.extend(true, {}, target.parent);
+//		}
+		return 3 - goal.d;
+	}
+	return this.getDirection(gx, gy);
 }
 Actor.prototype.step = function() {
 	this.s = (++this.s) % 2;
 }
-Actor.prototype.walk = function(player) {
+Actor.prototype.walk = function(field) {
 	if (!this.isPlayer()) {
 		this.cnt++;
 		if (this.cnt < 5) {
@@ -72,7 +160,8 @@ Actor.prototype.walk = function(player) {
 	// stride
 	if (1 < this.ptn) {
 		if (this.ptn == 7) {
-			this.chase(player.x, player.y);
+			var player = field.protagonist;
+			this.d = this.chase(field, player.x, player.y);
 		}
 		if (this.d == 0) {
 			this.y++;

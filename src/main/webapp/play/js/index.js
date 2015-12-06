@@ -87,7 +87,7 @@ function move() {
 	var ty = view.prop('touchY') - field.BRICK_WIDTH + player.STRIDE / 2;
 	var gx = field.viewX + parseInt(tx / player.STRIDE);
 	var gy = field.viewY + parseInt(ty / player.STRIDE);
-	var d = field.decideDirection(player.x, player.y, gx, gy);
+	var d = player.chase(field, gx, gy);
 
 //console.log('x:' + x + '/y:' + y);
 	if (d != null) {

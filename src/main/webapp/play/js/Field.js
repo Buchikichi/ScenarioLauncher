@@ -83,22 +83,16 @@ Field.prototype.addActor = function(charId, charNum, mapX, mapY, ptn, ev) {
 	actor.jump(x, y);
 	this.actors.push(actor);
 }
-Field.prototype.getActor = function(charId) {
-	var actor = null;
-	$.each(this.actors, function(ix, obj) {
-		if (obj.id == charId) {
-			actor = obj;
+Field.prototype.removeActor = function(charId) {
+	var field = this;
+
+	$.each(this.actors, function(ix, actor) {
+		if (actor.id == charId) {
+			actor.element.remove();
+			field.actors.splice(ix, 1);
 			return false;
 		}
 	});
-	return actor;
-}
-Field.prototype.removeActor = function(charId) {
-	var actor = this.getActor(charId);
-
-	if (actor != null) {
-		actor.element.remove();
-	}
 }
 Field.prototype.jump = function(mapX, mapY) {
 	var view = $('#view');
@@ -243,7 +237,7 @@ Field.prototype.show = function() {
 	// actor
 	var field = this;
 	$.each(this.actors, function(ix, actor) {
-		actor.walk(field.protagonist);
+		actor.walk(field);
 		if (typeof actor.x == 'undefined') {
 			return;
 		}
@@ -252,115 +246,4 @@ Field.prototype.show = function() {
 		}
 		actor.show(field.viewX, field.viewY);
 	})
-}
-/**
- * 方向を求める.
- * @param sx start X
- * @param sy start Y
- * @param gx goal X
- * @param gy goal Y
- */
-Field.prototype.getDirection = function(sx, sy, gx, gy) {
-	var diffX = gx - sx;
-	var diffY = gy - sy;
-	var d = null;
-
-	if (0 < Math.abs(diffX)) {
-		if (diffX < 0) {
-			d = 1;
-		} else if (0 < diffX) {
-			d = 2;
-		}
-	} else if (0 < Math.abs(diffY)) {
-		if (diffY < 0) {
-			d = 3;
-		} else if (0 < diffY) {
-			d = 0;
-		}
-	}
-	return d;
-}
-/**
- * 方向を求める.
- * @param sx start X
- * @param sy start Y
- * @param gx goal X
- * @param gy goal Y
- */
-Field.prototype.decideDirection = function(sx, sy, gx, gy) {
-	var shadow = new Actor(null, null, 2);
-	var goalNode = new AStarNode(gx, gy, 0, sx, sy);
-	var keySet = [goalNode.getKey()];
-	var nodeList = [goalNode];
-	var min = 10000;
-	var goal = null;
-
-	for (var cnt = 0; cnt < 100; cnt++) {
-		var newList = [];
-		var nextMin = 10000;
-
-		for (var ix = 0; ix < nodeList.length; ix++) {
-			var node = nodeList[ix];
-
-			if (min < node.s) {
-				newList.push(node);
-				continue;
-			}
-			for (var d = 0; d < 4; d++) {
-				shadow.jump(node.x, node.y);
-				shadow.d = d;
-				shadow.walk();
-				var x = shadow.x;
-				var y = shadow.y;
-				var isHit = this.hitWall(x, y);
-	
-				shadow.back();
-				if (isHit) {
-					continue;
-				}
-				var nextNode = new AStarNode(x, y, d, sx, sy);
-				var key = nextNode.getKey();
-				if (keySet.indexOf(key) != -1) {
-					continue;
-				}
-				nextNode.setParent(node);
-				keySet.push(key);
-				newList.push(nextNode);
-				if (x == sx && y == sy) {
-					goal = nextNode;
-					break;
-				}
-				if (nextNode.s < nextMin) {
-					nextMin = nextNode.s;
-				}
-			}
-			if (goal) {
-				break;
-			}
-		}
-		if (newList.length == 0 || goal) {
-			break;
-		}
-		nodeList = newList;
-		min = nextMin;
-	}
-//	console.log('----- goal:' + cnt);
-	if (goal) {
-//		var target = goal;
-//		for (var ix = 0; ix < cnt; ix++) {
-//			var x = target.x;
-//			var y = target.y;
-//
-//			var act = new Actor('dummy' + ix, 'chr001', 2);
-//			act.jump(x, y);
-//			act.show(this.viewX, this.viewX);
-//			console.log('target[' + x + ',' + y + ']c:' + target.c + '/s:' + target.s + '/h:' + target.h);
-//			if (!target.parent) {
-//				break;
-//			}
-//			target = $.extend(true, {}, target.parent);
-//		}
-		return 3 - goal.d;
-	}
-	return this.getDirection(sx, sy, gx, gy);
 }

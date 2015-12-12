@@ -13,12 +13,13 @@
 <body>
   <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
     <a href="./" data-rel="back" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-btn-icon-notext ui-icon-arrow-l"></a>
-    <h1>マイナンバー検査用数字算出</h1>
+    <h1>個人番号検査用数字算出</h1>
   </div>
   <div class="ui-corner-all custom-corners">
-    <div class="ui-bar ui-bar-a"><h3>検査用数字(=チェックディジット)算出方法</h3></div>
+    <div class="ui-bar ui-bar-a"><h3>検査用数字算出方法</h3></div>
     <div class="ui-body ui-body-a">
-      <p>個人番号の検査用数字(=チェックディジット)の算出方法は、総務省のサイトで公開されています。<br/>
+      <p>個人番号の検査用数字(=マイナンバーのチェックディジット)の算出方法は、
+<a href="http://www.soumu.go.jp/kojinbango_card/" target="_blank">総務省のサイト</a>で公開されています。<br/>
 キーワード[マイナンバー&nbsp;検査用数字]で検索すれば、いくらでも出てくるでしょう。</p>
     </div>
   </div>
@@ -26,7 +27,7 @@
     <div class="ui-bar ui-bar-a"><h3>そのままのロジックを書く(Javaのメソッドの一部)</h3></div>
     <div class="ui-body ui-body-a">
       <div>
-        仕様の中の以下の部分を考慮すると、配列のインデックスは、n に対して逆方向に進む必要があります。
+        仕様の中の以下の部分を考慮すると、n は配列のインデックスに対して逆方向に進むようです。
         <blockquote>Ｐn:&nbsp;十一桁の番号の最下位の桁を１桁目としたときのｎ桁目の数字</blockquote>
         仕様の中の以下の部分を見ると、if 文か3項演算子を使う事になりそうです。
         <blockquote>Ｑn:&nbsp;１≦ｎ≦６のとき&nbsp;ｎ＋１<br/>７≦ｎ≦11のとき&nbsp;ｎ－５</blockquote>
@@ -68,13 +69,14 @@ public String calculate(final String code) {
 nは、桁の位。Ｑnは、条件に当てはめた値(q = n &lt;= 6 ? n + 1 : n - 5)。そして、ix は配列のインデックス + 1。<br/>
 ここで、Ｑnとixに着目します。この関係は、数列のパズルや謎解きでよく見かけるやつです。<br/>
 ちゃんと考えると「Ｑn = 7 - ix % 6」という式になります。(演算子'%'は、剰余を求めます)<br/>
+Ｑnなんて固定値なのだから、毎回計算せずに配列で持つという手もありますね。
     </div>
   </div>
   <div class="ui-corner-all custom-corners">
     <div class="ui-bar ui-bar-a"><h3>どうやら3項演算子を気に入らない人がいるらしい</h3></div>
     <div class="ui-body ui-body-a">
       <div>
-        以下の仕様を実現する式の、3項演算子(val = 1 &lt; val ? 11 - val : 0;)を気に入らない人がいます。
+        以下の仕様を実現する式の、3項演算子(val = 1 &lt; val ? 11 - val : 0)を気に入らない人がいます。
         個人的な好みを持ち込むと、3項演算子は好きです。<br/>
         <blockquote>(合計)を11で除した余り≦１の場合は０とする</blockquote>
         よりスマートなロジックを書くには、もう少し考えてみるのがよさそうです。
@@ -96,8 +98,6 @@ nは、桁の位。Ｑnは、条件に当てはめた値(q = n &lt;= 6 ? n + 1 :
 (1～11 の値) % 11 を行なうと、11 が 0 になって、0～10 に絞り込まれます。<br/>
 (1～10 の値) % 10 を行なうと、10 が 0 になって、0～9 に絞り込まれます。(なんて強引な。)<br/>
     </div>
-  </div>
-  <div class="ui-corner-all custom-corners">
     <div class="ui-bar ui-bar-a"><h3>個人的な満足感により、スマートになったソース</h3></div>
     <div class="ui-body ui-body-a">
       <pre class="prettyprint linenums">
@@ -115,8 +115,29 @@ public String calculate(final String code) {
 	return String.valueOf((11 - val % 11) % 11 % 10);
 }</pre>
       code のチェックを予め行なっておく必要があります。メソッド名が calculate であるため、この中でチェック処理を行う事はスマートではありません。<br/>
-      他にも、いろいろやりたい事はあると思います。10行目の「ix++;」を7行目に含めたいとか、6行目から10行目をまとめて1行で書きたいとか。
+      他にも、いろいろやりたい事はあると思います。10行目の「ix++」を7行目に含めたいとか、6行目から10行目をまとめて1行で書きたいとか。
+    </div>
+    <div class="ui-bar ui-bar-a"><h3>swift版のソース</h3></div>
+    <div class="ui-body ui-body-a">
+      swift版も作ってみました。<a href="http://swiftlang.ng.bluemix.net/" target="_blank">IBM Swift Sandbox</a>で動作確認出来ます。
+      <pre class="prettyprint linenums">
+func calculate(code:String) -> Int {
+	var sum = 0
+	var ix = 1
+ 
+	for c in code.utf8 {
+		let p = Int(c) - 0x30
+		let q = 7 - ix % 6
+ 
+		sum += p * q
+		ix++
+	}
+	return (11 - sum % 11) % 11 % 10
+}
+var code = "12345678901"
+print(calculate(code))</pre>
     </div>
   </div>
+  <hr/>2015-12-12 更新.
 </body>
 </html>

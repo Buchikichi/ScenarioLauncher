@@ -5,6 +5,7 @@ function Field() {
 	this.id = '';
 	this.bg = $('#bg');
 	this.up = $('#upstairs');
+	this.anim = [];
 	this.protagonist = new Actor('protagonist', 'chr001', 2);
 	this.actors = [];
 	this.events = {};
@@ -28,6 +29,7 @@ Field.prototype.change = function(mapId, x, y) {
 			field.loadMap(resolve, reject);
 		});
 		p.then(function() {
+			field.initAnim();
 			field.jump(x, y);
 			field.show();
 		});
@@ -41,6 +43,7 @@ Field.prototype.loadMap = function(resolve, reject) {
 	var field = this;
 
 	this.wall = [];
+	this.anim = [];
 	$('#view').fadeOut(function() {
 		field.loadImage();
 		$.ajax('/map/', {
@@ -53,6 +56,9 @@ Field.prototype.loadMap = function(resolve, reject) {
 
 				$.each(data.eventList, function(ix, ev) {
 					events[ev.position] = ev.eventId;
+				});
+				$.each(data.animList, function(ix, rec) {
+					field.anim.push(new AnimCell(field.id, rec));
 				});
 				field.height = wall.length;
 				field.width = wall[0].length;
@@ -73,6 +79,12 @@ Field.prototype.loadImage = function() {
 
 	this.bg.css('background-image', 'url(' + bgUri + ')');
 	this.up.css('background-image', 'url(' + upUri + ')');
+}
+Field.prototype.initAnim = function() {
+	$('#view .cell').remove();
+	$.each(this.anim, function(ix, cell) {
+		$('#view').append(cell.element);
+	});
 }
 Field.prototype.addActor = function(charId, charNum, mapX, mapY, ptn, ev) {
 	var multiplicand = this.BRICK_WIDTH / this.protagonist.STRIDE;
@@ -246,4 +258,7 @@ Field.prototype.show = function() {
 		}
 		actor.show(field.viewX, field.viewY);
 	})
+	$.each(this.anim, function(ix, cell) {
+		cell.show(vx, vy);
+	});
 }

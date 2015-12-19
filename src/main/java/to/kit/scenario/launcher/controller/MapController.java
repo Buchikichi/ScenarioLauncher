@@ -14,13 +14,12 @@ import to.kit.scenario.launcher.dto.MapRequestDto;
  */
 public class MapController implements Controller<MapRequestDto> {
 	/**
-	 * 上層部イメージを取得.
-	 * @param path パス
-	 * @return 上層部イメージ
+	 * イメージをロード.
+	 * @param name リソース名
+	 * @return イメージ
 	 */
-	public byte[] upstairs(String path) {
+	private byte[] loadImage(final String name) {
 		byte[] image = null;
-		String name = "/" + path + "st.png";
 
 		try (InputStream in = MapController.class.getResourceAsStream(name)) {
 			image = IOUtils.toByteArray(in);
@@ -31,20 +30,36 @@ public class MapController implements Controller<MapRequestDto> {
 	}
 
 	/**
+	 * セルイメージを取得.
+	 * @param path パス
+	 * @return セルイメージ
+	 */
+	public byte[] cell(String path) {
+		String name = "/" + path + ".png";
+
+		return loadImage(name);
+	}
+
+	/**
+	 * 上層部イメージを取得.
+	 * @param path パス
+	 * @return 上層部イメージ
+	 */
+	public byte[] upstairs(String path) {
+		String name = "/" + path + "st.png";
+
+		return loadImage(name);
+	}
+
+	/**
 	 * バックグラウンドイメージを取得.
 	 * @param path パス
 	 * @return バックグラウンドイメージ
 	 */
 	public byte[] background(String path) {
-		byte[] image = null;
 		String name = "/" + path + "bg.png";
 
-		try (InputStream in = MapController.class.getResourceAsStream(name)) {
-			image = IOUtils.toByteArray(in);
-		} catch (@SuppressWarnings("unused") IOException e) {
-			// nop
-		}
-		return image;
+		return loadImage(name);
 	}
 
 	@Override

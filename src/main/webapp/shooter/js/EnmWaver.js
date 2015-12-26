@@ -3,7 +3,6 @@
  */
 function EnmWaver() {
 	Enemy.apply(this, arguments);
-	this.img = new Image();
 	this.img.src = 'img/enmWaver.png';
 	this.direction = 1;
 }

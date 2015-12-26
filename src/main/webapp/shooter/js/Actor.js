@@ -9,6 +9,8 @@ function Actor(field, x, y) {
 	this.height = 16;
 	this.hW = this.width / 2;
 	this.hH = this.height / 2;
+	this.maxX = this.field.width;
+	this.maxY = this.field.height;
 	this.speed = 1;
 	this.hitPoint = 1;
 	this.img = new Image();
@@ -42,7 +44,14 @@ Actor.prototype.move = function(target) {
 	}
 };
 
-Actor.prototype.movePlus = function(target) {};
+Actor.prototype.movePlus = function(target) {
+	if (this.x < 0 || this.field.width < this.x) {
+		this.isGone = true;
+	}
+	if (this.y < 0 || this.field.height < this.y) {
+		this.isGone = true;
+	}
+};
 
 /**
  * Draw.
@@ -94,19 +103,30 @@ Actor.prototype.isHit = function(target) {
 	var hitY = this.y <= ty1 && ty1 <= py2 || this.y <= ty2 && ty2 <= py2;
 
 	if (hitX && hitY) {
-		this.hitPoint--;
-		if (this.hitPoint <= 0) {
-			this.fate();
-		}
+		this.fate();
+		target.fate();
 		return true;
 	}
 	return false;
+};
+
+Actor.prototype.calcDistance = function(target) {
+	var wX = this.x - target.x;
+	var wY = this.y - target.y;
+
+	return Math.sqrt(wX * wX + wY * wY);
 };
 
 /**
  * やられ.
  */
 Actor.prototype.fate = function() {
+	this.hitPoint--;
+	if (0 < this.hitPoint) {
+		return;
+	}
 	this.explosion = this.MAX_EXPLOSION;
-	this.sfx.play();
+	if (this.sfx) {
+		this.sfx.play();
+	}
 };

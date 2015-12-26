@@ -48,16 +48,19 @@ Field.prototype.setupBgm = function(stage) {
 };
 
 Field.prototype.setupEnemy = function() {
+	if (this.isGameOver() && 10 < this.enemyList.length) {
+		return;
+	}
 	var type = parseInt(Math.random() * 10);
 	var x = this.width - 16;
 	var y = Math.random() * 125 + 25;
 
 	if (type == 0) {
-		this.enemyList.push(new EnmHanker(x, y, type));
+		this.enemyList.push(new EnmHanker(this, x, y));
 	} else if (type < 3) {
-		this.enemyList.push(new EnmBouncer(x, y, type));
+		this.enemyList.push(new EnmBouncer(this, x, y));
 	} else {
-		this.enemyList.push(new EnmWaver(x, y, type));
+		this.enemyList.push(new EnmWaver(this, x, y));
 	}
 };
 
@@ -72,6 +75,7 @@ Field.prototype.reset = function() {
 	this.ship.y = 100;
 	this.enemyList = [];
 	this.score = 0;
+	this.showScore();
 };
 
 Field.prototype.startGame = function() {
@@ -83,11 +87,12 @@ Field.prototype.startGame = function() {
 };
 
 Field.prototype.endGame = function() {
-	if ($('#gameOver').is(':visible')) {
-		return;
-	}
 	$('#gameOver').show('slow');
 	this.bgm.pause();
+};
+
+Field.prototype.isGameOver = function() {
+	return $('#gameOver').is(':visible');
 };
 
 Field.prototype.inkey = function(keys) {
@@ -142,15 +147,18 @@ Field.prototype.scroll = function() {
 };
 
 Field.prototype.draw = function() {
+	var field = this;
 	var ctx = this.ctx;
 	var ship = this.ship;
 	var validShots = [];
 	var validEnemies = [];
+	var score = 0;
 
 	ctx.clearRect(0, 0, this.width, this.height);
 	$.each(this.shotList, function(ix, shot) {
 		shot.draw(ctx);
-		if (!shot.isOut()) {
+		shot.move();
+		if (!shot.isGone) {
 			validShots.push(shot);
 		}
 	});
@@ -162,18 +170,45 @@ Field.prototype.draw = function() {
 	$.each(this.enemyList, function(ix, enemy) {
 		enemy.draw(ctx);
 		enemy.move(ship);
-		$.each(shotList, function(vx, shot) {
-			if (enemy.isHit(shot)) {
-				shot.fate();
-			}
-		});
-		if (!enemy.isGone()) {
-			ship.isHit(enemy);
-			validEnemies.push(enemy);
+		if (enemy.isGone) {
+			return;
 		}
+		if (enemy instanceof Enemy) {
+			$.each(shotList, function(vx, shot) {
+				if (enemy.isHit(shot)) {
+					if (enemy.explosion) {
+						score += enemy.score;
+					}
+				}
+			});
+			if (100 < enemy.calcDistance(ship)) {
+				var fire = parseInt(Math.random() * 500);
+				
+				if (fire == 0) {
+					var bullet = new Bullet(field, enemy.x, enemy.y);
+					bullet.aim(ship);
+					validEnemies.push(bullet);
+				}
+			}
+		}
+		ship.isHit(enemy);
+		validEnemies.push(enemy);
 	});
+	this.score += score;
+//	if (0 < score) {
+		this.showScore();
+//	}
 	this.enemyList = validEnemies;
-	if (ship.isGone) {
+	if (!this.isGameOver() && ship.isGone) {
 		this.endGame();
 	}
+};
+
+Field.prototype.showScore = function() {
+	if (this.hiscore < this.score) {
+		this.hiscore = this.score;
+	}
+	$('#score > div > div:eq(1)').text(this.score);
+	$('#score > div:eq(1) > div:eq(1)').text(this.hiscore);
+	$('#score > div:eq(2)').text(this.enemyList.length);
 };

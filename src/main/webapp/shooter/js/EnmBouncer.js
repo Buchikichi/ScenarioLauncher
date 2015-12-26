@@ -5,7 +5,7 @@ function EnmBouncer() {
 	Enemy.apply(this, arguments);
 	this.dx = -(Math.random() * 3 + 1);
 	this.hitPoint = 3;
-	this.img = new Image();
+	this.score = 50;
 	this.img.src = 'img/enmBouncer.png';
 }
 

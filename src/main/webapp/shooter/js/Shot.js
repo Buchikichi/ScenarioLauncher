@@ -5,9 +5,10 @@ function Shot() {
 	Actor.apply(this, arguments);
 	this.dx = 1;
 	this.dy = 0;
-	this.width = 8;
-	this.height = 2;
-	this.speed = 16;
+	this.width = 16;
+	this.height = 8;
+	this.recalculation();
+	this.speed = 12;
 	this.size = 2;
 	this.sfx.src = 'audio/sfx-fire.mp3';
 	this.sfx.volume = .5;

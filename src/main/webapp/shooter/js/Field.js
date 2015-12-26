@@ -111,7 +111,7 @@ Field.prototype.inkey = function(keys) {
 		var dx = 0;
 		var dy = 0;
 	
-		if (keys['k17']) {
+		if (keys['k16'] || keys['k17']) {
 			if (this.shotList.length < this.MAX_SHOTS) {
 				var x = this.ship.x + 16;
 				var y = this.ship.y + 8;

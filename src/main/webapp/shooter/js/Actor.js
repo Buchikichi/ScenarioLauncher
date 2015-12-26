@@ -7,12 +7,9 @@ function Actor(field, x, y) {
 	this.y = y;
 	this.width = 16;
 	this.height = 16;
-	this.hW = this.width / 2;
-	this.hH = this.height / 2;
-	this.maxX = this.field.width;
-	this.maxY = this.field.height;
 	this.speed = 1;
 	this.hitPoint = 1;
+	this.recalculation();
 	this.img = new Image();
 	this.sfx = new Audio();
 	this.sfx.src = 'audio/sfx-explosion.mp3';
@@ -20,6 +17,13 @@ function Actor(field, x, y) {
 	this.entry();
 }
 Actor.prototype.MAX_EXPLOSION = 12;
+
+Actor.prototype.recalculation = function() {
+	this.hW = this.width / 2;
+	this.hH = this.height / 2;
+	this.maxX = this.field.width;
+	this.maxY = this.field.height;
+};
 
 Actor.prototype.entry = function() {
 	this.explosion = 0;

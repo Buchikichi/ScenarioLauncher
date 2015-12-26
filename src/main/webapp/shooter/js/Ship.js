@@ -6,7 +6,8 @@ function Ship(field, x, y) {
 	this.speed = 4;
 	this.width = 32;
 	this.height = 16;
-	this.maxX = this.field.width - this.width * 4;
+	this.recalculation();
+	this.maxX = this.field.width - this.width * 3;
 	this.maxY = this.field.height - this.height;
 	this.img.src = 'img/ship001.png';
 }

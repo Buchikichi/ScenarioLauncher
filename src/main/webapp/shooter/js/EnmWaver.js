@@ -12,8 +12,8 @@ EnmWaver.prototype = Object.create(Enemy.prototype);
 EnmWaver.prototype.RANGE = 8;
 
 EnmWaver.prototype.movePlus = function() {
-	if (this.x < 0 || 500 < this.x) {
-		this.dx = -this.dx;
+	if (this.x + this.width < 0) {
+		this.isGone = true;
 	}
 	if (this.RANGE < Math.abs(this.dy)) {
 		this.direction = -this.direction;

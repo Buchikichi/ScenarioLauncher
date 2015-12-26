@@ -45,10 +45,10 @@ Actor.prototype.move = function(target) {
 };
 
 Actor.prototype.movePlus = function(target) {
-	if (this.x < 0 || this.field.width < this.x) {
+	if (this.x + this.width < 0 || this.field.width < this.x) {
 		this.isGone = true;
 	}
-	if (this.y < 0 || this.field.height < this.y) {
+	if (this.y + this.height < 0 || this.field.height < this.y) {
 		this.isGone = true;
 	}
 };
@@ -93,16 +93,12 @@ Actor.prototype.isHit = function(target) {
 	if (this.isGone || 0 < this.explosion) {
 		return false;
 	}
-	var tx1 = target.x;
-	var tx2 = tx1 + target.width;
-	var ty1 = target.y;
-	var ty2 = ty1 + target.height;
-	var px2 = this.x + this.width;
-	var py2 = this.y + this.height;
-	var hitX = this.x <= tx1 && tx1 <= px2 || this.x <= tx2 && tx2 <= px2;
-	var hitY = this.y <= ty1 && ty1 <= py2 || this.y <= ty2 && ty2 <= py2;
+	var dist = this.calcDistance(target);
+	var w = this.hW + target.hW;
+	var h = this.hH + target.hH;
+	var len = (w + h) / 3;
 
-	if (hitX && hitY) {
+	if (dist < len) {
 		this.fate();
 		target.fate();
 		return true;
@@ -111,8 +107,8 @@ Actor.prototype.isHit = function(target) {
 };
 
 Actor.prototype.calcDistance = function(target) {
-	var wX = this.x - target.x;
-	var wY = this.y - target.y;
+	var wX = this.x + this.hW - target.x - target.hW;
+	var wY = this.y + this.hH - target.y - target.hH;
 
 	return Math.sqrt(wX * wX + wY * wY);
 };

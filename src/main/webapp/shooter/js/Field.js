@@ -4,8 +4,7 @@
 function Field(width, height) {
 	this.width = width;
 	this.height = height;
-	this.enemyList = [];
-	this.maxShots = 7;
+	this.actorList = [];
 	this.shotList = [];
 	this.ship = new Ship(this, 100, 100);
 	this.ship.isGone = true;
@@ -13,7 +12,9 @@ function Field(width, height) {
 	this.hiscore = 0;
 }
 
+Field.prototype.MAX_SHOTS = 7;
 Field.prototype.MAX_ENEMIES = 100;
+Field.prototype.MIN_LOOSING_RATE = 10;
 
 Field.prototype.setup = function() {
 	var view = $('#view');
@@ -26,8 +27,8 @@ Field.prototype.setup = function() {
 		view.append(bg);
 	}
 	this.setupCanvas(view);
-	this.setupEnemy();
 	this.setupBgm(1);
+	this.reset();
 };
 
 Field.prototype.setupCanvas = function(view) {
@@ -48,7 +49,10 @@ Field.prototype.setupBgm = function(stage) {
 };
 
 Field.prototype.setupEnemy = function() {
-	if (this.isGameOver() && 10 < this.enemyList.length) {
+	if (this.isGameOver() && 10 < this.actorList.length) {
+		return;
+	}
+	if (this.MAX_ENEMIES < this.actorList.length) {
 		return;
 	}
 	var type = parseInt(Math.random() * 10);
@@ -56,11 +60,11 @@ Field.prototype.setupEnemy = function() {
 	var y = Math.random() * 125 + 25;
 
 	if (type == 0) {
-		this.enemyList.push(new EnmHanker(this, x, y));
+		this.actorList.push(new EnmHanker(this, x, y));
 	} else if (type < 3) {
-		this.enemyList.push(new EnmBouncer(this, x, y));
+		this.actorList.push(new EnmBouncer(this, x, y));
 	} else {
-		this.enemyList.push(new EnmWaver(this, x, y));
+		this.actorList.push(new EnmWaver(this, x, y));
 	}
 };
 
@@ -73,7 +77,8 @@ Field.prototype.reset = function() {
 	});
 	this.ship.x = 100;
 	this.ship.y = 100;
-	this.enemyList = [];
+	this.actorList = [];
+	this.loosingRate = 500;
 	this.score = 0;
 	this.showScore();
 };
@@ -96,36 +101,38 @@ Field.prototype.isGameOver = function() {
 };
 
 Field.prototype.inkey = function(keys) {
-	if (this.ship.isGone) {
+	if (this.isGameOver()) {
 		if (keys['k32']) {
 			this.startGame();
 		}
 		return;
 	}
-	var dx = 0;
-	var dy = 0;
-
-	if (keys['k17']) {
-		if (this.shotList.length < this.maxShots) {
-			var x = this.ship.x + 16;
-			var y = this.ship.y + 8;
-			this.shotList.push(new Shot(this, x, y));
+	if (!this.ship.explosion) {
+		var dx = 0;
+		var dy = 0;
+	
+		if (keys['k17']) {
+			if (this.shotList.length < this.MAX_SHOTS) {
+				var x = this.ship.x + 16;
+				var y = this.ship.y + 8;
+				this.actorList.push(new Shot(this, x, y));
+			}
 		}
+		if (keys['k37']) {
+			dx = -1;
+		}
+		if (keys['k38']) {
+			dy = -1;
+		}
+		if (keys['k39']) {
+			dx = 1;
+		}
+		if (keys['k40']) {
+			dy = 1;
+		}
+		this.ship.dx = dx;
+		this.ship.dy = dy;
 	}
-	if (keys['k37']) {
-		dx = -1;
-	}
-	if (keys['k38']) {
-		dy = -1;
-	}
-	if (keys['k39']) {
-		dx = 1;
-	}
-	if (keys['k40']) {
-		dy = 1;
-	}
-	this.ship.dx = dx;
-	this.ship.dy = dy;
 	this.ship.move();
 };
 
@@ -141,8 +148,11 @@ Field.prototype.scroll = function() {
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
-	if (parseInt(Math.random() * 30) == 0) {
+	if (die(this.loosingRate / 10)) {
 		this.setupEnemy();
+	}
+	if (this.MIN_LOOSING_RATE < this.loosingRate) {
+		this.loosingRate -= .1;
 	}
 };
 
@@ -150,55 +160,51 @@ Field.prototype.draw = function() {
 	var field = this;
 	var ctx = this.ctx;
 	var ship = this.ship;
-	var validShots = [];
-	var validEnemies = [];
+	var shotList = [];
+	var validActors = [];
+	var enemyList = [];
 	var score = 0;
 
 	ctx.clearRect(0, 0, this.width, this.height);
-	$.each(this.shotList, function(ix, shot) {
-		shot.draw(ctx);
-		shot.move();
-		if (!shot.isGone) {
-			validShots.push(shot);
-		}
-	});
-	this.ship.draw(ctx);
-	this.shotList = validShots;
-	validShots = [];
-
-	var shotList = this.shotList;
-	$.each(this.enemyList, function(ix, enemy) {
-		enemy.draw(ctx);
-		enemy.move(ship);
-		if (enemy.isGone) {
+	$.each(this.actorList, function(ix, actor) {
+		if (actor.isGone) {
 			return;
 		}
-		if (enemy instanceof Enemy) {
-			$.each(shotList, function(vx, shot) {
-				if (enemy.isHit(shot)) {
-					if (enemy.explosion) {
-						score += enemy.score;
-					}
-				}
-			});
-			if (100 < enemy.calcDistance(ship)) {
-				var fire = parseInt(Math.random() * 500);
-				
-				if (fire == 0) {
-					var bullet = new Bullet(field, enemy.x, enemy.y);
+		actor.draw(ctx);
+		actor.move(ship);
+		validActors.push(actor);
+		if (actor instanceof Shot) {
+			shotList.push(actor);
+		} else if (actor instanceof Bullet) {
+			ship.isHit(actor);
+		} else if (actor instanceof Enemy) {
+			ship.isHit(actor);
+			enemyList.push(actor);
+			if (100 < actor.calcDistance(ship)) {
+				if (die(field.loosingRate)) {
+					var bullet = new Bullet(field, actor.x, actor.y);
 					bullet.aim(ship);
-					validEnemies.push(bullet);
+					validActors.push(bullet);
 				}
 			}
 		}
-		ship.isHit(enemy);
-		validEnemies.push(enemy);
+	});
+	this.ship.draw(ctx);
+	this.actorList = validActors;
+	this.shotList = shotList;
+	$.each(enemyList, function(ix, enemy) {
+		$.each(shotList, function(vx, shot) {
+			if (enemy.isHit(shot)) {
+				if (enemy.explosion) {
+					score += enemy.score;
+				}
+			}
+		});
 	});
 	this.score += score;
 //	if (0 < score) {
 		this.showScore();
 //	}
-	this.enemyList = validEnemies;
 	if (!this.isGameOver() && ship.isGone) {
 		this.endGame();
 	}
@@ -210,5 +216,5 @@ Field.prototype.showScore = function() {
 	}
 	$('#score > div > div:eq(1)').text(this.score);
 	$('#score > div:eq(1) > div:eq(1)').text(this.hiscore);
-	$('#score > div:eq(2)').text(this.enemyList.length);
+	$('#score > div:eq(2)').text(this.actorList.length + ':' + parseInt(this.loosingRate));
 };

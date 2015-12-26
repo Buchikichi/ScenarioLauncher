@@ -25,7 +25,7 @@ Bullet.prototype.drawNormal = function(ctx) {
 	ctx.translate(this.width / 2, this.height / 2);
 	ctx.beginPath();
 	ctx.fillStyle = 'rgba(120, 200, 255, 0.7)';
-	ctx.arc(this.x, this.y, this.width / 4, 0, Math.PI * 2, false);
+	ctx.arc(this.x, this.y, this.width / 3, 0, Math.PI * 2, false);
 	ctx.fill();
 	ctx.restore();
 };

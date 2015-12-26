@@ -15,6 +15,9 @@
 	background-color: black;
 	/*border: 1px blue dotted;*/
 }
+#view.addicting {
+	cursor: none;
+}
 div.bg {
 	position: absolute;
 	width: 100%;

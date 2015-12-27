@@ -10,15 +10,28 @@ var reelPatterns = [
 var chassis = new Chassis();
 
 $(document).ready(function() {
+	var keys = {};
+	var trigger = $('#trigger');
+
 	chassis.setup(reelPatterns);
 	$('#trigger').click(function() {
 		if (!chassis.isStop()) {
 			return;
 		}
-		if (chassis.coins < 3) {
-			return;
-		}
 		chassis.start();
+	});
+	$(window).keydown(function(e) {
+		var ix = 'k' + e.keyCode;
+		keys[ix] = e.keyCode;
+//console.log(ix);
+	});
+	$(window).keyup(function(e) {
+		var ix = 'k' + e.keyCode;
+
+		if (keys['k16'] || keys['k17'] || keys['k32']) {
+			trigger.click();
+		}
+		delete keys[ix];
 	});
 	mainLoop();
 });

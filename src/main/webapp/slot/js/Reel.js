@@ -8,6 +8,7 @@ function Reel(ix, pattern) {
 	this.mark = parseInt(this.degree / this.FACE_HEIGHT);
 	this.steps = 0;
 	this.status = 0; // status={0:stopped, 1:rotating, 2:down, 3:up, 4:judge}
+	this.idle = 0;
 //	this.sfx = new Audio();
 //	this.sfx.src = 'audio/sfx-explosion.mp3';
 //	this.sfx.volume = .4;
@@ -16,6 +17,7 @@ function Reel(ix, pattern) {
 
 Reel.prototype.FACE_HEIGHT = 40;
 Reel.prototype.MAX_DEGREE = Reel.prototype.FACE_HEIGHT * 21;
+Reel.prototype.IDLE_TICK = 10;
 
 Reel.prototype.setupElement = function() {
 	var reel = this;
@@ -33,10 +35,14 @@ Reel.prototype.setupElement = function() {
 
 Reel.prototype.start = function() {
 	this.status = 1;
+	this.idle = parseInt(Math.random() * this.IDLE_TICK) + this.IDLE_TICK / 2;
 };
 
 Reel.prototype.stop = function() {
 	if (this.status != 1) {
+		return;
+	}
+	if (0 < this.idle) {
 		return;
 	}
 	this.status = 2;
@@ -51,6 +57,9 @@ Reel.prototype.move = function() {
 	//this.element.find('span:first').text('M:' + this.mark + '/D:' + this.degree);
 	if (this.status == 0 || this.status == 4) {
 		return;
+	}
+	if (0 < this.idle) {
+		this.idle--;
 	}
 	if (this.status == 1) {
 		if (this.steps < 16) {

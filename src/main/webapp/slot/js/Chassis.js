@@ -60,6 +60,9 @@ Chassis.prototype.showDebug = function() {
 };
 
 Chassis.prototype.start = function() {
+	if (this.coins < 3) {
+		return;
+	}
 	this.reelList.forEach(function(reel) {
 		reel.start();
 	});

@@ -1,31 +1,45 @@
 @CHARSET "UTF-8";
+* {
+	margin: 0px;
+	padding: 0px;
+}
 
 div.reel {
+	display: table;
+	table-layout: fixed;
 	width: 80px;
 	height: 140px;
 	position: absolute;
 	overflow: hidden;
-	/*border: 1px green solid;*/
+	/*border: 1px green dotted;*/
+}
+div.reel > div {
+	display: table-row;
+	width: 100%;
+}
+div.reel > div > span {
+	display: table-cell;
+	/*border: 1px green dotted;*/
+}
+div.reel div:FIRST-CHILD {
+	background: linear-gradient(rgba(0,0,0,0.35), rgba(255,255,255,0.1));
+}
+div.reel div:LAST-CHILD {
+	background: linear-gradient(rgba(255,255,255,0.1), rgba(0,0,0,0.35));
 }
 #reel0 {
 	top: 32px;
 	left: 60px;
+	background-image: url("../img/reel0.png");
 }
 #reel1 {
 	top: 32px;
 	left: 145px;
+	background-image: url("../img/reel1.png");
 }
 #reel2 {
 	top: 32px;
 	left: 230px;
-}
-#reel0 .reelFace {
-	background-image: url("../img/reel0.png");
-}
-#reel1 .reelFace {
-	background-image: url("../img/reel1.png");
-}
-#reel2 .reelFace {
 	background-image: url("../img/reel2.png");
 }
 div.reelFace {
@@ -36,12 +50,13 @@ div.reelFace {
 	position: relative;
 }
 #bg {
-	position: absolute;
-	top: 0px;
-	left: 0px;
+	position: relative;
 	width: 320px;
 	height: 240px;
 	background-image: url("../img/b100.png");
+	transform-origin: 0px 0px;
+	transform: scale(2);
+	z-index: 100;
 }
 #trigger {
 	position: absolute;
@@ -58,11 +73,46 @@ div.reelFace {
 	font-weight: bold;
 	text-align: right;
 	position: absolute;
-	top: 215px;
+	top: 213px;
 	left: 246px;
 	width: 62px;
-	height: 14px;
 	color: yellow;
-	background-color: transparent;
-	/*border: 1px red solid;*/
+	/*border: 1px red dotted;*/
+	z-index: 10;
+}
+
+/**
+ * DEBUG
+ */
+#debug {
+	font-size: .4em;
+	position: absolute;
+	width: auto;
+	background-color: rgba(255,255,255,0.4);
+	overflow: hidden;
+	border: 1px gray solid;
+	z-index: 200;
+}
+#debug > div {
+	display: table-cell;
+	background-size: 100% 100%;
+}
+#debug > div:nth-child(1) {
+	background-image: url("../img/reel0.png");
+}
+#debug > div:nth-child(2) {
+	background-image: url("../img/reel1.png");
+}
+#debug > div:nth-child(3) {
+	background-image: url("../img/reel2.png");
+}
+#debug span {
+	color: blue;
+	display: table-cell;
+	width: 12px;
+	height: 7px;
+	border: 1px transparent solid;
+}
+#debug span.selected {
+	border: 1px blue dotted;
 }

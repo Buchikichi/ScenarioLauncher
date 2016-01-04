@@ -44,6 +44,7 @@ Actor.prototype.move = function(target) {
 		this.explosion--;
 		if (this.explosion == 0) {
 			this.isGone = true;
+			this.x = - this.width;
 		}
 	}
 };

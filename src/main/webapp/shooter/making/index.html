@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Shooter</title>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=js&skin=Sons-Of-Obsidian"></script>
+<style type="text/css">
+pre.linenums li {list-style-type: decimal;}
+img.char {margin-right: 4px;}
+</style>
+</head>
+
+<body>
+  <div data-role="page">
+    <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
+      <a href="/" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-btn-icon-notext ui-icon-arrow-l"></a>
+      <h1>Shooterの作り方</h1>
+    </div>
+    <div class="ui-body ui-body-a ui-corner-all">
+仕事で初めて Canvas を使ったのは、2008年。
+生産管理系のシステムで「画面でグラフを見たい」という要求を満たすものでした。<br/>
+その頃は、まだまだ動作が重くてリアルタイムに中身を書き換えてぐりぐり動かすような事は全く考えていませんでした。<br/>
+2015年12月になって、そういえば<a href="http://appsweets.net/blog/tag/gradius/" target="_blank">HTML5版グラディウス</a>ってあったな～って思い出して、
+シューティングゲームを作ってみようと思いつきました。<br/>
+とりあえず、丸が1,000個動くサンプルプログラムを作ってみたら、Canvasって速い!!! 2008年の頃とは全然違います。<br/>
+仕事が忙しい時に限って、いろいろ変な事をしてしまうものです。仕事が終わって帰宅してちょっとずつ作ったので、工数は合計すると30時間位でしょうか。<br/>
+絵には工数をかけていないので、ダサダサなのです。
+    </div>
+    <div data-role="collapsibleset" data-mini="true">
+      <div data-role="collapsible">
+        <h3>背景を作る</h3>
+        <div>
+Shooterでは、z-indexを使って以下のように画面の層を作っています。<br/>
+<img src="img/bg.png"/><br/>
+#bg0 と #bg1 は div要素で、星(ドット)を描いた画像を疑似スクロールしています。
+スクロール方法は<a href="../../buchi/map-display.html" data-ajax="false">「ぶちきちの大冒険」のマップのスクロール</a>と同様です。<br/>
+#canvas は canvas要素です。ここでは、キャラクターを描画する事に専念します。<br/>
+#bg2 は div要素です。ここでは大きな地形を描いた画像をスクロールしています。<br/>
+#bg0,#bg1,#bg2の、それぞれの層でスタイル「background-color: transparent;」を指定して透過させ、なおかつ画像は透過PNGにします。<br/>
+スクロール幅を、#bg0 は1ドットずつ、#bg1 は2ドットずつ、#bg2 は3ドットずつというように変えて、奥行きを感じるようにしています。<br/>
+今考えたら、canvas内で全てを描画をしてしまえば良かったと思います。
+        </div>
+      </div>
+      <div data-role="collapsible">
+        <h3>Shipを動かす</h3>
+        <div>
+ウインドウシステムではない頃は「今どのキーが押されているのか？」というのをいつでも気軽に拾えたものです。<br/>
+ウインドウシステムの場合はイベント駆動型で「キーが押されるとイベントが実行される」という形になります。<br/>
+Shooterでは「今どのキーが押されているのか？」を気軽に拾うために、キーイベントが発生したら溜めるという事をしています。<br/>
+          <pre class="prettyprint linenums">
+var keys = {};
+$(document).ready(function() {
+	...
+	$(window).keydown(function(e) {
+		var ix = 'k' + e.keyCode;
+		keys[ix] = e.keyCode;
+	});
+	$(window).keyup(function(e) {
+		var ix = 'k' + e.keyCode;
+		delete keys[ix];
+	});
+});</pre>
+サンプルコード内の6行目で、押されたキーを溜めています。
+10行目で、キーが離されたら溜めたものを削除しています。<br/>
+配列 keys のインデックス ix に 'k' というプレフィックスを付与しています。<br/>
+数値のkeyCodeをそのまま使うと、単なる配列のインデックスになってしまうので、連想配列のハッシュキーとして動作させるのが目的です。<br/>
+どのキーが押されているかを判定するには、以下のようにしています。
+          <pre class="prettyprint linenums">
+if (keys['k32']) {
+	// スペースキーが押されている
+	this.startGame();
+}
+if (keys['k16'] || keys['k17']) {
+	// [Ctrl]キーか[Shift]キーが押されている
+	...
+}
+</pre>
+        </div>
+      </div>
+      <div data-role="collapsible">
+        <h3>オブジェクト指向のような</h3>
+        <div>
+ShooterはJavaScriptで動いていますが、ちょっとしたクラスのようなものを作っています。<br/>
+          <ul data-role="listview" data-inset="true">
+            <li><h2>Actorクラス。</h2><p>Actorクラスは、画面に登場するキャラクターの基底クラスです。move(),draw(),isHit()といったメソッドがあります。</p></li>
+            <li><h2>Shipクラス。</h2><p>プレイヤーが操作するキャラクターを管理します。</p></li>
+            <li><h2>Shotクラス。</h2><p>プレイヤーが打つ弾を管理します。</p></li>
+            <li><h2>Enemyクラス。</h2><p>すべての敵キャラクターは、このクラスを継承します。</p></li>
+            <li><h2>EnmBouncerクラス。</h2><p>Bouncerという名前の敵を管理します。</p></li>
+            <li><h2>EnmHankerクラス。</h2><p>Hankerという名前の敵を管理します。</p></li>
+            <li><h2>EnmWaverクラス。</h2><p>Waverという名前の敵を管理します。</p></li>
+            <li><h2>Bulletクラス。</h2><p>敵の弾を管理します。</p></li>
+            <li><h2>Fieldクラス。</h2><p>画面全体を管理します。</p></li>
+          </ul>
+        </div>
+      </div>
+      <div data-role="collapsible">
+        <h3>敵を動かす</h3>
+        <div>
+          3種類の敵キャラクターを作成しています。<br/>
+          <div class="ui-body ui-body-a ui-corner-all">
+            <img src="../img/enmWaver.png" class="char"/>Waver<br/>
+波打つ動きをします。<br/>
+波打つ動きをするには、固定値をキャラクターの位置(x, y)に対して加減算するだけでは実現できません。<br/>
+Actorクラス(Actor.js)の中で、以下のような処理をしています。
+            <pre class="prettyprint linenums">
+this.x += this.dx * this.speed;
+this.y += this.dy * this.speed;
+</pre>
+どの位加速するのかという加速度(dx, dy)を、キャラクターの位置(x, y)に対して加減算しています。<br/>
+EnmWaverクラス(EnmWaver.js)の中で、以下のような処理をしています。
+            <pre class="prettyprint linenums">
+EnmWaver.prototype.RANGE = 8;
+EnmWaver.prototype.movePlus = function() {
+	...
+	if (this.RANGE &lt; Math.abs(this.dy)) {
+		this.direction = -this.direction;
+	}
+	this.dy += this.direction;
+};
+</pre>
+5行目の変数 direction の初期値は 1 で、-1 か 1 に変化します。<br/>
+7行目で、dy を増減させています。dyは、1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-8,-7,-6,-5...と変化していきます。<br/>
+こうする事で加速/減速の幅が少しずつ変化するので、波打つ動きを実現出来ます。
+          </div>
+          <div class="ui-body ui-body-a ui-corner-all">
+            <img src="../img/enmBouncer.png" class="char"/>Bouncer<br/>
+            ピョンピョン飛び跳ねる動きをします。<br/>
+            キャラクターの位置(x, y)に対して、加速度(dx, dy)を加減算するという方法は、Waverと同じです。<br/>
+            EnmBouncerクラス(EnmBouncer.js)の中で、以下のような処理をしています。
+            <pre class="prettyprint linenums">
+EnmBouncer.prototype.movePlus = function() {
+	if (this.x &lt; 0 || 500 &lt; this.x) {
+		this.dx = -this.dx;
+	}
+	if (224 &lt; this.y) {
+		this.dy = -this.dy;
+	} else {
+		this.dy += .3;
+	}
+};
+</pre>
+            2～4行目は、画面の左右にたどりついたら、横方向の加速度(dx)の正負を逆転しています。
+            正負の逆転は「跳ね返る」事なのです。<br/>
+            5,6行目も同様に、画面の下にたどりついたら、縦方向の加速度(dy)に対して「跳ね返る」という処理をしています。<br/>
+            8行目、画面内にいるときは、縦方向の加速度(dy)を加算して落下するような動きをしています。
+          </div>
+          <div class="ui-body ui-body-a ui-corner-all">
+            <img src="../img/enmHanker.png" class="char"/>Hanker<br/>
+            プレイヤーをしつこく追い回します。<br/>
+            ターゲット(=プレイヤー)に依存して動くので、別の2つのキャラクターとは動きが違います。<br/>
+            EnmHankerクラス(EnmHanker.js)の中で、以下のような処理をしています。
+            <pre class="prettyprint linenums">
+EnmHanker.prototype.movePlus = function(target) {
+	var wX = this.x - target.x;
+	var wY = this.y - target.y;
+
+	this.radian = Math.atan2(wY, wX);
+	this.dx = -Math.cos(this.radian);
+	this.dy = -Math.sin(this.radian);
+};
+</pre>
+            2,3行目で、Hankerとターゲット間のX軸方向の距離、Y軸方向の距離を計算しています。<br/>
+            5行目で、Hankerとターゲットの角度を求めています。この角度はラジアンです。分度器で測る角度はdegree(デグリー)です。<br/>
+            atan2 メソッドへは、y, x の順に値を渡します。<br/>
+            横方向の加速度(dx) は、角度(ラジアン)をもとに cos で計算します。<br/>
+            縦方向の加速度(dy) は、角度(ラジアン)をもとに sin で計算します。<br/>
+            角度を求める時に、ターゲットから見た角度としているので、-1を掛けた値を加速度(dx, dy)にしています。<br/>
+            角度を、ターゲットから見た角度にした理由は、hankerの画像を回転したいからです。<br/>
+            <pre class="prettyprint linenums">
+EnmHanker.prototype.drawNormal = function(ctx) {
+	ctx.save();
+	ctx.translate(this.x + this.hW, this.y + this.hH);
+	ctx.rotate(this.radian);
+	ctx.drawImage(this.img, -this.hW, -this.hH);
+	ctx.restore();
+};
+</pre>
+            canvasにイメージを貼り付ける時に、rotateメソッドを使って画像を回転させています。<br/>
+            この時の角度(radian)は、ターゲットからHankerを見た角度なのです。
+          </div>
+        </div>
+      </div>
+      <div data-role="collapsible">
+        <h3>敵が弾を撃つ</h3>
+        <div>
+          弾の加速度(dx, dy)も、角度(ラジアン)をもとに計算します。<br/>
+          Bulletクラス(Bullet.js)の中で、以下のような処理をしています。
+          <pre class="prettyprint linenums">
+Bullet.prototype.aim = function(target) {
+	var wX = target.x - this.x;
+	var wY = target.y - this.y;
+	var radian = Math.atan2(wY, wX);
+
+	this.dx = Math.cos(radian) * this.speed;
+	this.dy = Math.sin(radian) * this.speed;
+};
+</pre>
+          Hankerの動きのロジックと似ています。<br/>
+          今度は、自分から見たターゲットへの角度を求めています。
+        </div>
+      </div>
+    </div>
+<hr/>2016-01-04 updated.
+  </div>
+</body>
+</html>

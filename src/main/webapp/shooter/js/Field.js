@@ -216,5 +216,5 @@ Field.prototype.showScore = function() {
 	}
 	$('#score > div > div:eq(1)').text(this.score);
 	$('#score > div:eq(1) > div:eq(1)').text(this.hiscore);
-	$('#score > div:eq(2)').text(this.actorList.length + ':' + parseInt(this.loosingRate));
+//	$('#score > div:eq(2)').text(this.actorList.length + ':' + parseInt(this.loosingRate));
 };

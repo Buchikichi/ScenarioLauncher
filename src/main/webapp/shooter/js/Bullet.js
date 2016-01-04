@@ -11,17 +11,17 @@ function Bullet() {
 Bullet.prototype = Object.create(Actor.prototype);
 
 Bullet.prototype.aim = function(target) {
-	var wX = this.x - target.x;
-	var wY = this.y - target.y;
+	var wX = target.x - this.x;
+	var wY = target.y - this.y;
+	var radian = Math.atan2(wY, wX);
 
-	this.radian = Math.atan2(wY, wX);
-	this.dx = -Math.cos(this.radian) * this.speed;
-	this.dy = -Math.sin(this.radian) * this.speed;
+	this.dx = Math.cos(radian) * this.speed;
+	this.dy = Math.sin(radian) * this.speed;
 };
 
 Bullet.prototype.drawNormal = function(ctx) {
 	ctx.save();
-	ctx.translate(this.width / 2, this.height / 2);
+	ctx.translate(this.hW, this.hH);
 	ctx.beginPath();
 	ctx.fillStyle = 'rgba(120, 200, 255, 0.7)';
 	ctx.arc(this.x, this.y, this.width / 3, 0, Math.PI * 2, false);

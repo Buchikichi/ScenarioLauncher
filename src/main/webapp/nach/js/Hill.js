@@ -11,14 +11,14 @@ function Hill(field) {
 	this.setup();
 }
 Hill.prototype.STEP = 16;
-Hill.prototype.MAX_DY = 20; // 高低差
-Hill.prototype.MAX_CNT = 5;
+Hill.prototype.MAX_DY = 10; // 高低差
+Hill.prototype.MAX_CNT = 8;
 
 Hill.prototype.setup = function() {
 	this.hW = this.width / 2;
 	this.hH = this.height / 2;
 	this.maxX = this.field.width;
-	this.minY = this.field.height * .3;
+	this.minY = this.field.height * .5;
 	this.maxY = this.field.height;
 
 	this.waveList.push(new WaveInfo(this.y, {y:this.y}));

@@ -19,6 +19,10 @@ function Nach(field, x, y) {
 Nach.prototype = Object.create(Actor.prototype);
 Nach.prototype.MAX_JUMPING = 5;
 
+Nach.prototype.getSpeed = function() {
+	return this.x / 16 + 1;
+};
+
 Nach.prototype.movePlus = function() {
 	if (this.x < 0 || this.maxX < this.x) {
 		this.x = this.svX;
@@ -29,7 +33,7 @@ Nach.prototype.movePlus = function() {
 		this.y = this.maxY;
 	}
 //	if (this.jumping < 2) {
-		this.anim += .1 + this.x / 2000;
+		this.anim += .3 + this.x / 800;
 		this.anim %= 8;
 //	}
 };
@@ -55,9 +59,9 @@ Nach.prototype.land = function(ground) {
 		this.rad = ground.rad;
 
 		this.svX = this.x;
-		var dx = Math.sin(this.rad) * 2;
+		var dx = Math.sin(this.rad) * 4;
 		if (0 < dx) {
-			dx *= 4;
+			dx *= 2;
 		}
 		this.x += dx;
 		this.movePlus();

@@ -41,7 +41,7 @@ Field.prototype.setupCanvas = function(view) {
 
 Field.prototype.setupBgm = function(stage) {
 	this.bgm = new Audio();
-	this.bgm.src = 'audio/bgm-edo-beth.mp3';
+	this.bgm.src = 'audio/nyanko-m.mp3';
 	this.bgm.volume = .7;
 	$(this.bgm).on('ended', function() {
 		this.play();
@@ -110,7 +110,7 @@ Field.prototype.inkey = function(keys) {
 	if (!this.nach.explosion) {
 		var dx = 0;
 	
-		if (keys['k16'] || keys['k17']) {
+		if (keys['k16'] || keys['k17'] || keys['k38']) {
 			this.nach.jump();
 		} else {
 			this.nach.letdown();
@@ -127,6 +127,8 @@ Field.prototype.inkey = function(keys) {
 };
 
 Field.prototype.scroll = function() {
+	var speed = this.nach.getSpeed() * .45;
+
 	$('.bg').each(function(ix, obj) {
 		var bg = $(this);
 		var mX = bg.prop('mX');
@@ -134,7 +136,7 @@ Field.prototype.scroll = function() {
 		var position = -mX + 'px ' + -mY + 'px';
 
 		bg.css('background-position', position);
-		mX += (ix + 1) * .5;
+		mX += (ix + 1) * speed;
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
@@ -154,8 +156,9 @@ Field.prototype.draw = function() {
 	var validActors = [];
 	var enemyList = [];
 	var score = 0;
-	var speed = nach.x / 16 + 1;
+	var speed = nach.getSpeed();
 
+	score += parseInt(speed * .1) * 10;
 	ctx.clearRect(0, 0, this.width, this.height);
 	this.hill.draw(ctx);
 	this.hill.move(speed);
@@ -206,10 +209,12 @@ Field.prototype.draw = function() {
 };
 
 Field.prototype.showScore = function() {
+	var speed = parseInt(this.nach.getSpeed());
+
 	if (this.hiscore < this.score) {
 		this.hiscore = this.score;
 	}
 	$('#score > div > div:eq(1)').text(this.score);
 	$('#score > div:eq(1) > div:eq(1)').text(this.hiscore);
-	$('#score > div:eq(2)').text(this.nach.jumping + '/' + this.nach.x);
+	$('#score > div:eq(2)').text(this.nach.jumping + '/' + speed);
 };

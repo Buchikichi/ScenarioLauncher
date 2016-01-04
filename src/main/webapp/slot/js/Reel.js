@@ -9,9 +9,9 @@ function Reel(ix, pattern) {
 	this.steps = 0;
 	this.status = 0; // status={0:stopped, 1:rotating, 2:down, 3:up, 4:judge}
 	this.idle = 0;
-//	this.sfx = new Audio();
-//	this.sfx.src = 'audio/sfx-explosion.mp3';
-//	this.sfx.volume = .4;
+	this.sfx = new Audio();
+	this.sfx.src = 'audio/sfx-stop.mp3';
+	this.sfx.volume = .4;
 	this.setupElement();
 }
 
@@ -47,6 +47,7 @@ Reel.prototype.stop = function() {
 	}
 	this.status = 2;
 	this.mark = parseInt(this.degree / this.FACE_HEIGHT);
+	this.sfx.play();
 };
 
 Reel.prototype.isJudge = function() {

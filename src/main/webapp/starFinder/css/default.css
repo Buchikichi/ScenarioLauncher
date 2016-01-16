@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+* {
+	margin: 0px;
+	padding: 0px;
+}
+#view {
+	position: relative;
+	background-color: black;
+	overflow: hidden;
+	z-index: 0;
+}
+#slider {
+	width: 60px;
+}
+#slider + div {
+	margin-left: 90px;
+}

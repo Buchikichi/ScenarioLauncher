@@ -4,10 +4,13 @@
 	padding: 0px;
 }
 #view {
-	position: relative;
 	background-color: black;
+	text-align: center;
 	overflow: hidden;
-	z-index: 0;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
 }
 #slider {
 	width: 60px;

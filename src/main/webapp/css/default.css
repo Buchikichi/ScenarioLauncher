@@ -3,39 +3,10 @@
 	margin: 0px;
 	padding: 0px;
 }
-#view {
-	position: relative;
-/*
-	top: 50px;
-	left: 50px;
-*/
-	overflow: hidden;
-	z-index: 0;
+
+div.photo {
+	text-align: center;
 }
-#bg {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: transparent;
-	z-index: 0;
-}
-#stair {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: transparent;
-	z-index: 15;
-}
-#actor {
-	position: absolute;
-	background-color: transparent;
-	z-index: 10;
-}
-#cover {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: transparent;
-	z-index: 100;
-/*	border: 1px black dashed;*/
+div.photo img {
+	border-radius: 4px;
 }

@@ -70,6 +70,9 @@ $(document).ready(function() {
 	view.bind('touchstart', start);
 	view.bind('touchmove', touch);
 	view.bind('touchend', end);
+	view.mousewheel(function(e) {
+		field.zoom(e.deltaY);
+	});
 	slider.change(function() {
 		field.maxMag = $(this).val();
 	});

@@ -10,6 +10,7 @@ function Field() {
 	this.dx = 0;
 	this.rotationH = 0;
 	this.rotationV = 0;
+	this.magnification = 1;
 	this.init();
 }
 
@@ -28,6 +29,7 @@ Field.prototype.resetCanvas = function(width) {
 	$(this.canvas).attr('width', this.width).attr('height', this.height);
 	this.ctx = this.canvas.getContext('2d');
 	this.ctx.font = "12px 'Times New Roman'";
+	this.zoom(0);
 };
 
 Field.prototype.loadStars = function() {
@@ -76,6 +78,14 @@ Field.prototype.rotateV = function(diff) {
 	} else if (this.rotationV < -90) {
 		this.rotationV = -90;
 	}
+};
+
+Field.prototype.zoom = function(delta) {
+	this.magnification += delta / 4;
+	if (this.magnification < 1) {
+		this.magnification = 1;
+	}
+	this.radius = this.width * this.magnification / 2;
 };
 
 Field.prototype.drawConstellation = function(rhRad, rvRad) {

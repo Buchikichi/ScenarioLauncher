@@ -13,12 +13,14 @@
 </head>
 
 <body>
-  <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
+  <div id="header" data-role="header" data-theme="b" data-position="fixed" data-size="mini">
     <a href="/" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-home">back</a>
     <h1>KuruKuru StarFinder HIP</h1>
   </div>
   <div id="view"></div>
-  <input id="slider" type="range" value="4" min="1" max="10" step=".1" data-highlight="true"/>
-  Constellation:<input id="constellationSwitch" type="checkbox" data-role="flipswitch" data-mini="true"/>
+  <div id="footer">
+    <input id="slider" type="range" value="4" min="1" max="10" step=".1" data-highlight="true"/>
+    Constellation:<input id="constellationSwitch" type="checkbox" data-role="flipswitch" data-mini="true"/>
+  </div>
 </body>
 </html>

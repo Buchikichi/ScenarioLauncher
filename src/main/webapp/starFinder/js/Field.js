@@ -1,9 +1,7 @@
 /**
  * Field.
  */
-function Field(width, height) {
-	this.width = width;
-	this.height = height;
+function Field() {
 	this.stars = [];
 	this.starMap = {};
 	this.maxMag = 0;
@@ -17,13 +15,19 @@ function Field(width, height) {
 
 Field.prototype.init = function() {
 	var view = $('#view');
-	var canvas = $('<canvas></canvas>').attr('width', this.width).attr('height', this.height);
 
-	view.append(canvas);
-	this.ctx = canvas.get(0).getContext('2d');
-	this.ctx.font = "12px 'Times New Roman'";
+	this.canvas = document.createElement('canvas');
+	view.append(this.canvas);
 	this.loadStars();
 	this.loadConstellation();
+};
+
+Field.prototype.resetCanvas = function(width) {
+	this.width = width;
+	this.height = width;
+	$(this.canvas).attr('width', this.width).attr('height', this.height);
+	this.ctx = this.canvas.getContext('2d');
+	this.ctx.font = "12px 'Times New Roman'";
 };
 
 Field.prototype.loadStars = function() {
@@ -126,6 +130,9 @@ Field.prototype.drawStars = function(rhRad, rvRad) {
 };
 
 Field.prototype.draw = function() {
+	if (!this.ctx) {
+		return;
+	}
 	var field = this;
 	var ctx = this.ctx;
 	var hW = this.width / 2;

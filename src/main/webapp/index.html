@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"/>
+<meta name=viewport content="width=device-width, initial-scale=1"/>
 <title>ぶちきちの研究室</title>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
-<link rel="stylesheet" href="css/default.css"/>
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
+<style type="text/css">
+div.photo {
+	text-align: center;
+}
+div.photo img {
+	border-radius: 4px;
+}
+</style>
+<script type="text/javascript" async src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" async src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 
 <body>
   <div data-role="page">
-    <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
+    <div data-role="header" data-theme="b" data-position="fixed">
       <h1>ぶちきちの研究室</h1>
       <a href="#aboutPanel" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-info">ぶちきち</a>
     </div>
     <div data-role="content">
-      <div data-role="collapsible" data-collapsed="false" data-mini="true">
+      <div data-role="collapsible" data-collapsed="false">
         <h3>ゲーム</h3>
         <div class="ui-body-a ui-corner-all">
           <div class="ui-bar ui-bar-a ui-corner-all">横スクロールシューティング</div>
@@ -59,7 +66,7 @@
           <a href="./slot/" data-ajax="false" class="ui-btn ui-corner-all ui-mini ui-btn-inline ui-btn-icon-left ui-icon-power">Webでプレイ</a>
         </div>
       </div>
-      <div data-role="collapsible" data-collapsed="false" data-mini="true">
+      <div data-role="collapsible" data-collapsed="false">
         <h3>実験・科学</h3>
         <div class="ui-body-a ui-corner-all">
           <div class="ui-bar ui-bar-a ui-corner-all">くるくるStarFinder</div>
@@ -72,7 +79,7 @@
           <div class="ui-body">※あまり欲張ってスライダーを一杯に動かさないでください。2016年でもまだまだ現役の Core2 Quad Q9550で 6 ぐらいが限界です。</div>
         </div>
       </div>
-      <div data-role="collapsible" data-collapsed="false" data-mini="true">
+      <div data-role="collapsible" data-collapsed="false">
         <h3>情報処理(?)</h3>
         <div class="ui-body-a ui-corner-all">
           <div class="ui-bar ui-bar-a ui-corner-all">個人番号検査用数字算出</div>

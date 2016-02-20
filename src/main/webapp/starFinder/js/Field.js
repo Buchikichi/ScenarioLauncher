@@ -10,6 +10,8 @@ function Field() {
 	this.dx = 0;
 	this.rotationH = 0;
 	this.rotationV = 0;
+	this.seekH = null;
+	this.seekV = null;
 	this.magnification = 1;
 	this.init();
 }
@@ -88,6 +90,20 @@ Field.prototype.zoom = function(delta) {
 	this.radius = this.width * this.magnification / 2;
 };
 
+Field.prototype.seek = function() {
+	console.log('seek');
+	if (arguments.length == 1) {
+		var target = this.starMap[arguments[0]];
+		var longitude = target.ra * 180 / Math.PI;
+		var latitude = target.dec * 180 / Math.PI;
+	} else {
+		var longitude = arguments[0];
+		var latitude = arguments[1];
+	}
+	this.seekH = (-longitude) % 360;
+	this.seekV = latitude;
+};
+
 Field.prototype.drawConstellation = function(rhRad, rvRad) {
 	if (!this.showConstellation) {
 		return;
@@ -106,7 +122,7 @@ Field.prototype.drawConstellation = function(rhRad, rvRad) {
 			ctx.fillStyle = 'rgba(128, 128, 128, 0.5)';
 			ctx.fillText(rec.name, cons.x, cons.y);
 		}
-		ctx.strokeStyle = 'rgba(32, 80, 128, 0.4)';
+		ctx.strokeStyle = 'rgba(32, 80, 128, 0.6)';
 		rec.list.forEach(function(line) {
 			var from = field.starMap[line.from];
 			var to = field.starMap[line.to];
@@ -167,5 +183,24 @@ Field.prototype.draw = function() {
 		var sign = this.dx < 0 ? -1 : 1;
 
 		this.dx += -sign;
+	}
+	// seek
+	if (this.seekV != null) {
+		var diffV = (this.rotationV - this.seekV) / 5;
+
+		if (Math.abs(diffV) < 1) {
+			this.seekV = null;
+		} else {
+			this.rotationV -= diffV;
+		}
+	}
+	if (this.seekH != null) {
+		var diffH = (this.rotationH - this.seekH) / 5;
+
+		if (Math.abs(diffH) < 1) {
+			this.seekH = null;
+		} else {
+			this.rotationH -= diffH;
+		}
 	}
 };

@@ -18,3 +18,7 @@
 #slider + div {
 	margin-left: 90px;
 }
+
+#searchPanel ul {
+	max-height: 200px;
+}

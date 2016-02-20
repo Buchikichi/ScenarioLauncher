@@ -84,7 +84,47 @@ $(document).ready(function() {
 	constellationSwitch.change();
 	activate(field);
 	$(window).resize();
+	loadNames(field);
 });
+
+function loadNames(field) {
+	var ul = $('#searchPanel ul');
+
+	$.ajax('dat/names.json', {
+		'success': function(list) {
+			console.log('names.json:' + list.length);
+			list.forEach(function(rec) {
+				var anchor = $('<a></a>').text(rec.name);
+				var li = $('<li></li>').append(anchor);
+
+				if (rec.star) {
+					anchor.attr('star', rec.star);
+				} else {
+					anchor.attr('longitude', rec.longitude);
+					anchor.attr('latitude', rec.latitude);
+				}
+				if (rec.text) {
+					li.attr('data-filtertext', rec.text);
+				}
+				ul.append(li);
+				anchor.click(function() {
+					var a = $(this);
+					var star = a.attr('star');
+
+					if (star) {
+						field.seek(star);
+						return;
+					}
+					var longitude = a.attr('longitude');
+					var latitude = a.attr('latitude');
+//					console.log('longitude:' + longitude + '/latitude:' + latitude);
+					field.seek(longitude, latitude);
+				});
+			});
+			ul.filterable('refresh');
+		}
+	});
+}
 
 /**
  * 実行.

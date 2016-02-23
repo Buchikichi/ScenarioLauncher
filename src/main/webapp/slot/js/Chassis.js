@@ -108,7 +108,7 @@ Chassis.prototype.judge = function() {
 	win += this.sameFace([0, 1, 2]); // ななめ
 	win += this.sameFace([2, 1, 0]); // ななめ
 	if (0 < win) {
-		chassis.win = win;
+		this.win = win;
 	}
 };
 

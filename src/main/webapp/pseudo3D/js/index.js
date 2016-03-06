@@ -2,7 +2,7 @@ $(document).ready(function() {
 	var win = $(window);
 	var body = $('body');
 	var field = new Field();
-	var hero = new Hero(field, 144, 100);
+	var hero = new Hero(field, 0, 0, 0);
 	var sx = 0;
 	var sy = 0;
 	var which = 0;
@@ -28,8 +28,8 @@ $(document).ready(function() {
 		}
 		sx /= field.magni;
 		sy /= field.magni;
-		hero.setTargetX(sx);
-		hero.setTargetY(sy);
+		hero.setTargetX(sx - field.ox);
+		hero.setTargetY(sy - field.oy);
 		which = e.which;
 	};
 	var touch = function(e) {
@@ -50,14 +50,14 @@ $(document).ready(function() {
 		}
 		tx /= field.magni;
 		ty /= field.magni;
-		hero.setTargetX(tx);
-		hero.setTargetY(ty);
+		hero.setTargetX(tx - field.ox);
+		hero.setTargetY(ty - field.oy);
 		sx = tx;
 		sy = ty;
 	};
 	var end = function(e) {
-		hero.setTargetX(field.ox);
-		hero.setTargetY(field.oy);
+		hero.setTargetX(0);
+		hero.setTargetY(0);
 		which = 0;
 	};
 
@@ -80,7 +80,6 @@ $(document).ready(function() {
 	});
 	win.resize();
 
-	hero.setTargetX(field.ox);
 	field.addActor(hero);
 	console.log('Ready!!!');
 	activate(field);

@@ -74,7 +74,10 @@ Actor.prototype.afterMove = function(target) {
  * @param ctx
  */
 Actor.prototype.drawNormal = function(ctx) {
-	ctx.drawImage(this.img, this.x, this.y);
+	var x = this.x - this.hW;
+	var y = this.y - this.hH;
+
+	ctx.drawImage(this.img, x, y);
 };
 
 Actor.prototype.drawExplosion = function(ctx) {

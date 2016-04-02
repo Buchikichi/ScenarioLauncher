@@ -1,18 +1,16 @@
 /**
  * Actor.
  */
-function Actor(field, x, y, imgsrc) {
+function Actor(x, y, field, imgsrc) {
+	Esse.apply(this, arguments);
 	var actor = this;
 
 	this.field = field;
-	this.x = x;
-	this.y = y;
 	this.dx = 0;
 	this.dy = 0;
 	this.width = 16;
 	this.height = 16;
-	this.speed = 2;
-	this.recalculation();
+	this.speed = 3;
 	this.img = new Image();
 	this.img.onload = function() {
 		actor.width = this.width;
@@ -20,19 +18,14 @@ function Actor(field, x, y, imgsrc) {
 		actor.recalculation();
 	};
 	this.img.src = imgsrc;
-	this.entry();
 }
+Actor.prototype = Object.create(Esse.prototype);
 
 Actor.prototype.recalculation = function() {
 	this.hW = this.width / 2;
 	this.hH = this.height / 2;
 	this.maxX = this.field.width;
 	this.maxY = this.field.height;
-};
-
-Actor.prototype.entry = function() {
-	this.explosion = 0;
-	this.isGone = false;
 };
 
 /**

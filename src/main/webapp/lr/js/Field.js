@@ -2,10 +2,9 @@
  * Field.
  */
 function Field() {
-	this.lib = new Actor(this, 100, 100, 'img/lib.png');
-	this.rab = new Actor(this, 120, 100, 'img/rab.png');
+	this.lib = new Lib(131, 137, 'img/lib.png');
+	this.rab = new Rab(157, 137, 'img/rab.png').unshift(this.lib);
 	this.actors = [this.lib, this.rab];
-	this.points = [];
 	this.init();
 	this.resetParams();
 
@@ -20,7 +19,6 @@ Field.MAX_Y = 200;
 Field.POS_Z = 320;
 Field.MAX_Z = 320;
 Field.CELL_WIDTH = 32;
-Field.PICKET_RADIUS = 2;
 Field.PICKET = [
 	[15, 60], [47, 60], [79, 60], [111, 60], [143, 60], [175, 60], [207, 60], [239, 60], [271, 60],
 	[15, 92], [47, 92], [79, 92], [111, 92], [143, 92], [175, 92], [207, 92], [239, 92], [271, 92],
@@ -33,8 +31,12 @@ Field.prototype.resetParams = function() {
 	this.x = 0;
 	this.y = this.oy;
 	this.z = 0;
-this.dz = 6;
-this.zzz = 0;
+
+	var picketList = [];
+	Field.PICKET.forEach(function(pos) {
+		picketList.push(new Picket(pos[0], pos[1]));
+	});
+	this.picketList = picketList;
 };
 
 Field.prototype.init = function() {
@@ -106,116 +108,177 @@ Field.prototype.moveV = function(delta) {
 Field.prototype.drawPicket = function() {
 	var ctx = this.ctx;
 
+//	ctx.fillStyle = 'rgba(200, 200, 200, .4)';
 	ctx.fillStyle = 'rgba(255, 143, 0, 1)';
-//	ctx.fillStyle = 'rgba(255, 0, 0, .4)';
-	Field.PICKET.forEach(function(pos) {
-//console.log('x:' + pos[0]);
-		ctx.beginPath();
-		ctx.arc(pos[0], pos[1], 2, 0, Math.PI * 2, false);
-		ctx.fill();
+	this.picketList.forEach(function(picket) {
+		picket.draw(ctx);
 	});
 };
 
-Field.prototype.picketTest = function() {
+Field.prototype.drawGuide = function(picket, radian, height) {
+	var px = picket.x;
+	var py = picket.y;
+	var sx = px + Math.cos(radian) * height;
+	var sy = py + Math.sin(radian) * height;
 	var ctx = this.ctx;
-	var lib = this.lib;
-	var rab = this.rab;
-	var radian = Math.atan2(rab.y - lib.y, rab.x - lib.x);
-	var bx = -Field.PICKET_RADIUS;
-	var by = -Field.PICKET_RADIUS;
-	var ex = Field.PICKET_RADIUS;
-	var ey = Field.PICKET_RADIUS;
 
-	if (lib.x < rab.x) {
-		bx += lib.x;
-		ex += rab.x;
-	} else {
-		bx += rab.x;
-		ex += lib.x;
+	ctx.beginPath();
+	ctx.arc(sx, sy, 1, 0, Math.PI * 2, false);
+	ctx.fill();
+//	ctx.fillText(parseInt(height), sx, sy);
+	ctx.beginPath();
+	ctx.moveTo(px, py);
+	ctx.lineTo(sx, sy);
+	ctx.stroke();
+};
+
+Field.prototype.inUse = function(pt) {
+	var isExists = false;
+	var target = this.lib;
+
+	target = target.next;
+	while (target) {
+		if (target.id == pt.id) {
+			isExists = true;
+			break;
+		}
+		target = target.next;
 	}
-	if (lib.y < rab.y) {
-		by += lib.y;
-		ey += rab.y;
-	} else {
-		by += rab.y;
-		ey += lib.y;
+	return isExists;
+};
+
+Field.prototype.separate = function(p1) {
+	var isLib = p1 instanceof Lib;
+	var p2 = isLib ? p1.next : p1.prev;
+
+	if (!(p2 instanceof Picket)) {
+		return;
 	}
+	var picket = p2.parent;
+	var p3 = isLib ? p2.next : p2.prev;
+	var di1 = new Diagonal(p1, p2);
+	var dist1 = di1.distanceFrom(picket);
+	var sign1 = dist1 < 0 ? -1 : 1;
+	var di2 = new Diagonal(p1, p3);
+	var dist2 = di2.distanceFrom(picket);
+	var sign2 = dist2 < 0 ? -1 : 1;
 
-	ctx.save();
-	ctx.fillStyle = 'rgba(256, 32, 32, .6)';
-	ctx.lineWidth = .2;
-	ctx.strokeStyle = 'rgba(256, 64, 64, .8)';
-	Field.PICKET.forEach(function(pos) {
-		var px = pos[0];
-		var py = pos[1];
+	if (!isLib) {
+		var ctx = this.ctx;
+		ctx.save();
+		ctx.strokeStyle = 'rgba(0, 255, 255, 1)';
+		ctx.fillStyle = 'rgba(0, 255, 255, 1)';
+		p2.drawContact(ctx);
+		ctx.fill();
+		ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+		p3.drawContact(ctx);
+		ctx.restore();
+	}
+	if (sign1 != sign2) {
+		return;
+	}
+	if (Math.abs(dist2) <= Math.abs(dist1)) {
+		return;
+	}
+//console.log('separate:' + dist1 + '/' + dist2);
+	p2.remove();
+};
 
-		if (px < bx || ex < px || py < by || ey < py) {
+Field.prototype.testPicket = function(p1) {
+	var field = this;
+	var ctx = this.ctx;
+	var isLib = p1 instanceof Lib;
+	var p2 = isLib ? p1.next : p1.prev;
+	var di = new Diagonal(p1, p2);
+	var radian = di.radian + Math.PI / 2;
+	var bounds = new Diagonal(p1, p2).addMargin(Picket.RADIUS);
+	var found = null;
+
+//	bounds.drawRect(ctx);
+	this.picketList.forEach(function(picket) {
+		if (picket.includes(p1)) {
+//console.log('over!');
 			return;
 		}
-		var dx = px - lib.x;
-		var dy = py - lib.y;
-		var dist = Math.sqrt(dx * dx + dy * dy);
-		var r2 = Math.atan2(dy, dx);
-		var deg2 = parseInt(r2 * 180 / Math.PI);
-		var r3 = radian - r2;
-		var height = Math.sin(r3) * dist;
-		var side = parseInt(Math.cos(r3) * dist);
-		var sx = lib.x + Math.cos(radian) * side;
-		var sy = lib.y + Math.sin(radian) * side;
+		if (found || !bounds.rectIncludes(picket)) {
+			return;
+		}
+		var dist = di.distanceFrom(picket);
+		var np = picket.derive(radian, dist);
 
-		ctx.beginPath();
-		ctx.arc(sx, sy, 1, 0, Math.PI * 2, false);
-		ctx.fill();
-		ctx.fillText(parseInt(height), px, py);
-		ctx.beginPath();
-		ctx.moveTo(px, py);
-		ctx.lineTo(sx, sy);
-		ctx.stroke();
+		np.drawContact(ctx);
+		field.drawGuide(picket, radian, dist);
+		if (Math.abs(dist) < Picket.RADIUS) {
+
+			if (!field.inUse(np)) {
+				found = np;
+			}
+		}
 	});
+	if (found) {
+//console.log('Hit:' + found.id);
+		if (isLib) {
+			this.lib.push(found);
+		} else if (p1 instanceof Rab) {
+			this.rab.unshift(found);
+		}
+	}
+};
+
+Field.prototype.testLine = function() {
+	var ctx = this.ctx;
+
+	this.drawPoint();
+	ctx.save();
+	ctx.lineWidth = .2;
+	ctx.strokeStyle = 'rgba(255, 255, 64, .8)';
+	ctx.fillStyle = 'rgba(255, 32, 32, .6)';
+	this.testPicket(this.lib);
+	this.testPicket(this.rab);
+	this.separate(this.lib);
+	this.separate(this.rab);
 	ctx.restore();
+};
+
+Field.prototype.drawPoint = function() {
+	var ctx = this.ctx;
+	var target = this.lib.next;
+
+	ctx.strokeStyle = 'rgba(40, 40, 40, 1)';
+	ctx.fillStyle = 'rgba(40, 40, 40, 1)';
+	while (target.next) {
+		target.drawContact(ctx);
+		ctx.fill();
+		target = target.next;
+	}
 };
 
 Field.prototype.drawLines = function() {
 	var ctx = this.ctx;
+	var target = this.lib;
+	var cnt = 0;
 
 	ctx.strokeStyle = 'rgba(0, 174, 210, 1)';
 	ctx.beginPath();
-	ctx.moveTo(this.lib.x, this.lib.y);
-	ctx.lineTo(this.rab.x, this.rab.y);
+	ctx.moveTo(target.x, target.y);
+	target = target.next;
+	while (target) {
+		ctx.lineTo(target.x, target.y);
+		target = target.next;
+		cnt++;
+	}
 	ctx.stroke();
+	ctx.fillStyle = 'rgba(0, 174, 210, 1)';
+	ctx.fillText(cnt, 10, 32);
 };
 
 Field.prototype.drawActors = function() {
 	var ctx = this.ctx;
-	var field = this;
 
 	this.actors.forEach(function(actor) {
 		actor.move();
 		actor.draw(ctx);
 	});
-
-	var rnd = parseInt(Math.random() * 5);
-	if (rnd == 0) {
-		var type = parseInt(Math.random() * 2);
-		var x = parseInt(Math.random() * 10) - 5;
-
-		if (type == 0) {
-			var y = 1;
-			var img = 'img/tree001.png';
-		} else {
-			var y = parseInt(Math.random() * 5) + 1;
-			var img = 'img/stone001.png';
-		}
-	}
-};
-
-Field.prototype.calcPos = function(ax, ay, az) {
-	var px = Math.cos(this.radY) * ax - Math.sin(this.radY) * az;
-	var nz = Math.sin(this.radY) * ax + Math.cos(this.radY) * az;
-	var py = Math.cos(this.radX) * ay - Math.sin(this.radX) * nz;
-	var zoom = az * az / (Field.POS_Z * Field.POS_Z);
-
-	return {px: px * zoom, py: py * zoom};
 };
 
 Field.prototype.draw = function() {
@@ -228,6 +291,6 @@ Field.prototype.draw = function() {
 	this.drawLines();
 	this.drawPicket();
 	this.drawActors();
-this.picketTest();
+	this.testLine();
 	ctx.restore();
 };

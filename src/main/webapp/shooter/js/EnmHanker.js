@@ -23,11 +23,3 @@ EnmHanker.prototype.movePlus = function(target) {
 	this.dx = -Math.cos(this.radian);
 	this.dy = -Math.sin(this.radian);
 };
-
-EnmHanker.prototype.drawNormal = function(ctx) {
-	ctx.save();
-	ctx.translate(this.x + this.hW, this.y + this.hH);
-	ctx.rotate(this.radian);
-	ctx.drawImage(this.img, -this.hW, -this.hH);
-	ctx.restore();
-};

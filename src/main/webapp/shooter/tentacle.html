@@ -1,46 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Shooter</title>
+<meta charset="UTF-8"/>
+<meta name=viewport content="width=device-width, initial-scale=1"/>
+<title>Tentacle</title>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
-<link rel="stylesheet" href="css/default.css"/>
 <script type="text/javascript" defer src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" defer src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script type="text/javascript" defer src="js/Field.js"></script>
 <script type="text/javascript" defer src="js/Actor.js"></script>
-<script type="text/javascript" defer src="js/Ship.js"></script>
-<script type="text/javascript" defer src="js/Shot.js"></script>
 <script type="text/javascript" defer src="js/Enemy.js"></script>
-<script type="text/javascript" defer src="js/EnmBouncer.js"></script>
-<script type="text/javascript" defer src="js/EnmHanker.js"></script>
-<script type="text/javascript" defer src="js/EnmWaver.js"></script>
 <script type="text/javascript" defer src="js/Chain.js"></script>
 <script type="text/javascript" defer src="js/EnmTentacle.js"></script>
 <script type="text/javascript" defer src="js/EnmTentacleJoint.js"></script>
 <script type="text/javascript" defer src="js/EnmTentacleHead.js"></script>
-<script type="text/javascript" defer src="js/Bullet.js"></script>
-<script type="text/javascript" defer src="js/index.js"></script>
+<script type="text/javascript" defer src="js/Ship.js"></script>
+<script type="text/javascript" defer src="js/tentacleField.js"></script>
+<script type="text/javascript" defer src="js/tentacleIndex.js"></script>
+<style type="text/css">
+body {
+	overflow: hidden;
+}
+#content {
+	display: table-cell;
+	text-align: center;
+	background-color: #F0F0F0;
+}
+#canvas {
+	/*display: inline;*/
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+}
+</style>
 </head>
 
 <body>
-  <div data-role="header" data-theme="b" data-position="fixed" data-size="mini">
-    <a href="/" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-btn-icon-notext ui-icon-arrow-l"></a>
-    <h1>Shooter</h1>
-  </div>
-  <div id="view">
-    <div id="gameOver">
-      <div>GAME OVER</div>
-      <div>Hit space key to start.</div>
+  <div data-role="page">
+    <div id="header" data-role="header" data-theme="b" data-position="fixed">
+      <a href="/" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
+      <h1>Tentacle</h1>
     </div>
-    <div id="gameInfo">
-      <div id="score">
-        <div><div>1P</div><div>0</div></div>
-        <div><div>HI</div><div>0</div></div>
-        <div></div>
+    <div style="display: table; table-layout: fixed; width: 100%;">
+        <div id="content">
+          <canvas id="canvas"></canvas>
+        </div>
+    </div>
+    <div data-role="content">
+<!--
+      <div class="ui-body-a ui-corner-all">
+        <input id="magni" type="range" value="1" min="-20" max="20" step="1"/>
       </div>
+-->
     </div>
   </div>
+<!--  -->
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -50,5 +65,6 @@
   ga('create', 'UA-74094631-2', 'auto');
   ga('send', 'pageview');
 </script>
+<!--  -->
 </body>
 </html>

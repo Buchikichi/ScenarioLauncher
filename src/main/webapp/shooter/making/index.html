@@ -6,10 +6,11 @@
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=js&skin=Sons-Of-Obsidian"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 <style type="text/css">
-pre.linenums li {list-style-type: decimal;}
-img.char {margin-right: 4px;}
+li:nth-child(odd) {background-color: #f9f9f9;}
+.linenums li {list-style-type: decimal;}
+img.char {}
 </style>
 </head>
 
@@ -26,7 +27,8 @@ img.char {margin-right: 4px;}
 2015年12月になって、そういえば<a href="http://appsweets.net/blog/tag/gradius/" target="_blank">HTML5版グラディウス</a>ってあったな～って思い出して、
 シューティングゲームを作ってみようと思いつきました。<br/>
 とりあえず、丸が1,000個動くサンプルプログラムを作ってみたら、Canvasって速い!!! 2008年の頃とは全然違います。<br/>
-仕事が忙しい時に限って、いろいろ変な事をしてしまうものです。仕事が終わって帰宅してちょっとずつ作ったので、工数は合計すると30時間位でしょうか。<br/>
+仕事が忙しい時に限って、いろいろ変な事をしてしまうものです。仕事が終わって帰宅してちょっとずつ作ったので、試作版(敵が3種類まで)を作成時の工数は合計すると30時間位でしょうか。<br/>
+2016年5月に追加で作った敵Tentacleは、合計8時間位かかっています。<br/>
 絵には工数をかけていないので、ダサダサなのです。
     </div>
     <div data-role="collapsibleset" data-mini="true">
@@ -84,6 +86,7 @@ if (keys['k16'] || keys['k17']) {
         <h3>オブジェクト指向のような</h3>
         <div>
 ShooterはJavaScriptで動いていますが、ちょっとしたクラスのようなものを作っています。<br/>
+<!--
           <ul data-role="listview" data-inset="true">
             <li><h2>Actorクラス。</h2><p>Actorクラスは、画面に登場するキャラクターの基底クラスです。move(),draw(),isHit()といったメソッドがあります。</p></li>
             <li><h2>Shipクラス。</h2><p>プレイヤーが操作するキャラクターを管理します。</p></li>
@@ -95,14 +98,16 @@ ShooterはJavaScriptで動いていますが、ちょっとしたクラスのよ
             <li><h2>Bulletクラス。</h2><p>敵の弾を管理します。</p></li>
             <li><h2>Fieldクラス。</h2><p>画面全体を管理します。</p></li>
           </ul>
+-->
         </div>
       </div>
       <div data-role="collapsible">
         <h3>敵を動かす</h3>
         <div>
-          3種類の敵キャラクターを作成しています。<br/>
+          4種類の敵キャラクターを作成しています。<br/>
           <div class="ui-body ui-body-a ui-corner-all">
-            <img src="../img/enmWaver.png" class="char"/>Waver<br/>
+            <img src="../img/enmWaver.png" class="char"/>
+            Waver<br/>
 波打つ動きをします。<br/>
 波打つ動きをするには、固定値をキャラクターの位置(x, y)に対して加減算するだけでは実現できません。<br/>
 Actorクラス(Actor.js)の中で、以下のような処理をしています。
@@ -127,7 +132,8 @@ EnmWaver.prototype.movePlus = function() {
 こうする事で加速/減速の幅が少しずつ変化するので、波打つ動きを実現出来ます。
           </div>
           <div class="ui-body ui-body-a ui-corner-all">
-            <img src="../img/enmBouncer.png" class="char"/>Bouncer<br/>
+            <img src="../img/enmBouncer.png" class="char"/>
+            Bouncer<br/>
             ピョンピョン飛び跳ねる動きをします。<br/>
             キャラクターの位置(x, y)に対して、加速度(dx, dy)を加減算するという方法は、Waverと同じです。<br/>
             EnmBouncerクラス(EnmBouncer.js)の中で、以下のような処理をしています。
@@ -149,7 +155,8 @@ EnmBouncer.prototype.movePlus = function() {
             8行目、画面内にいるときは、縦方向の加速度(dy)を加算して落下するような動きをしています。
           </div>
           <div class="ui-body ui-body-a ui-corner-all">
-            <img src="../img/enmHanker.png" class="char"/>Hanker<br/>
+            <img src="../img/enmHanker.png" class="char"/>
+            Hanker<br/>
             プレイヤーをしつこく追い回します。<br/>
             ターゲット(=プレイヤー)に依存して動くので、別の2つのキャラクターとは動きが違います。<br/>
             EnmHankerクラス(EnmHanker.js)の中で、以下のような処理をしています。
@@ -182,6 +189,20 @@ EnmHanker.prototype.drawNormal = function(ctx) {
             canvasにイメージを貼り付ける時に、rotateメソッドを使って画像を回転させています。<br/>
             この時の角度(radian)は、ターゲットからHankerを見た角度なのです。
           </div>
+          <div class="ui-body ui-body-a ui-corner-all">
+            <img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleHead.png" class="char"/>
+            Tentacle<br/>
+            プレイヤーにじわじわと近づく触手です。胴体、節、頭を連結させています。<br/>
+            胴体はx,y座標を持っているのですが、節と頭は自分が回転している角度を持っていて、一つ前のオブジェクトの座標から相対的な位置を決定しています。
+            <pre class="prettyprint linenums">
+var radian = this.addRadian(step);
+var prev = this.prev;
+var dist = this.radius + prev.radius;
+
+this.x = prev.x + Math.cos(radian) * dist;
+this.y = prev.y + Math.sin(radian) * dist;
+</pre>
+          </div>
         </div>
       </div>
       <div data-role="collapsible">
@@ -204,7 +225,7 @@ Bullet.prototype.aim = function(target) {
         </div>
       </div>
     </div>
-<hr/>2016-01-04 updated.
+<hr/>2016-05-21 updated.
   </div>
 </body>
 </html>

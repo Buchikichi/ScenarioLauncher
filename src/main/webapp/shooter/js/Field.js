@@ -12,9 +12,9 @@ function Field(width, height) {
 	this.hiscore = 0;
 }
 
-Field.prototype.MAX_SHOTS = 7;
-Field.prototype.MAX_ENEMIES = 100;
-Field.prototype.MIN_LOOSING_RATE = 10;
+Field.MAX_SHOTS = 9;
+Field.MAX_ENEMIES = 100;
+Field.MIN_LOOSING_RATE = 10;
 
 Field.prototype.setup = function() {
 	var view = $('#view');
@@ -52,16 +52,25 @@ Field.prototype.setupEnemy = function() {
 	if (this.isGameOver() && 10 < this.actorList.length) {
 		return;
 	}
-	if (this.MAX_ENEMIES < this.actorList.length) {
+	if (Field.MAX_ENEMIES < this.actorList.length) {
 		return;
 	}
-	var type = parseInt(Math.random() * 10);
+	var type = parseInt(Math.random() * 100);
 	var x = this.width - 16;
 	var y = Math.random() * 125 + 25;
 
-	if (type == 0) {
+	if (type < 5) {
+		var tentacle = new EnmTentacle(this, x, y);
+		var joint = tentacle.next;
+
+		while (joint) {
+			this.actorList.push(joint);
+			joint = joint.next;
+		}
+		this.actorList.push(tentacle);
+	} else if (type < 10) {
 		this.actorList.push(new EnmHanker(this, x, y));
-	} else if (type < 3) {
+	} else if (type < 40) {
 		this.actorList.push(new EnmBouncer(this, x, y));
 	} else {
 		this.actorList.push(new EnmWaver(this, x, y));
@@ -87,7 +96,7 @@ Field.prototype.startGame = function() {
 	$('#gameOver').hide();
 	this.bgm.currentTime = 0;
 	this.bgm.play();
-	this.ship.entry();
+	this.ship.enter();
 	this.reset();
 };
 
@@ -112,9 +121,9 @@ Field.prototype.inkey = function(keys) {
 		var dy = 0;
 	
 		if (keys['k16'] || keys['k17']) {
-			if (this.shotList.length < this.MAX_SHOTS) {
+			if (this.shotList.length < Field.MAX_SHOTS) {
 				var x = this.ship.x + 16;
-				var y = this.ship.y + 8;
+				var y = this.ship.y;
 				this.actorList.push(new Shot(this, x, y));
 			}
 		}
@@ -151,7 +160,7 @@ Field.prototype.scroll = function() {
 	if (die(this.loosingRate / 10)) {
 		this.setupEnemy();
 	}
-	if (this.MIN_LOOSING_RATE < this.loosingRate) {
+	if (Field.MIN_LOOSING_RATE < this.loosingRate) {
 		this.loosingRate -= .1;
 	}
 };
@@ -180,7 +189,7 @@ Field.prototype.draw = function() {
 		} else if (actor instanceof Enemy) {
 			ship.isHit(actor);
 			enemyList.push(actor);
-			if (100 < actor.calcDistance(ship)) {
+			if (actor.hasBullet && 100 < actor.calcDistance(ship)) {
 				if (die(field.loosingRate)) {
 					var bullet = new Bullet(field, actor.x, actor.y);
 					bullet.aim(ship);
@@ -202,9 +211,7 @@ Field.prototype.draw = function() {
 		});
 	});
 	this.score += score;
-//	if (0 < score) {
-		this.showScore();
-//	}
+	this.showScore();
 	if (!this.isGameOver() && ship.isGone) {
 		this.endGame();
 	}

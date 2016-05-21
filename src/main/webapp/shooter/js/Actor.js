@@ -5,18 +5,20 @@ function Actor(field, x, y) {
 	this.field = field;
 	this.x = x;
 	this.y = y;
+	this.radian = 0;
 	this.width = 16;
 	this.height = 16;
 	this.speed = 1;
 	this.hitPoint = 1;
+	this.hasBullet = true;
 	this.recalculation();
 	this.img = new Image();
 	this.sfx = new Audio();
 	this.sfx.src = 'audio/sfx-explosion.mp3';
 	this.sfx.volume = .4;
-	this.entry();
+	this.enter();
 }
-Actor.prototype.MAX_EXPLOSION = 12;
+Actor.MAX_EXPLOSION = 12;
 
 Actor.prototype.recalculation = function() {
 	this.hW = this.width / 2;
@@ -25,9 +27,14 @@ Actor.prototype.recalculation = function() {
 	this.maxY = this.field.height;
 };
 
-Actor.prototype.entry = function() {
+Actor.prototype.enter = function() {
 	this.explosion = 0;
 	this.isGone = false;
+};
+
+Actor.prototype.eject = function() {
+	this.isGone = true;
+	this.x = -this.width;
 };
 
 /**
@@ -43,8 +50,7 @@ Actor.prototype.move = function(target) {
 	if (0 < this.explosion) {
 		this.explosion--;
 		if (this.explosion == 0) {
-			this.isGone = true;
-			this.x = - this.width;
+			this.eject();
 		}
 	}
 };
@@ -63,17 +69,21 @@ Actor.prototype.movePlus = function(target) {
  * @param ctx
  */
 Actor.prototype.drawNormal = function(ctx) {
-	ctx.drawImage(this.img, this.x, this.y);
+	ctx.save();
+	ctx.translate(this.x, this.y);
+	ctx.rotate(this.radian);
+	ctx.drawImage(this.img, -this.hW, -this.hH);
+	ctx.restore();
 };
 
 Actor.prototype.drawExplosion = function(ctx) {
 	var size = this.explosion;
 
-	ctx.save();
-	ctx.translate(this.width / 2, this.height / 2);
-	ctx.beginPath();
 	ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
-	ctx.arc(this.x, this.y, size, 0, Math.PI * 2, false);
+	ctx.save();
+	ctx.translate(this.x, this.y);
+	ctx.beginPath();
+	ctx.arc(0, 0, size, 0, Math.PI * 2, false);
 	ctx.fill();
 	ctx.restore();
 };
@@ -112,8 +122,8 @@ Actor.prototype.isHit = function(target) {
 };
 
 Actor.prototype.calcDistance = function(target) {
-	var wX = this.x + this.hW - target.x - target.hW;
-	var wY = this.y + this.hH - target.y - target.hH;
+	var wX = this.x - target.x;
+	var wY = this.y - target.y;
 
 	return Math.sqrt(wX * wX + wY * wY);
 };
@@ -126,7 +136,7 @@ Actor.prototype.fate = function() {
 	if (0 < this.hitPoint) {
 		return;
 	}
-	this.explosion = this.MAX_EXPLOSION;
+	this.explosion = Actor.MAX_EXPLOSION;
 	if (this.sfx) {
 		this.sfx.play();
 	}

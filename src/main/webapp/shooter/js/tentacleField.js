@@ -39,20 +39,7 @@ Field.prototype.resize = function(magni) {
 };
 
 Field.prototype.inkey = function(keys) {
-	this.ship.dx = 0;
-	this.ship.dy = 0;
-	if (keys['k37']) {
-		this.ship.dx = -1;
-	}
-	if (keys['k39']) {
-		this.ship.dx = 1;
-	}
-	if (keys['k38']) {
-		this.ship.dy = -1;
-	}
-	if (keys['k40']) {
-		this.ship.dy = 1;
-	}
+	this.ship.inkey(keys);
 };
 
 Field.prototype.drawActors = function() {

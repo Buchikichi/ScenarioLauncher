@@ -7,6 +7,9 @@ function Actor(field, x, y) {
 	this.field = field;
 	this.x = x;
 	this.y = y;
+	this.dx = 0;
+	this.dy = 0;
+	this.dir = null;
 	this.radian = 0;
 	this.width = 16;
 	this.height = 16;
@@ -23,6 +26,9 @@ function Actor(field, x, y) {
 	this.sfx = new Audio();
 	this.sfx.src = 'audio/sfx-explosion.mp3';
 	this.sfx.volume = .4;
+	this.absorb = new Audio();
+	this.absorb.src = 'audio/sfx-absorb.mp3';
+	this.absorb.volume = .4;
 	this.enter();
 }
 Actor.MAX_EXPLOSION = 12;
@@ -51,6 +57,10 @@ Actor.prototype.eject = function() {
 Actor.prototype.move = function(target) {
 	this.svX = this.x;
 	this.svY = this.y;
+	if (this.dir != null) {
+		this.x += Math.cos(this.dir) * this.speed;
+		this.y += Math.sin(this.dir) * this.speed;
+	}
 	this.x += this.dx * this.speed;
 	this.y += this.dy * this.speed;
 	this.movePlus(target);
@@ -141,6 +151,9 @@ Actor.prototype.calcDistance = function(target) {
 Actor.prototype.fate = function() {
 	this.hitPoint--;
 	if (0 < this.hitPoint) {
+		if (this.absorb) {
+			this.absorb.play();
+		}
 		return;
 	}
 	this.explosion = Actor.MAX_EXPLOSION;

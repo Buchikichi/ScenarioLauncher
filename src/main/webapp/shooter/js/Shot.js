@@ -3,8 +3,7 @@
  */
 function Shot() {
 	Actor.apply(this, arguments);
-	this.dx = 1;
-	this.dy = 0;
+	this.dir = 0;
 	this.width = 16;
 	this.height = 8;
 	this.recalculation();

@@ -6,14 +6,16 @@ function EnmBouncer() {
 	this.dx = -(Math.random() * 3 + 1);
 	this.hitPoint = 3;
 	this.score = 50;
+	this.shuttle = parseInt(Math.random() * 4) + 1;
 	this.img.src = 'img/enmBouncer.png';
 }
 
 EnmBouncer.prototype = Object.create(Enemy.prototype);
 
 EnmBouncer.prototype.movePlus = function() {
-	if (this.x < 0 || 500 < this.x) {
+	if (this.shuttle && (this.x < 0 || 500 < this.x)) {
 		this.dx = -this.dx;
+		this.shuttle--;
 	}
 	if (224 < this.y) {
 		this.dy = -this.dy;

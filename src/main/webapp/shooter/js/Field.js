@@ -117,9 +117,6 @@ Field.prototype.inkey = function(keys) {
 		return;
 	}
 	if (!this.ship.explosion) {
-		var dx = 0;
-		var dy = 0;
-	
 		if (keys['k16'] || keys['k17']) {
 			if (this.shotList.length < Field.MAX_SHOTS) {
 				var x = this.ship.x + 16;
@@ -127,20 +124,7 @@ Field.prototype.inkey = function(keys) {
 				this.actorList.push(new Shot(this, x, y));
 			}
 		}
-		if (keys['k37']) {
-			dx = -1;
-		}
-		if (keys['k38']) {
-			dy = -1;
-		}
-		if (keys['k39']) {
-			dx = 1;
-		}
-		if (keys['k40']) {
-			dy = 1;
-		}
-		this.ship.dx = dx;
-		this.ship.dy = dy;
+		this.ship.inkey(keys);
 	}
 	this.ship.move();
 };

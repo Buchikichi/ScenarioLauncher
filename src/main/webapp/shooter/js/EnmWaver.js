@@ -4,6 +4,7 @@
 function EnmWaver() {
 	Enemy.apply(this, arguments);
 	this.img.src = 'img/enmWaver.png';
+	this.dx = -4;
 	this.direction = 1;
 }
 

@@ -1,8 +1,6 @@
 function EnmTentacleJoint(speed) {
 	Chain.apply(this, arguments);
 
-	this.dx = 0;
-	this.dy = 0;
 	this.radius = 4;
 	this.radian = 0;
 	this.speed = speed;

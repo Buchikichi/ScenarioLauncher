@@ -166,16 +166,15 @@ EnmHanker.prototype.movePlus = function(target) {
 	var wY = this.y - target.y;
 
 	this.radian = Math.atan2(wY, wX);
-	this.dx = -Math.cos(this.radian);
-	this.dy = -Math.sin(this.radian);
+	this.dir = this.radian - Math.PI;
 };
 </pre>
             2,3行目で、Hankerとターゲット間のX軸方向の距離、Y軸方向の距離を計算しています。<br/>
             5行目で、Hankerとターゲットの角度を求めています。この角度はラジアンです。分度器で測る角度はdegree(デグリー)です。<br/>
             atan2 メソッドへは、y, x の順に値を渡します。<br/>
-            横方向の加速度(dx) は、角度(ラジアン)をもとに cos で計算します。<br/>
-            縦方向の加速度(dy) は、角度(ラジアン)をもとに sin で計算します。<br/>
-            角度を求める時に、ターゲットから見た角度としているので、-1を掛けた値を加速度(dx, dy)にしています。<br/>
+            進行方向 dir は、角度からπを引いて逆方向にしています。<br/>
+            横方向の加速度は、角度(dir)をもとに cos で計算します。<br/>
+            縦方向の加速度は、角度(dir)をもとに sin で計算します。<br/>
             角度を、ターゲットから見た角度にした理由は、hankerの画像を回転したいからです。<br/>
             <pre class="prettyprint linenums">
 Actor.prototype.drawNormal = function(ctx) {

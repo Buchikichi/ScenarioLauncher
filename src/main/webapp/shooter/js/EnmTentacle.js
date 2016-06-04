@@ -1,9 +1,7 @@
 function EnmTentacle(field, x, y) {
 	Chain.apply(this, arguments);
 
-	this.dx = 0;
-	this.dy = 0;
-	this.speed = .4;
+	this.speed = .8;
 	this.hitPoint = 16;
 	this.hasBullet = false;
 	this.img.src = 'img/enmTentacle.png';
@@ -33,12 +31,8 @@ EnmTentacle.prototype.eject = function() {
 EnmTentacle.prototype.movePlus = function(target) {
 	var dx = target.x - this.x;
 	var dy = target.y - this.y;
-	var rad = Math.atan2(dy, dx);
 
-	this.dx = Math.cos(rad);
-	this.dy = Math.sin(rad);
-	this.x += this.dx * this.speed;
-	this.y += this.dy * this.speed;
+	this.dir = Math.atan2(dy, dx);
 };
 
 EnmTentacle.prototype.drawNormal = function(ctx) {

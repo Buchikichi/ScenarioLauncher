@@ -178,9 +178,9 @@ EnmHanker.prototype.movePlus = function(target) {
             角度を求める時に、ターゲットから見た角度としているので、-1を掛けた値を加速度(dx, dy)にしています。<br/>
             角度を、ターゲットから見た角度にした理由は、hankerの画像を回転したいからです。<br/>
             <pre class="prettyprint linenums">
-EnmHanker.prototype.drawNormal = function(ctx) {
+Actor.prototype.drawNormal = function(ctx) {
 	ctx.save();
-	ctx.translate(this.x + this.hW, this.y + this.hH);
+	ctx.translate(this.x, this.y);
 	ctx.rotate(this.radian);
 	ctx.drawImage(this.img, -this.hW, -this.hH);
 	ctx.restore();

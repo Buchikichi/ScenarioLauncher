@@ -5,10 +5,6 @@ function EnmTentacleJoint(speed) {
 	this.dy = 0;
 	this.radius = 4;
 	this.radian = 0;
-	this.width = 8;
-	this.height = 8;
-	this.hW = this.width / 2;
-	this.hH = this.height / 2;
 	this.speed = speed;
 	this.hasBullet = false;
 	this.img.src = 'img/enmTentacleJoint.png';

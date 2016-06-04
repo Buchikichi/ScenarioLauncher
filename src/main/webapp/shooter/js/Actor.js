@@ -2,6 +2,8 @@
  * Actor.
  */
 function Actor(field, x, y) {
+	var actor = this;
+
 	this.field = field;
 	this.x = x;
 	this.y = y;
@@ -13,6 +15,11 @@ function Actor(field, x, y) {
 	this.hasBullet = true;
 	this.recalculation();
 	this.img = new Image();
+	this.img.onload = function() {
+		actor.width = this.width;
+		actor.height = this.height;
+		actor.recalculation();
+	};
 	this.sfx = new Audio();
 	this.sfx.src = 'audio/sfx-explosion.mp3';
 	this.sfx.volume = .4;

@@ -7,7 +7,7 @@
   <name>ScenarioLauncher</name>
 
   <properties>
-    <appengine.version>1.9.32</appengine.version>
+    <appengine.version>1.9.37</appengine.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

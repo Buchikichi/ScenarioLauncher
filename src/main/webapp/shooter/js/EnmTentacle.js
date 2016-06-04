@@ -3,10 +3,6 @@ function EnmTentacle(field, x, y) {
 
 	this.dx = 0;
 	this.dy = 0;
-	this.width = 32;
-	this.height = 32;
-	this.hW = this.width / 2;
-	this.hH = this.height / 2;
 	this.speed = .4;
 	this.hitPoint = 16;
 	this.hasBullet = false;

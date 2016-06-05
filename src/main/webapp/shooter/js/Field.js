@@ -10,11 +10,14 @@ function Field(width, height) {
 	this.ship.isGone = true;
 	this.score = 0;
 	this.hiscore = 0;
+	this.enemyCycle = 0;
 }
 
 Field.MAX_SHOTS = 9;
 Field.MAX_ENEMIES = 100;
-Field.MIN_LOOSING_RATE = 10;
+Field.ENEMY_CYCLE = 10;
+Field.MIN_LOOSING_RATE = 1;
+Field.MAX_LOOSING_RATE = 100;
 
 Field.prototype.setup = function() {
 	var view = $('#view');
@@ -87,7 +90,7 @@ Field.prototype.reset = function() {
 	this.ship.x = 100;
 	this.ship.y = 100;
 	this.actorList = [];
-	this.loosingRate = 500;
+	this.loosingRate = Field.MAX_LOOSING_RATE;
 	this.score = 0;
 	this.showScore();
 };
@@ -141,11 +144,16 @@ Field.prototype.scroll = function() {
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
-	if (die(this.loosingRate / 10)) {
-		this.setupEnemy();
+	if (Field.ENEMY_CYCLE < this.enemyCycle++) {
+		this.enemyCycle = 0;
+		if (die(this.loosingRate / 30)) {
+			this.setupEnemy();
+		}
 	}
 	if (Field.MIN_LOOSING_RATE < this.loosingRate) {
-		this.loosingRate -= .1;
+		var step = this.loosingRate / 10000;
+
+		this.loosingRate -= step;
 	}
 };
 
@@ -159,7 +167,7 @@ Field.prototype.draw = function() {
 	var score = 0;
 
 	ctx.clearRect(0, 0, this.width, this.height);
-	$.each(this.actorList, function(ix, actor) {
+	this.actorList.forEach(function(actor) {
 		if (actor.isGone) {
 			return;
 		}
@@ -173,8 +181,8 @@ Field.prototype.draw = function() {
 		} else if (actor instanceof Enemy) {
 			ship.isHit(actor);
 			enemyList.push(actor);
-			if (actor.hasBullet && 100 < actor.calcDistance(ship)) {
-				if (die(field.loosingRate)) {
+			if (actor.trigger() && 100 < actor.calcDistance(ship)) {
+				if (die(field.loosingRate / 10)) {
 					var bullet = new Bullet(field, actor.x, actor.y);
 					bullet.aim(ship);
 					validActors.push(bullet);
@@ -185,8 +193,8 @@ Field.prototype.draw = function() {
 	this.ship.draw(ctx);
 	this.actorList = validActors;
 	this.shotList = shotList;
-	$.each(enemyList, function(ix, enemy) {
-		$.each(shotList, function(vx, shot) {
+	enemyList.forEach(function(enemy) {
+		shotList.forEach(function(shot) {
 			if (enemy.isHit(shot)) {
 				if (enemy.explosion) {
 					score += enemy.score;

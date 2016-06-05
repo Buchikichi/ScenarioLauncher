@@ -4,7 +4,6 @@ function EnmTentacleJoint(speed) {
 	this.radius = 4;
 	this.radian = 0;
 	this.speed = speed;
-	this.hasBullet = false;
 	this.img.src = 'img/enmTentacleJoint.png';
 }
 EnmTentacleJoint.prototype = Object.create(Chain.prototype);
@@ -57,5 +56,9 @@ EnmTentacleJoint.prototype.movePlus = function(target) {
 };
 
 EnmTentacleJoint.prototype.fate = function() {
+	// nop
+};
+
+EnmTentacleJoint.prototype.trigger = function() {
 	// nop
 };

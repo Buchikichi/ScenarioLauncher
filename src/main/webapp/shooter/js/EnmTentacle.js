@@ -3,7 +3,6 @@ function EnmTentacle(field, x, y) {
 
 	this.speed = .8;
 	this.hitPoint = 16;
-	this.hasBullet = false;
 	this.img.src = 'img/enmTentacle.png';
 	// Joint
 	this.push(new EnmTentacleHead(.8));
@@ -51,4 +50,8 @@ EnmTentacle.prototype.drawNormal = function(ctx) {
 //	ctx.strokeStyle = 'rgba(0, 0, 255, 1)';
 //	ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
 //	ctx.stroke();
+};
+
+EnmTentacle.prototype.trigger = function() {
+	// nop
 };

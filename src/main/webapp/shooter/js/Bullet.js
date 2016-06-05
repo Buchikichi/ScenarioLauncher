@@ -19,7 +19,6 @@ Bullet.prototype.aim = function(target) {
 
 Bullet.prototype.drawNormal = function(ctx) {
 	ctx.save();
-	ctx.translate(this.hW, this.hH);
 	ctx.beginPath();
 	ctx.fillStyle = 'rgba(120, 200, 255, 0.7)';
 	ctx.arc(this.x, this.y, this.width / 3, 0, Math.PI * 2, false);

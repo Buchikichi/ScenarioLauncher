@@ -15,7 +15,6 @@ function Actor(field, x, y) {
 	this.height = 16;
 	this.speed = 1;
 	this.hitPoint = 1;
-	this.hasBullet = true;
 	this.recalculation();
 	this.img = new Image();
 	this.img.onload = function() {
@@ -28,7 +27,7 @@ function Actor(field, x, y) {
 	this.sfx.volume = .4;
 	this.absorb = new Audio();
 	this.absorb.src = 'audio/sfx-absorb.mp3';
-	this.absorb.volume = .4;
+	this.absorb.volume = .3;
 	this.enter();
 }
 Actor.MAX_EXPLOSION = 12;
@@ -152,6 +151,15 @@ Actor.prototype.fate = function() {
 	this.hitPoint--;
 	if (0 < this.hitPoint) {
 		if (this.absorb) {
+			var ctx = this.field.ctx;
+
+			ctx.fillStyle = 'rgba(255, 255, 0, 0.4)';
+			ctx.save();
+			ctx.translate(this.x, this.y);
+			ctx.beginPath();
+			ctx.arc(0, 0, 5, 0, Math.PI * 2, false);
+			ctx.fill();
+			ctx.restore();
 			this.absorb.play();
 		}
 		return;

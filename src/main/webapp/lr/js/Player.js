@@ -28,10 +28,10 @@ Player.prototype.move = function() {
 };
 
 Player.prototype.draw = function(ctx) {
-	var x = this.x - this.hW;
-	var y = this.y - this.hH;
-
-	ctx.drawImage(this.img, x, y);
+	ctx.save();
+	ctx.translate(this.x, this.y);
+	ctx.drawImage(this.img, -this.hW, -this.hH);
+	ctx.restore();
 };
 
 function Lib(x, y, imgsrc) {

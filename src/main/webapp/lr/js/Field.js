@@ -28,10 +28,6 @@ Field.PICKET = [
 ];
 
 Field.prototype.resetParams = function() {
-	this.x = 0;
-	this.y = this.oy;
-	this.z = 0;
-
 	var picketList = [];
 	Field.PICKET.forEach(function(pos) {
 		picketList.push(new Picket(pos[0], pos[1]));
@@ -42,8 +38,6 @@ Field.prototype.resetParams = function() {
 Field.prototype.init = function() {
 	this.canvas = document.getElementById('canvas');
 	this.ctx = this.canvas.getContext('2d');
-	this.ox = Field.WIDTH / 2;
-	this.oy = Field.HEIGHT / 2;
 	this.resize(1);
 };
 
@@ -91,20 +85,6 @@ Field.prototype.inkey = function(keys) {
 	}
 };
 
-Field.prototype.moveH = function(delta) {
-	this.x += delta;
-	this.x %= 64;
-};
-
-Field.prototype.moveV = function(delta) {
-	this.y -= delta;
-	if (this.y < Field.MIN_Y) {
-		this.y = Field.MIN_Y;
-	} else if (Field.MAX_Y < this.y) {
-		this.y = Field.MAX_Y;
-	}
-};
-
 Field.prototype.drawPicket = function() {
 	var ctx = this.ctx;
 
@@ -122,6 +102,7 @@ Field.prototype.drawGuide = function(picket, radian, height) {
 	var sy = py + Math.sin(radian) * height;
 	var ctx = this.ctx;
 
+	ctx.fillStyle = 'rgba(255, 32, 32, .4)';
 	ctx.beginPath();
 	ctx.arc(sx, sy, 1, 0, Math.PI * 2, false);
 	ctx.fill();
@@ -147,33 +128,33 @@ Field.prototype.inUse = function(pt) {
 	return isExists;
 };
 
-Field.prototype.separate = function(p1) {
-	var isLib = p1 instanceof Lib;
-	var p2 = isLib ? p1.next : p1.prev;
+Field.prototype.separate = function(player) {
+	var isLib = player instanceof Lib;
+	var joint = isLib ? player.next : player.prev;
 
-	if (!(p2 instanceof Picket)) {
+	if (joint instanceof Player) {
 		return;
 	}
-	var picket = p2.parent;
-	var p3 = isLib ? p2.next : p2.prev;
-	var di1 = new Diagonal(p1, p2);
+	var picket = joint.parent;
+	var p3 = isLib ? joint.next : joint.prev;
+	var di1 = new Diagonal(player, joint);
 	var dist1 = di1.distanceFrom(picket);
 	var sign1 = dist1 < 0 ? -1 : 1;
-	var di2 = new Diagonal(p1, p3);
+	var di2 = new Diagonal(player, p3);
 	var dist2 = di2.distanceFrom(picket);
 	var sign2 = dist2 < 0 ? -1 : 1;
 
-	if (!isLib) {
-		var ctx = this.ctx;
-		ctx.save();
-		ctx.strokeStyle = 'rgba(0, 255, 255, 1)';
-		ctx.fillStyle = 'rgba(0, 255, 255, 1)';
-		p2.drawContact(ctx);
-		ctx.fill();
-		ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
-		p3.drawContact(ctx);
-		ctx.restore();
-	}
+//	if (!isLib) {
+//		var ctx = this.ctx;
+//		ctx.save();
+//		ctx.strokeStyle = 'rgba(0, 255, 255, 1)';
+//		ctx.fillStyle = 'rgba(0, 255, 255, 1)';
+//		joint.drawContact(ctx);
+//		ctx.fill();
+//		ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+//		p3.drawContact(ctx);
+//		ctx.restore();
+//	}
 	if (sign1 != sign2) {
 		return;
 	}
@@ -181,26 +162,27 @@ Field.prototype.separate = function(p1) {
 		return;
 	}
 //console.log('separate:' + dist1 + '/' + dist2);
-	p2.remove();
+	joint.remove();
 };
 
-Field.prototype.testPicket = function(p1) {
+Field.prototype.testPicket = function(player) {
 	var field = this;
 	var ctx = this.ctx;
-	var isLib = p1 instanceof Lib;
-	var p2 = isLib ? p1.next : p1.prev;
-	var di = new Diagonal(p1, p2);
+	var isLib = player instanceof Lib;
+	var prev = isLib ? player.next : player.prev;
+	var di = new Diagonal(player, prev);
 	var radian = di.radian + Math.PI / 2;
-	var bounds = new Diagonal(p1, p2).addMargin(Picket.RADIUS);
-	var found = null;
+	var bounds = new Diagonal(player, prev).addMargin(1);
+	var distMax = Number.MAX_VALUE;
+	var candidate = null;
 
 //	bounds.drawRect(ctx);
 	this.picketList.forEach(function(picket) {
-		if (picket.includes(p1)) {
+		if (picket.includes(player)) {
 //console.log('over!');
 			return;
 		}
-		if (found || !bounds.rectIncludes(picket)) {
+		if (!bounds.rectIncludes(picket)) {
 			return;
 		}
 		var dist = di.distanceFrom(picket);
@@ -208,19 +190,21 @@ Field.prototype.testPicket = function(p1) {
 
 		np.drawContact(ctx);
 		field.drawGuide(picket, radian, dist);
-		if (Math.abs(dist) < Picket.RADIUS) {
+		if (Math.abs(dist) < Picket.RADIUS && !field.inUse(np)) {
+			var distFromPlayer = player.distanceFrom(np);
 
-			if (!field.inUse(np)) {
-				found = np;
+			if (distFromPlayer < distMax) {
+				// playerからの距離を測って一番近いものだけ候補にする
+				distMax = distFromPlayer;
+				candidate = np;
 			}
 		}
 	});
-	if (found) {
-//console.log('Hit:' + found.id);
+	if (candidate) {
 		if (isLib) {
-			this.lib.push(found);
-		} else if (p1 instanceof Rab) {
-			this.rab.unshift(found);
+			player.push(candidate);
+		} else if (player instanceof Rab) {
+			player.unshift(candidate);
 		}
 	}
 };
@@ -232,7 +216,6 @@ Field.prototype.testLine = function() {
 	ctx.save();
 	ctx.lineWidth = .2;
 	ctx.strokeStyle = 'rgba(255, 255, 64, .8)';
-	ctx.fillStyle = 'rgba(255, 32, 32, .6)';
 	this.testPicket(this.lib);
 	this.testPicket(this.rab);
 	this.separate(this.lib);
@@ -245,7 +228,7 @@ Field.prototype.drawPoint = function() {
 	var target = this.lib.next;
 
 	ctx.strokeStyle = 'rgba(40, 40, 40, 1)';
-	ctx.fillStyle = 'rgba(40, 40, 40, 1)';
+	ctx.fillStyle = 'rgba(40, 40, 40, .6)';
 	while (target.next) {
 		target.drawContact(ctx);
 		ctx.fill();
@@ -272,11 +255,47 @@ Field.prototype.drawLines = function() {
 	ctx.fillText(cnt, 10, 32);
 };
 
+Field.prototype.divertPicket = function(player) {
+	var px = player.x;
+	var py = player.y;
+	var step = Picket.RADIUS * 2 + 1;
+
+	this.picketList.forEach(function(picket) {
+		if (picket.includes(player)) {
+			if (player.dx != 0) {
+				var sign = py <= picket.y ? -1 : 1;
+
+				player.y = picket.y + step * sign;
+//console.log('dx:' + player.dx);
+			} else {
+				var sign = px <= picket.x ? -1 : 1;
+
+				player.x = picket.x + step * sign;
+//console.log('dy:' + player.dy);
+			}
+		}
+	});
+};
+
 Field.prototype.drawActors = function() {
+	var field = this;
 	var ctx = this.ctx;
 
 	this.actors.forEach(function(actor) {
 		actor.move();
+		if (actor.x < 0) {
+			actor.x = 0;
+		} else if (Field.WIDTH < actor.x) {
+			actor.x = Field.WIDTH;
+		}
+		if (actor.y < 0) {
+			actor.y = 0;
+		} else if (Field.HEIGHT < actor.y) {
+			actor.y = Field.HEIGHT;
+		}
+		if (actor instanceof Player) {
+			field.divertPicket(actor);
+		}
 		actor.draw(ctx);
 	});
 };

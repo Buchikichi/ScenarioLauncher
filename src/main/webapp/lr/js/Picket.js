@@ -1,9 +1,9 @@
 function Picket(x, y) {
-	Chain.apply(this, arguments);
+	Esse.apply(this, arguments);
 	this.parent = null;
 }
 Picket.RADIUS = 2;
-Picket.prototype = Object.create(Chain.prototype);
+Picket.prototype = Object.create(Esse.prototype);
 
 Picket.prototype.includes = function(pt) {
 	var dx = pt.x - this.x;
@@ -19,10 +19,10 @@ Picket.prototype.derive = function(radian, dist) {
 	var radius = Picket.RADIUS * sign;
 	var sx = this.x + Math.cos(rad) * radius;
 	var sy = this.y + Math.sin(rad) * radius;
-	var picket = new Picket(sx, sy);
+	var joint = new Chain(sx, sy);
 
-	picket.parent = this;
-	return picket;
+	joint.parent = this;
+	return joint;
 };
 
 Picket.prototype.draw = function(ctx) {

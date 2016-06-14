@@ -27,11 +27,10 @@ EnmTentacle.prototype.eject = function() {
 	this.x = -this.width;
 };
 
-EnmTentacle.prototype.movePlus = function(target) {
-	var dx = target.x - this.x;
-	var dy = target.y - this.y;
-
-	this.dir = Math.atan2(dy, dx);
+EnmTentacle.prototype._move = Enemy.prototype.move;
+EnmTentacle.prototype.move = function(target) {
+	this.aim(target);
+	this._move(target);
 };
 
 EnmTentacle.prototype.drawNormal = function(ctx) {

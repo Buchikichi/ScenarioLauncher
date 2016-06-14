@@ -4,24 +4,24 @@
 function Ship(field, x, y) {
 	Actor.apply(this, arguments);
 	this.speed = 4;
-	this.recalculation();
+	this.trigger = false;
 	this.img.src = 'img/ship001.png';
 }
 Ship.SQ = Math.PI / 2;
 Ship.prototype = Object.create(Actor.prototype);
+Ship.prototype.actor = Object.create(Actor.prototype);
 
+Ship.prototype._recalculation = Actor.prototype.recalculation;
 Ship.prototype.recalculation = function() {
-	this.hW = this.width / 2;
-	this.hH = this.height / 2;
-	this.maxX = this.field.width - this.width * 3;
-	this.maxY = this.field.height - this.hH;
+	this.right = this.field.width - this.width * 3;
+	this.bottom = this.field.height - this.hH;
+	this._recalculation();
 };
 
 Ship.prototype.inkey = function(keys) {
 	var hit = false;
 	var dir = 0;
 
-	this.dir = null;
 	if (keys['k37']) {
 		dir = 1;
 		hit = true;
@@ -41,11 +41,20 @@ Ship.prototype.inkey = function(keys) {
 	}
 };
 
-Ship.prototype.movePlus = function() {
-	if (this.x < this.hW || this.maxX < this.x) {
+Ship.prototype.shot = function() {
+	return new Shot(this.field, this.x + this.hW, this.y);
+};
+
+Ship.prototype._move = Actor.prototype.move;
+Ship.prototype.move = function() {
+	this._move();
+	if (this.isGone) {
+		return;
+	}
+	if (this.x < this.hW || this.right < this.x) {
 		this.x = this.svX;
 	}
-	if (this.y < this.hH || this.maxY < this.y) {
+	if (this.y < this.hH || this.bottom < this.y) {
 		this.y = this.svY;
 	}
 };

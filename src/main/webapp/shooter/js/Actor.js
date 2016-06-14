@@ -15,6 +15,10 @@ function Actor(field, x, y) {
 	this.height = 16;
 	this.speed = 1;
 	this.hitPoint = 1;
+	this.minX = 0;
+	this.minY = 0;
+	this.maxX = this.field.width;
+	this.maxY = this.field.height;
 	this.recalculation();
 	this.img = new Image();
 	this.img.onload = function() {
@@ -35,8 +39,10 @@ Actor.MAX_EXPLOSION = 12;
 Actor.prototype.recalculation = function() {
 	this.hW = this.width / 2;
 	this.hH = this.height / 2;
-	this.maxX = this.field.width;
-	this.maxY = this.field.height;
+	this.minX = -this.width;
+	this.minY = -this.height;
+	this.maxX = this.field.width + this.width;
+	this.maxY = this.field.height + this.height;
 };
 
 Actor.prototype.enter = function() {
@@ -47,6 +53,21 @@ Actor.prototype.enter = function() {
 Actor.prototype.eject = function() {
 	this.isGone = true;
 	this.x = -this.width;
+};
+
+Actor.prototype.aim = function(target) {
+	if (target) {
+		var dist = this.calcDistance(target);
+
+		if (this.speed < dist) {
+			var dx = target.x - this.x;
+			var dy = target.y - this.y;
+
+			this.dir = Math.atan2(dy, dx);
+		}
+	} else {
+		this.dir = null;
+	}
 };
 
 /**
@@ -62,21 +83,17 @@ Actor.prototype.move = function(target) {
 	}
 	this.x += this.dx * this.speed;
 	this.y += this.dy * this.speed;
-	this.movePlus(target);
+	if (this.x < this.minX || this.maxX < this.x) {
+		this.eject();
+	}
+	if (this.y < this.minY || this.maxY < this.y) {
+		this.eject();
+	}
 	if (0 < this.explosion) {
 		this.explosion--;
 		if (this.explosion == 0) {
 			this.eject();
 		}
-	}
-};
-
-Actor.prototype.movePlus = function(target) {
-	if (this.x + this.width < 0 || this.field.width < this.x) {
-		this.isGone = true;
-	}
-	if (this.y + this.height < 0 || this.field.height < this.y) {
-		this.isGone = true;
 	}
 };
 

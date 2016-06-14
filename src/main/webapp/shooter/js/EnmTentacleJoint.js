@@ -41,7 +41,7 @@ EnmTentacleJoint.prototype.trimRadian = function(radian) {
 	return rad;
 };
 
-EnmTentacleJoint.prototype.movePlus = function(target) {
+EnmTentacleJoint.prototype.move = function(target) {
 	var prev = this.prev;
 	var dx = target.x - this.x;
 	var dy = target.y - this.y;

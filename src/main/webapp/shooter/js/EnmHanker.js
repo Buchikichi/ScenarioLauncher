@@ -11,10 +11,9 @@ function EnmHanker() {
 
 EnmHanker.prototype = Object.create(Enemy.prototype);
 
-EnmHanker.prototype.movePlus = function(target) {
-	var wX = this.x - target.x;
-	var wY = this.y - target.y;
-
-	this.radian = Math.atan2(wY, wX);
-	this.dir = this.radian - Math.PI;
+EnmHanker.prototype._move = Enemy.prototype.move;
+EnmHanker.prototype.move = function(target) {
+	this.aim(target);
+	this.radian = this.dir;
+	this._move(target);
 };

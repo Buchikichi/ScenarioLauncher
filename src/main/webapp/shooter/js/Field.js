@@ -8,6 +8,7 @@ function Field(width, height) {
 	this.shotList = [];
 	this.ship = new Ship(this, 100, 100);
 	this.ship.isGone = true;
+	this.shipTarget = null;
 	this.score = 0;
 	this.hiscore = 0;
 	this.enemyCycle = 0;
@@ -113,6 +114,7 @@ Field.prototype.isGameOver = function() {
 };
 
 Field.prototype.inkey = function(keys) {
+	this.ship.dir = null;
 	if (this.isGameOver()) {
 		if (keys['k32']) {
 			this.startGame();
@@ -121,15 +123,22 @@ Field.prototype.inkey = function(keys) {
 	}
 	if (!this.ship.explosion) {
 		if (keys['k16'] || keys['k17']) {
-			if (this.shotList.length < Field.MAX_SHOTS) {
-				var x = this.ship.x + 16;
-				var y = this.ship.y;
-				this.actorList.push(new Shot(this, x, y));
-			}
+			this.ship.trigger = true;
 		}
+		this.ship.aim(this.shipTarget);
 		this.ship.inkey(keys);
 	}
 	this.ship.move();
+};
+
+Field.prototype.moveShipTo = function(target) {
+	if (this.isGameOver() || this.ship.explosion) {
+		return;
+	}
+	if (target) {
+		this.ship.trigger = true;
+	}
+	this.shipTarget = target;
 };
 
 Field.prototype.scroll = function() {
@@ -202,6 +211,12 @@ Field.prototype.draw = function() {
 			}
 		});
 	});
+	if (this.ship.trigger) {
+		this.ship.trigger = false;
+		if (this.shotList.length < Field.MAX_SHOTS) {
+			this.actorList.push(this.ship.shot());
+		}
+	}
 	this.score += score;
 	this.showScore();
 	if (!this.isGameOver() && ship.isGone) {

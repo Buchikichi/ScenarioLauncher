@@ -12,16 +12,18 @@ function EnmBouncer() {
 
 EnmBouncer.prototype = Object.create(Enemy.prototype);
 
-EnmBouncer.prototype.movePlus = function() {
-	if (this.shuttle && (this.x < 0 || 500 < this.x)) {
+EnmBouncer.prototype._move = Enemy.prototype.move;
+EnmBouncer.prototype.move = function(target) {
+	if (this.shuttle && (this.x < 0 || this.field.width < this.x)) {
 		this.dx = -this.dx;
 		this.shuttle--;
 	}
-	if (224 < this.y) {
+	if (this.field.height <= this.y) {
 		this.dy = -this.dy;
 	} else {
 		this.dy += .3;
 	}
+	this._move(target);
 };
 
 EnmBouncer.prototype.drawNormal = function(ctx) {
@@ -30,7 +32,8 @@ EnmBouncer.prototype.drawNormal = function(ctx) {
 	var ty = this.y / sy;
 
 	ctx.save();
+	ctx.translate(this.x, this.y);
 	ctx.scale(1, sy);
-	ctx.drawImage(this.img, this.x, ty);
+	ctx.drawImage(this.img, -this.hW, -this.hH);
 	ctx.restore();
 };

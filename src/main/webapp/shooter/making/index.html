@@ -109,73 +109,83 @@ ShooterはJavaScriptで動いていますが、ちょっとしたクラスのよ
             <img src="../img/enmWaver.png" class="char"/>
             Waver<br/>
 波打つ動きをします。<br/>
-波打つ動きをするには、固定値をキャラクターの位置(x, y)に対して加減算するだけでは実現できません。<br/>
-Actorクラス(Actor.js)の中で、以下のような処理をしています。
-            <pre class="prettyprint linenums">
-this.x += this.dx * this.speed;
-this.y += this.dy * this.speed;
-</pre>
-どの位加速するのかという加速度(dx, dy)を、キャラクターの位置(x, y)に対して加減算しています。<br/>
 EnmWaverクラス(EnmWaver.js)の中で、以下のような処理をしています。
             <pre class="prettyprint linenums">
-EnmWaver.prototype.RANGE = 8;
-EnmWaver.prototype.movePlus = function() {
-	...
-	if (this.RANGE &lt; Math.abs(this.dy)) {
+EnmWaver.RANGE = 8;
+EnmWaver.prototype.move = function(target) {
+	if (EnmWaver.RANGE &lt; Math.abs(this.cnt)) {
 		this.direction = -this.direction;
 	}
-	this.dy += this.direction;
+	this.dir += this.direction * this.step;
+	this.cnt += this.direction;
+	this._move();
 };
 </pre>
-5行目の変数 direction の初期値は 1 で、-1 か 1 に変化します。<br/>
-7行目で、dy を増減させています。dyは、1,2,3,4,5,6,7,8,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-8,-7,-6,-5...と変化していきます。<br/>
-こうする事で加速/減速の幅が少しずつ変化するので、波打つ動きを実現出来ます。
+4行目の変数 direction は正負の方向を示しています。初期値は 1 で、-1 か 1 に変化します。<br/>
+6行目の変数 dir は、進行方向です。初期値はπです。角度0は右方向、角度πは左方向です。<br/>
+dir を少しずつ変化させて、波打つ動きを実現しています。
           </div>
           <div class="ui-body ui-body-a ui-corner-all">
             <img src="../img/enmBouncer.png" class="char"/>
             Bouncer<br/>
             ピョンピョン飛び跳ねる動きをします。<br/>
-            キャラクターの位置(x, y)に対して、加速度(dx, dy)を加減算するという方法は、Waverと同じです。<br/>
+            キャラクターの位置(x, y)に対して、加速度(dx, dy)を加減算するという方法をとっています。<br/>
             EnmBouncerクラス(EnmBouncer.js)の中で、以下のような処理をしています。
             <pre class="prettyprint linenums">
-EnmBouncer.prototype.movePlus = function() {
-	if (this.x &lt; 0 || 500 &lt; this.x) {
+EnmBouncer.prototype.move = function(target) {
+	if (this.shuttle &amp;&amp; (this.x &lt; 0 || this.field.width &lt; this.x)) {
 		this.dx = -this.dx;
+		this.shuttle--;
 	}
-	if (224 &lt; this.y) {
+	if (this.field.height &lt;= this.y) {
 		this.dy = -this.dy;
 	} else {
 		this.dy += .3;
 	}
+	this._move(target);
 };
 </pre>
-            2～4行目は、画面の左右にたどりついたら、横方向の加速度(dx)の正負を逆転しています。
-            正負の逆転は「跳ね返る」事なのです。<br/>
-            5,6行目も同様に、画面の下にたどりついたら、縦方向の加速度(dy)に対して「跳ね返る」という処理をしています。<br/>
-            8行目、画面内にいるときは、縦方向の加速度(dy)を加算して落下するような動きをしています。
+            2～5行目は、画面の左右にたどりついたら、横方向の加速度(dx)の正負を逆転しています。
+            ここでの正負の逆転は「跳ね返る」事なのです。<br/>
+            6,7行目も同様に、画面の下にたどりついたら、縦方向の加速度(dy)に対して「跳ね返る」という処理をしています。<br/>
+            9行目、画面内にいるときは、縦方向の加速度(dy)を加算して落下するような動きをしています。
           </div>
           <div class="ui-body ui-body-a ui-corner-all">
             <img src="../img/enmHanker.png" class="char"/>
             Hanker<br/>
             プレイヤーをしつこく追い回します。<br/>
             ターゲット(=プレイヤー)に依存して動くので、別の2つのキャラクターとは動きが違います。<br/>
-            EnmHankerクラス(EnmHanker.js)の中で、以下のような処理をしています。
+            Actorクラス(Actor.js)と、EnmHankerクラス(EnmHanker.js)の中で、以下のような処理をしています。
             <pre class="prettyprint linenums">
-EnmHanker.prototype.movePlus = function(target) {
-	var wX = this.x - target.x;
-	var wY = this.y - target.y;
+Actor.prototype.aim = function(target) {
+	...
+	var dx = target.x - this.x;
+	var dy = target.y - this.y;
 
-	this.radian = Math.atan2(wY, wX);
-	this.dir = this.radian - Math.PI;
+	this.dir = Math.atan2(dy, dx);
+	...
+};
+Actor.prototype.move = function(target) {
+	...
+	if (this.dir != null) {
+		this.x += Math.cos(this.dir) * this.speed;
+		this.y += Math.sin(this.dir) * this.speed;
+	}
+	...
 };
 </pre>
-            2,3行目で、Hankerとターゲット間のX軸方向の距離、Y軸方向の距離を計算しています。<br/>
-            5行目で、Hankerとターゲットの角度を求めています。この角度はラジアンです。分度器で測る角度はdegree(デグリー)です。<br/>
-            atan2 メソッドへは、y, x の順に値を渡します。<br/>
-            進行方向 dir は、角度からπを引いて逆方向にしています。<br/>
-            横方向の加速度は、角度(dir)をもとに cos で計算します。<br/>
-            縦方向の加速度は、角度(dir)をもとに sin で計算します。<br/>
-            角度を、ターゲットから見た角度にした理由は、hankerの画像を回転したいからです。<br/>
+            3,4行目で、Hankerとターゲット間のX軸方向の距離、Y軸方向の距離を計算しています。<br/>
+            6行目で、Hankerとターゲットの角度を求めています。この角度はラジアンです。分度器で測る角度はdegree(デグリー)です。<br/>
+            Math.atan2 メソッドへは、y, x の順に値を渡します。<br/>
+            横方向の移動は、角度(dir)をもとに cos で計算し、縦方向の移動は、角度(dir)をもとに sin で計算します。<br/>
+            <pre class="prettyprint linenums">
+EnmHanker.prototype.move = function(target) {
+	this.aim(target);
+	this.radian = this.dir;
+	this._move(target);
+};
+</pre>
+            進行方向 this.dir を、そのまま this.radian に渡して、画像を回転しています。<br/>
             <pre class="prettyprint linenums">
 Actor.prototype.drawNormal = function(ctx) {
 	ctx.save();
@@ -185,8 +195,7 @@ Actor.prototype.drawNormal = function(ctx) {
 	ctx.restore();
 };
 </pre>
-            canvasにイメージを貼り付ける時に、rotateメソッドを使って画像を回転させています。<br/>
-            この時の角度(radian)は、ターゲットからHankerを見た角度なのです。
+            canvasにイメージを貼り付ける時に、rotateメソッドを使って画像を回転させています。
           </div>
           <div class="ui-body ui-body-a ui-corner-all">
             <img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleHead.png" class="char"/>

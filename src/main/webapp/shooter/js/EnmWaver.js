@@ -15,13 +15,12 @@ EnmWaver.prototype = Object.create(Enemy.prototype);
 
 EnmWaver.RANGE = 8;
 
-EnmWaver.prototype.movePlus = function() {
-	if (this.x + this.width < 0) {
-		this.isGone = true;
-	}
+EnmWaver.prototype._move = Enemy.prototype.move;
+EnmWaver.prototype.move = function(target) {
 	if (EnmWaver.RANGE < Math.abs(this.cnt)) {
 		this.direction = -this.direction;
 	}
 	this.dir += this.direction * this.step;
 	this.cnt += this.direction;
+	this._move();
 };

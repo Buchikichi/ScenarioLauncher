@@ -9,6 +9,7 @@ function Shot() {
 	this.recalculation();
 	this.speed = 12;
 	this.size = 2;
+	this.maxX = this.field.width;
 	this.sfx.src = 'audio/sfx-fire.mp3';
 	this.sfx.volume = .5;
 	this.sfx.play();

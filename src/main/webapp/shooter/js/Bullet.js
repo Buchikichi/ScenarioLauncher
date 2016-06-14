@@ -10,13 +10,6 @@ function Bullet(field, x, y) {
 }
 Bullet.prototype = Object.create(Actor.prototype);
 
-Bullet.prototype.aim = function(target) {
-	var dx = target.x - this.x;
-	var dy = target.y - this.y;
-
-	this.dir = Math.atan2(dy, dx);
-};
-
 Bullet.prototype.drawNormal = function(ctx) {
 	ctx.save();
 	ctx.beginPath();

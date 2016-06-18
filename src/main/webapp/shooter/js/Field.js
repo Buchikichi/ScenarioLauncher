@@ -4,6 +4,8 @@
 function Field(width, height) {
 	this.width = width;
 	this.height = height;
+	this.hW = width / 2;
+	this.hH = height / 2;
 	this.actorList = [];
 	this.shotList = [];
 	this.ship = new Ship(this, 100, 100);
@@ -60,10 +62,24 @@ Field.prototype.setupEnemy = function() {
 		return;
 	}
 	var type = parseInt(Math.random() * 100);
-	var x = this.width - 16;
+	var x = this.width;
 	var y = Math.random() * 125 + 25;
+	var istenEacleExists = false;
+	var isDragonExists = false;
 
-	if (type < 5) {
+	this.actorList.forEach(function(actor) {
+		if (actor instanceof EnmTentacle) {
+			istenEacleExists = true;
+		}
+		if (actor instanceof EnmDragonHead) {
+			isDragonExists = true;
+		}
+	});
+	if (type < 3) {
+		if (!isDragonExists) {
+			this.setupDragon(x, y);
+		}
+	} else if (type < 7/* && !istenEacleExists*/) {
 		var tentacle = new EnmTentacle(this, x, y);
 		var joint = tentacle.next;
 
@@ -72,13 +88,24 @@ Field.prototype.setupEnemy = function() {
 			joint = joint.next;
 		}
 		this.actorList.push(tentacle);
-	} else if (type < 10) {
+	} else if (type < 15) {
 		this.actorList.push(new EnmHanker(this, x, y));
-	} else if (type < 40) {
+	} else if (type < 30) {
+		var y = Math.random() * (this.hH - 32) + this.hH;
 		this.actorList.push(new EnmBouncer(this, x, y));
 	} else {
 		this.actorList.push(new EnmWaver(this, x, y));
 	}
+};
+
+Field.prototype.setupDragon = function(x, y) {
+	var dragon = new EnmDragonHead(this, x + 50, y);
+	var actorList = this.actorList;
+
+	dragon.body.forEach(function(body) {
+		actorList.push(body);
+	});
+	this.actorList.push(dragon);
 };
 
 Field.prototype.reset = function() {

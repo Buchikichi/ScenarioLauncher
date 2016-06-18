@@ -35,6 +35,8 @@ function Actor(field, x, y) {
 	this.enter();
 }
 Actor.MAX_EXPLOSION = 12;
+Actor.PI2 = Math.PI * 2;
+Actor.DEG_STEP = Math.PI / 180;
 
 Actor.prototype.recalculation = function() {
 	this.hW = this.width / 2;
@@ -52,7 +54,7 @@ Actor.prototype.enter = function() {
 
 Actor.prototype.eject = function() {
 	this.isGone = true;
-	this.x = -this.width;
+	this.x = -this.field.width;
 };
 
 Actor.prototype.aim = function(target) {
@@ -68,6 +70,29 @@ Actor.prototype.aim = function(target) {
 	} else {
 		this.dir = null;
 	}
+};
+
+Actor.prototype.trimRadian = function(radian) {
+	if (Math.PI < radian) {
+		return radian - Actor.PI2;
+	} else if (radian < -Math.PI) {
+		return radian + Actor.PI2;
+	}
+	return radian;
+};
+
+Actor.prototype.closeGap = function(target) {
+	var dx = target.x - this.x;
+	var dy = target.y - this.y;
+	var diff = this.trimRadian(this.radian - Math.atan2(dy, dx));
+
+	if (Math.abs(diff) <= Actor.DEG_STEP) {
+		return 0;
+	}
+	if (0 < diff) {
+		return -Actor.DEG_STEP;
+	}
+	return Actor.DEG_STEP;
 };
 
 /**
@@ -116,7 +141,7 @@ Actor.prototype.drawExplosion = function(ctx) {
 	ctx.save();
 	ctx.translate(this.x, this.y);
 	ctx.beginPath();
-	ctx.arc(0, 0, size, 0, Math.PI * 2, false);
+	ctx.arc(0, 0, size, 0, Actor.PI2, false);
 	ctx.fill();
 	ctx.restore();
 };
@@ -147,8 +172,8 @@ Actor.prototype.isHit = function(target) {
 	var len = (w + h) / 3;
 
 	if (dist < len) {
-		this.fate();
-		target.fate();
+		this.fate(target);
+		target.fate(this);
 		return true;
 	}
 	return false;
@@ -164,7 +189,7 @@ Actor.prototype.calcDistance = function(target) {
 /**
  * やられ.
  */
-Actor.prototype.fate = function() {
+Actor.prototype.fate = function(target) {
 	this.hitPoint--;
 	if (0 < this.hitPoint) {
 		if (this.absorb) {
@@ -172,9 +197,9 @@ Actor.prototype.fate = function() {
 
 			ctx.fillStyle = 'rgba(255, 255, 0, 0.4)';
 			ctx.save();
-			ctx.translate(this.x, this.y);
+			ctx.translate(target.x, target.y);
 			ctx.beginPath();
-			ctx.arc(0, 0, 5, 0, Math.PI * 2, false);
+			ctx.arc(0, 0, 5, 0, Actor.PI2, false);
 			ctx.fill();
 			ctx.restore();
 			this.absorb.play();

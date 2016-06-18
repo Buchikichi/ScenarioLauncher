@@ -3,7 +3,7 @@
  */
 function EnmHanker() {
 	Enemy.apply(this, arguments);
-	this.speed = 3;
+	this.speed = 2;
 	this.hitPoint = 8;
 	this.score = 100;
 	this.img.src = 'img/enmHanker.png';

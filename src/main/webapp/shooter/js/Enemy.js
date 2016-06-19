@@ -3,7 +3,6 @@
  */
 function Enemy() {
 	Actor.apply(this, arguments);
-	this.score = 10;
 	this.triggerCycle = 0;
 }
 Enemy.prototype = Object.create(Actor.prototype);

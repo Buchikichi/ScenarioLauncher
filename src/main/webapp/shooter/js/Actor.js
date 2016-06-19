@@ -15,6 +15,7 @@ function Actor(field, x, y) {
 	this.height = 16;
 	this.speed = 1;
 	this.hitPoint = 1;
+	this.score = 0;
 	this.minX = 0;
 	this.minY = 0;
 	this.maxX = this.field.width;
@@ -127,6 +128,9 @@ Actor.prototype.move = function(target) {
  * @param ctx
  */
 Actor.prototype.drawNormal = function(ctx) {
+	if (!this.img.src) {
+		return;
+	}
 	ctx.save();
 	ctx.translate(this.x, this.y);
 	ctx.rotate(this.radian);
@@ -163,7 +167,7 @@ Actor.prototype.draw = function(ctx) {
  * @returns {Boolean}
  */
 Actor.prototype.isHit = function(target) {
-	if (this.isGone || 0 < this.explosion) {
+	if (this.isGone || 0 < this.explosion || 0 < target.explosion) {
 		return false;
 	}
 	var dist = this.calcDistance(target);

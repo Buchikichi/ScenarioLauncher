@@ -64,22 +64,22 @@ Field.prototype.setupEnemy = function() {
 	var type = parseInt(Math.random() * 100);
 	var x = this.width;
 	var y = Math.random() * 125 + 25;
-	var istenEacleExists = false;
-	var isDragonExists = false;
+	var numOfTentacle = 0;
+	var numOfDragon = 0;
 
 	this.actorList.forEach(function(actor) {
 		if (actor instanceof EnmTentacle) {
-			istenEacleExists = true;
+			numOfTentacle++;
 		}
 		if (actor instanceof EnmDragonHead) {
-			isDragonExists = true;
+			numOfDragon++;
 		}
 	});
-	if (type < 3) {
-		if (!isDragonExists) {
+	if (type < 2) {
+		if (!numOfDragon) {
 			this.setupDragon(x, y);
 		}
-	} else if (type < 7/* && !istenEacleExists*/) {
+	} else if (type < 7 && numOfTentacle < 3) {
 		var tentacle = new EnmTentacle(this, x, y);
 		var joint = tentacle.next;
 
@@ -88,12 +88,18 @@ Field.prototype.setupEnemy = function() {
 			joint = joint.next;
 		}
 		this.actorList.push(tentacle);
+	} else if (type < 10) {
+		if (die(4)) {
+			x = 0;
+		}
+		this.actorList.push(new EnmFormation(this, x, y).setup(EnmWaver, 8));
 	} else if (type < 15) {
 		this.actorList.push(new EnmHanker(this, x, y));
 	} else if (type < 30) {
 		var y = Math.random() * (this.hH - 32) + this.hH;
 		this.actorList.push(new EnmBouncer(this, x, y));
 	} else {
+		var y = Math.random() * this.hH + this.hH / 2;
 		this.actorList.push(new EnmWaver(this, x, y));
 	}
 };
@@ -207,8 +213,12 @@ Field.prototype.draw = function() {
 		if (actor.isGone) {
 			return;
 		}
+		var child = actor.move(ship);
+
+		if (child instanceof Actor) {
+			validActors.push(child);
+		}
 		actor.draw(ctx);
-		actor.move(ship);
 		validActors.push(actor);
 		if (actor instanceof Shot) {
 			shotList.push(actor);
@@ -225,17 +235,17 @@ Field.prototype.draw = function() {
 				}
 			}
 		}
+		if (actor.explosion && actor.score) {
+			score += actor.score;
+			actor.score = 0;
+		}
 	});
 	this.ship.draw(ctx);
 	this.actorList = validActors;
 	this.shotList = shotList;
 	enemyList.forEach(function(enemy) {
 		shotList.forEach(function(shot) {
-			if (enemy.isHit(shot)) {
-				if (enemy.explosion) {
-					score += enemy.score;
-				}
-			}
+			enemy.isHit(shot);
 		});
 	});
 	if (this.ship.trigger) {

@@ -24,7 +24,7 @@ EnmDragonHead.prototype = Object.create(Enemy.prototype);
 EnmDragonHead.CNT_OF_BODY = 10;
 EnmDragonHead.STP_OF_BODY = 16;
 
-EnmDragonHead.prototype._recalculation = Enemy.prototype.recalculation;
+EnmDragonHead.prototype._recalculation = Actor.prototype.recalculation;
 EnmDragonHead.prototype.recalculation = function() {
 	this._recalculation();
 	this.minX = -this.field.width;

@@ -194,12 +194,15 @@ Actor.prototype.calcDistance = function(target) {
  * やられ.
  */
 Actor.prototype.fate = function(target) {
+	if (this.isGone || this.explosion) {
+		return;
+	}
 	this.hitPoint--;
 	if (0 < this.hitPoint) {
 		if (this.absorb) {
 			var ctx = this.field.ctx;
 
-			ctx.fillStyle = 'rgba(255, 255, 0, 0.4)';
+			ctx.fillStyle = 'rgba(255, 200, 0, 0.4)';
 			ctx.save();
 			ctx.translate(target.x, target.y);
 			ctx.beginPath();

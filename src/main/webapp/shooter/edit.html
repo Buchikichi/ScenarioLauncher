@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name=viewport content="width=device-width, initial-scale=1"/>
+<title>Edit</title>
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+<!--
+<link rel="stylesheet" href="css/default.css"/>
+-->
+<script type="text/javascript" defer src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" defer src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" defer src="js/Landform.js"></script>
+<script type="text/javascript" defer src="js/edit.js"></script>
+<style type="text/css">
+canvas {
+	border: 1px lightgray solid;
+	background-color: black;
+}
+#slider {
+/*	display: none;*/
+}
+</style>
+</head>
+
+<body>
+  <div data-role="page">
+    <div id="header" data-role="header" data-theme="b" data-position="fixed">
+      <a href="/" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
+      <h1>Edit</h1>
+    </div>
+    <div style="display: table; table-layout: fixed; width: 100%;">
+        <div id="content">
+          <canvas id="canvas" width="1024" height="224"></canvas>
+        </div>
+    </div>
+    <div id="controls" data-role="content">
+      <input id="slider" min="0" max="0" value="0" type="range" readonly/>
+      <input id="bg" type="file" accept="image/*"/>
+      <button id="generateButton">Generate</button>
+      <input id="map" type="file" accept="image/*"/>
+      <img id="mapImage"/>
+    </div>
+  </div>
+</body>
+</html>

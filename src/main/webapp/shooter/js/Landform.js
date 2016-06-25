@@ -1,0 +1,205 @@
+function Landform(canvas) {
+	var landform = this;
+
+	this.canvas = canvas;
+	this.ctx = canvas.getContext('2d');
+	this.x = 0;
+	this.y = 0;
+	this.dir = 0;
+	this.speed = 0;
+	this.col = 0;
+	this.colDir = 1;
+	this.magni = 1;
+	this.target = null;
+	this.img = new Image();
+	this.img.onload = function() {
+		landform.x = 0;
+		landform.width = this.width;
+		landform.height = this.height;
+		landform.bw = this.width / Landform.BRICK_WIDTH;
+		landform.bh = this.height / Landform.BRICK_WIDTH;
+	}
+	this.isEdit = false;
+	this.brick = null;
+	this.touch = false;
+}
+Landform.BRICK_WIDTH = 8;
+Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
+Landform.COL_MAX = 512;
+
+Landform.prototype.load = function(file) {
+	if (file instanceof File) {
+		this.img.src = window.URL.createObjectURL(file);
+	} else {
+		this.img.src = file;
+	}
+};
+
+Landform.prototype.loadMapData = function(file) {
+	var landform = this;
+	var img = new Image();
+
+	img.onload = function() {
+		var canvas = document.createElement('canvas');
+		var ctx = canvas.getContext('2d');
+
+		canvas.width = this.width;
+		canvas.height = this.height;
+		ctx.drawImage(img, 0, 0);
+		landform.brick = ctx.getImageData(0, 0, this.width, this.height);
+		landform.touch = true;
+	}
+	if (file instanceof File) {
+		img.src = window.URL.createObjectURL(file);
+	} else {
+		img.src = file;
+	}
+};
+
+Landform.prototype.forward = function() {
+	this.x += Math.cos(this.dir) * this.speed;
+	if (this.width < this.x) {
+		this.x = -512;
+	}
+};
+
+Landform.prototype.hitTest = function(target) {
+	if (!this.brick) {
+		return;
+	}
+	this.target = null;
+	var tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+	if (tx < 0 || this.bw < tx) {
+		return;
+	}
+	var ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+	var ix = ty * this.bw * 4 + tx * 4;
+	var bd = this.brick.data;
+
+	if (bd[ix + 3]) {
+		target.fate();
+	}
+	this.target = target;
+};
+
+Landform.prototype.drawTarget = function() {
+	if (!this.target || !this.isEdit) {
+		return;
+	}
+	var ctx = this.ctx;
+	var tx = Math.round((this.x + this.target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var ty = Math.round((this.y + this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+
+	ctx.save();
+	ctx.fillStyle = 'rgba(0, 255, 255, .6)';
+	ctx.fillRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH);
+	ctx.restore();
+};
+
+Landform.prototype.drawBrick = function() {
+	if (!this.brick || !this.isEdit) {
+		return;
+	}
+	var ctx = this.ctx;
+	var red = 255 < this.col ? this.col - 256 : 0;
+	var green = 255 < this.col ? 255 : this.col % 256;
+	var brickWidth = Landform.BRICK_WIDTH - 2;
+	var sx = Math.round(this.x / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var startX = sx / Landform.BRICK_WIDTH;
+	var endX = Math.min(startX + 512 / Landform.BRICK_WIDTH, this.bw);
+	var bd = this.brick.data;
+
+	ctx.save();
+	ctx.font = "6px 'Times New Roman'";
+	ctx.strokeStyle = 'rgba(0, 160, 0, .4)';
+	ctx.fillStyle = 'rgba(' + red + ', ' + green + ', 255, .4)';
+	for (var y = 0, ry = 0; y < this.bh; y++, ry += Landform.BRICK_WIDTH) {
+		var ix = (y * this.bw + startX) * 4;
+
+		for (var x = startX, rx = sx; x < endX; x++, rx += Landform.BRICK_WIDTH) {
+			if (0 <= x && bd[ix + 3]) {
+				ctx.fillRect(rx, ry, brickWidth, brickWidth);
+			}
+			ix += 4;
+		}
+	}
+	ctx.restore();
+	this.col += this.colDir * 16;
+	if (this.col <= 0 || Landform.COL_MAX <= this.col) {
+		this.colDir *= -1;
+	}
+};
+
+Landform.prototype.draw = function() {
+	if (!this.img.src || !this.img.complete) {
+		return;
+	}
+	var ctx = this.ctx;
+
+	ctx.save();
+	ctx.scale(this.magni, this.magni);
+	ctx.translate(-this.x, this.y);
+	ctx.drawImage(this.img, 0, 0);
+	this.drawBrick();
+	this.drawTarget();
+	ctx.restore();
+	if (this.touch && this.brick) {
+		this.updateMap();
+		this.touch = false;
+	}
+};
+
+Landform.prototype.updateMap = function() {
+	var canvas = document.createElement('canvas');
+	var ctx = canvas.getContext('2d');
+
+	canvas.width = this.brick.width;
+	canvas.height = this.brick.height;
+	ctx.putImageData(this.brick, 0, 0);
+	$('#mapImage').attr('src', canvas.toDataURL('image/png'));
+};
+
+Landform.prototype.getImageData = function() {
+	var canvas = document.createElement('canvas');
+	var ctx = canvas.getContext('2d');
+
+	canvas.width = this.width;
+	canvas.height = this.height;
+	ctx.drawImage(this.img, 0, 0);
+	return ctx.getImageData(0, 0, this.width, this.height);
+};
+
+Landform.prototype.generateBrick = function(ctx) {
+	if (!this.img.src || !this.img.complete) {
+		return;
+	}
+	var img = this.getImageData();
+	var bw = this.width / Landform.BRICK_WIDTH;
+	var bh = this.height / Landform.BRICK_WIDTH;
+	var brick = ctx.createImageData(bw, bh);
+	var dst = brick.data;
+	var sx = 0;
+	var ix = 0;
+
+console.log(this.width + ' x ' + this.height + ' | ' + (this.width * this.height * 4));
+console.log(bw + ' x ' + bh + ' | ' + dst.length);
+	for (var y = 0; y < bh; y++) {
+		for (var x = 0; x < bw; x++) {
+			var dot = false;
+
+			for (var c = 0; c < 4; c++) {
+				if (img.data[sx + c]) {
+					dot = true;
+				}
+			}
+			dst[ix + 3] = dot ? 255 : 0;
+			sx += Landform.BRICK_WIDTH * 4;
+			ix += 4;
+		}
+		sx += this.width * (Landform.BRICK_WIDTH - 1) * 4;
+	}
+console.log('ix:' + ix);
+console.log('sx:' + sx);
+	this.brick = brick;
+	this.touch = true;
+};

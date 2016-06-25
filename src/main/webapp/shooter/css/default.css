@@ -35,10 +35,6 @@ div.bg {
 	background-image: url("../img/stage01bg1.png");
 	z-index: 1;
 }
-#bg2 {
-	background-image: url("../img/stage01bg.png");
-	z-index: 1100;
-}
 #canvas {
 	position: absolute;
 	width: 100%;

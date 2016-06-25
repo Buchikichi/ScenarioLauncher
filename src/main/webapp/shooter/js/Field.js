@@ -24,25 +24,24 @@ Field.MAX_LOOSING_RATE = 100;
 
 Field.prototype.setup = function() {
 	var view = $('#view');
+	var canvas = document.getElementById('canvas');
 
-	for (var ix = 0; ix < 3; ix++) {
+	this.landform = new Landform(canvas);
+	this.landform.speed = 1;
+	this.landform.load('./img/stage01bg.png');
+	this.landform.loadMapData('./img/stage01map.png');
+	for (var ix = 0; ix < 2; ix++) {
 		var bg = $('<div></div>').attr('id', 'bg' + ix).addClass('bg');
 
 		bg.prop('mX', 0);
 		bg.prop('mY', 0);
 		view.append(bg);
 	}
-	this.setupCanvas(view);
+	canvas.width = this.width;
+	canvas.height = this.height;
+	this.ctx = canvas.getContext('2d');
 	this.setupBgm(1);
 	this.reset();
-};
-
-Field.prototype.setupCanvas = function(view) {
-	// canvas
-	var canvas = $('<canvas id="canvas"></canvas>').attr('width', this.width).attr('height', this.height);
-
-	view.append(canvas);
-	this.ctx = canvas.get(0).getContext('2d');
 };
 
 Field.prototype.setupBgm = function(stage) {
@@ -121,6 +120,7 @@ Field.prototype.reset = function() {
 		bg.prop('mX', 0);
 		bg.prop('mY', 0);
 	});
+	this.landform.x = -512;
 	this.ship.x = 100;
 	this.ship.y = 100;
 	this.actorList = [];
@@ -182,10 +182,11 @@ Field.prototype.scroll = function() {
 		var position = -mX + 'px ' + -mY + 'px';
 
 		bg.css('background-position', position);
-		mX += (ix + 1) * .5;
+		mX += (ix + 1) * .4;
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
+	this.landform.forward();
 	if (Field.ENEMY_CYCLE < this.enemyCycle++) {
 		this.enemyCycle = 0;
 		if (die(this.loosingRate / 30)) {
@@ -243,10 +244,11 @@ Field.prototype.draw = function() {
 	this.ship.draw(ctx);
 	this.actorList = validActors;
 	this.shotList = shotList;
-	enemyList.forEach(function(enemy) {
-		shotList.forEach(function(shot) {
+	shotList.forEach(function(shot) {
+		enemyList.forEach(function(enemy) {
 			enemy.isHit(shot);
 		});
+		field.landform.hitTest(shot);
 	});
 	if (this.ship.trigger) {
 		this.ship.trigger = false;
@@ -254,6 +256,8 @@ Field.prototype.draw = function() {
 			this.actorList.push(this.ship.shot());
 		}
 	}
+	this.landform.hitTest(this.ship);
+	this.landform.draw();
 	this.score += score;
 	this.showScore();
 	if (!this.isGameOver() && ship.isGone) {

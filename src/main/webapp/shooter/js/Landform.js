@@ -11,6 +11,7 @@ function Landform(canvas) {
 	this.colDir = 1;
 	this.magni = 1;
 	this.target = null;
+	this.selection = 0;
 	this.img = new Image();
 	this.img.onload = function() {
 		landform.x = 0;
@@ -56,6 +57,9 @@ Landform.prototype.loadMapData = function(file) {
 	}
 };
 
+/*
+ * for play.
+ */
 Landform.prototype.forward = function() {
 	this.x += Math.cos(this.dir) * this.speed;
 	if (this.width < this.x) {
@@ -82,6 +86,24 @@ Landform.prototype.hitTest = function(target) {
 	this.target = target;
 };
 
+/*
+ * for edit
+ */
+Landform.prototype.drawEnemy = function(num, x, y) {
+	var obj = Enemy.LIST[num - 1];
+	var cnt = obj.formation ? 3 : 1;
+	var enemy = obj.instance;
+
+	enemy.x = x + enemy.hW;
+	enemy.y = y + enemy.hH;
+	while (cnt--) {
+		enemy.draw(this.ctx);
+		enemy.x += 2;
+		enemy.y += 2;
+	}
+	return enemy;
+};
+
 Landform.prototype.drawTarget = function() {
 	if (!this.target || !this.isEdit) {
 		return;
@@ -89,10 +111,16 @@ Landform.prototype.drawTarget = function() {
 	var ctx = this.ctx;
 	var tx = Math.round((this.x + this.target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 	var ty = Math.round((this.y + this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var bw = Landform.BRICK_WIDTH;
 
+	if (0 < this.selection) {
+		var enemy = this.drawEnemy(this.selection, tx, ty);
+
+		bw = enemy.width;
+	}
 	ctx.save();
-	ctx.fillStyle = 'rgba(0, 255, 255, .6)';
-	ctx.fillRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH);
+	ctx.fillStyle = 'rgba(128, 255, 255, .4)';
+	ctx.fillRect(tx, ty, bw, bw);
 	ctx.restore();
 };
 

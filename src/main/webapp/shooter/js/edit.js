@@ -28,6 +28,14 @@ $(document).ready(function() {
 
 		landform.loadMapData(file);
 	});
+	setupActorList(landform);
+
+	$(canvas).mousemove(function(e) {
+		var magni = landform.magni;
+		var mx = e.offsetX / magni;
+		var my = e.offsetY / magni;
+		landform.target = {x: mx, y: my};
+	});
 	win.resize(function() {
 		var body = $('body');
 		var header = $('#header');
@@ -54,6 +62,26 @@ $(document).ready(function() {
 	};
 	activate();
 });
+
+function setupActorList(landform) {
+	var actorList = $('#actorList');
+	var container = actorList.controlgroup('container');
+
+	Enemy.LIST.forEach(function(rec, ix) {
+		var id = 'actor' + ix;
+		var input = $('<input type="radio" name="actor"/>').attr('id', id).val(ix + 1);
+		var label = $('<label></label>').text(rec.name).attr('for', id);
+		var img = $('<img/>').attr('src', 'img/' + rec.img);
+
+		rec.instance = new rec.type(landform);
+		container.append(input);
+		container.append(label.prepend(img));
+	});
+	actorList.parent().trigger('create');
+	actorList.find('input').click(function() {
+		landform.selection = this.value;
+	});
+}
 
 function Field(){}
 Field.WIDTH = 512;

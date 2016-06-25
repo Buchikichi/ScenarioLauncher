@@ -4,12 +4,13 @@
 function Ship(field, x, y) {
 	Actor.apply(this, arguments);
 	this.speed = 4;
+	this.shotList = [];
 	this.trigger = false;
 	this.img.src = 'img/ship001.png';
 }
+Ship.MAX_SHOTS = 7;
 Ship.SQ = Math.PI / 2;
 Ship.prototype = Object.create(Actor.prototype);
-Ship.prototype.actor = Object.create(Actor.prototype);
 
 Ship.prototype._recalculation = Actor.prototype.recalculation;
 Ship.prototype.recalculation = function() {
@@ -41,10 +42,6 @@ Ship.prototype.inkey = function(keys) {
 	}
 };
 
-Ship.prototype.shot = function() {
-	return new Shot(this.field, this.x + this.hW, this.y);
-};
-
 Ship.prototype._move = Actor.prototype.move;
 Ship.prototype.move = function() {
 	this._move();
@@ -56,5 +53,9 @@ Ship.prototype.move = function() {
 	}
 	if (this.y < this.hH || this.bottom < this.y) {
 		this.y = this.svY;
+	}
+	if (this.trigger && this.shotList.length < Ship.MAX_SHOTS) {
+		this.trigger = false;
+		return new Shot(this.field, this.x + this.hW, this.y);
 	}
 };

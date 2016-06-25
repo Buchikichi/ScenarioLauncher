@@ -5,20 +5,16 @@
 <meta name=viewport content="width=device-width, initial-scale=1"/>
 <title>Edit</title>
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
-<!--
-<link rel="stylesheet" href="css/default.css"/>
--->
 <script type="text/javascript" defer src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" defer src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" defer src="js/Actor.js"></script>
+<script type="text/javascript" defer src="js/Enemy-min.js"></script>
 <script type="text/javascript" defer src="js/Landform.js"></script>
 <script type="text/javascript" defer src="js/edit.js"></script>
 <style type="text/css">
 canvas {
 	border: 1px lightgray solid;
 	background-color: black;
-}
-#slider {
-/*	display: none;*/
 }
 </style>
 </head>
@@ -28,6 +24,7 @@ canvas {
     <div id="header" data-role="header" data-theme="b" data-position="fixed">
       <a href="/" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
       <h1>Edit</h1>
+      <a href="#editPanel" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-edit ui-btn-icon-notext"></a>
     </div>
     <div style="display: table; table-layout: fixed; width: 100%;">
         <div id="content">
@@ -40,6 +37,11 @@ canvas {
       <button id="generateButton">Generate</button>
       <input id="map" type="file" accept="image/*"/>
       <img id="mapImage"/>
+    </div>
+    <div id="editPanel" data-role="panel" data-position="right" data-display="overlay">
+      <div id="actorList" data-role="controlgroup">
+        <input id="brick" type="radio" name="actor" value="0" checked="checked"/><label for="brick">brick</label>
+      </div>
     </div>
   </div>
 </body>

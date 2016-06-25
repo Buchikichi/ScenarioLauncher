@@ -6,17 +6,15 @@ function Field(width, height) {
 	this.height = height;
 	this.hW = width / 2;
 	this.hH = height / 2;
-	this.actorList = [];
-	this.shotList = [];
 	this.ship = new Ship(this, 100, 100);
 	this.ship.isGone = true;
 	this.shipTarget = null;
+	this.actorList = [];
 	this.score = 0;
 	this.hiscore = 0;
 	this.enemyCycle = 0;
 }
 
-Field.MAX_SHOTS = 9;
 Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
@@ -123,7 +121,7 @@ Field.prototype.reset = function() {
 	this.landform.x = -512;
 	this.ship.x = 100;
 	this.ship.y = 100;
-	this.actorList = [];
+	this.actorList = [this.ship];
 	this.loosingRate = Field.MAX_LOOSING_RATE;
 	this.score = 0;
 	this.showScore();
@@ -161,7 +159,6 @@ Field.prototype.inkey = function(keys) {
 		this.ship.aim(this.shipTarget);
 		this.ship.inkey(keys);
 	}
-	this.ship.move();
 };
 
 Field.prototype.moveShipTo = function(target) {
@@ -205,8 +202,8 @@ Field.prototype.draw = function() {
 	var ctx = this.ctx;
 	var ship = this.ship;
 	var shotList = [];
-	var validActors = [];
 	var enemyList = [];
+	var validActors = [];
 	var score = 0;
 
 	ctx.clearRect(0, 0, this.width, this.height);
@@ -235,27 +232,20 @@ Field.prototype.draw = function() {
 					validActors.push(bullet);
 				}
 			}
-		}
-		if (actor.explosion && actor.score) {
-			score += actor.score;
-			actor.score = 0;
+			if (actor.explosion && actor.score) {
+				score += actor.score;
+				actor.score = 0;
+			}
 		}
 	});
-	this.ship.draw(ctx);
-	this.actorList = validActors;
-	this.shotList = shotList;
 	shotList.forEach(function(shot) {
 		enemyList.forEach(function(enemy) {
 			enemy.isHit(shot);
 		});
 		field.landform.hitTest(shot);
 	});
-	if (this.ship.trigger) {
-		this.ship.trigger = false;
-		if (this.shotList.length < Field.MAX_SHOTS) {
-			this.actorList.push(this.ship.shot());
-		}
-	}
+	this.actorList = validActors;
+	this.ship.shotList = shotList;
 	this.landform.hitTest(this.ship);
 	this.landform.draw();
 	this.score += score;

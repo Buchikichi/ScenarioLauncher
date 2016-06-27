@@ -72,24 +72,8 @@ Field.prototype.setupEnemy = function() {
 			numOfDragon++;
 		}
 	});
-	if (type < 2) {
-		if (!numOfDragon) {
-			this.setupDragon(x, y);
-		}
-	} else if (type < 7 && numOfTentacle < 3) {
-		var tentacle = new EnmTentacle(this, x, y);
-		var joint = tentacle.next;
-
-		while (joint) {
-			this.actorList.push(joint);
-			joint = joint.next;
-		}
-		this.actorList.push(tentacle);
-	} else if (type < 10) {
-		if (die(4)) {
-			x = 0;
-		}
-		this.actorList.push(new EnmFormation(this, x, y).setup(EnmWaver, 8));
+	if (type < 7 && numOfTentacle < 3) {
+		this.actorList.push(new EnmTentacle(this, x, y));
 	} else if (type < 15) {
 		this.actorList.push(new EnmHanker(this, x, y));
 	} else if (type < 30) {
@@ -98,17 +82,8 @@ Field.prototype.setupEnemy = function() {
 	} else {
 		var y = Math.random() * this.hH + this.hH / 2;
 		this.actorList.push(new EnmWaver(this, x, y));
+//		this.actorList.push(new EnmFormation(this, x, y).setup(EnmWaver, 8));
 	}
-};
-
-Field.prototype.setupDragon = function(x, y) {
-	var dragon = new EnmDragonHead(this, x + 50, y);
-	var actorList = this.actorList;
-
-	dragon.body.forEach(function(body) {
-		actorList.push(body);
-	});
-	this.actorList.push(dragon);
 };
 
 Field.prototype.reset = function() {
@@ -172,6 +147,8 @@ Field.prototype.moveShipTo = function(target) {
 };
 
 Field.prototype.scroll = function() {
+	var field = this;
+
 	$('.bg').each(function(ix, obj) {
 		var bg = $(this);
 		var mX = bg.prop('mX');
@@ -184,6 +161,16 @@ Field.prototype.scroll = function() {
 		bg.prop('mY', mY);
 	});
 	this.landform.forward();
+	this.landform.scanEnemy().forEach(function(obj) {
+		var enemy;
+
+		if (obj.formation) {
+			enemy = new EnmFormation(this, obj.x, obj.y).setup(obj.type, 8);
+		} else {
+			enemy = new obj.type(field, obj.x, obj.y);
+		}
+		field.actorList.push(enemy);
+	});
 	if (Field.ENEMY_CYCLE < this.enemyCycle++) {
 		this.enemyCycle = 0;
 		if (die(this.loosingRate / 30)) {
@@ -215,6 +202,11 @@ Field.prototype.draw = function() {
 
 		if (child instanceof Actor) {
 			validActors.push(child);
+		}
+		if (child instanceof Array) {
+			child.forEach(function(enemy) {
+				validActors.push(enemy);
+			});
 		}
 		actor.draw(ctx);
 		validActors.push(actor);

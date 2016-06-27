@@ -3,10 +3,16 @@
  */
 function EnmDragonHead() {
 	Enemy.apply(this, arguments);
+	if (0 < this.x) {
+		this.x += 50;
+	} else {
+		this.x -= 50;
+	}
 	this.speed = 1.8;
 	this.hitPoint = 200;
 	this.score = 1000;
 	this.radian = Math.PI;
+	this.appears = false;
 	this.img.src = 'img/enmDragonHead.png';
 
 	this.locus = [];
@@ -61,4 +67,9 @@ EnmDragonHead.prototype.move = function(target) {
 	}
 	this.locus.unshift({x:this.x, y:this.y, radian:this.radian});
 	this.locus.pop();
+	if (this.appears) {
+		return;
+	}
+	this.appears = true;
+	return this.body;
 };

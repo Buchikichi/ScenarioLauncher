@@ -11,7 +11,14 @@ function Landform(canvas) {
 	this.colDir = 1;
 	this.magni = 1;
 	this.target = null;
+	this.tx = 0;
+	this.ty = 0;
 	this.selection = 0;
+	this.which = null;
+	this.brick = null;
+	this.brickVal = null;
+	this.lastScan = null;
+	this.touch = false;
 	this.img = new Image();
 	this.img.onload = function() {
 		landform.x = 0;
@@ -67,33 +74,89 @@ Landform.prototype.forward = function() {
 	}
 };
 
+Landform.prototype.scanEnemy = function() {
+	var result = [];
+	var tx = Math.round(this.x / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	if (tx === this.lastScan) {
+		return result;
+	}
+	this.lastScan = tx;
+//	var ctx = this.ctx;
+
+//	ctx.fillStyle = 'rgba(255, 0, 0, .8)';
+
+
+
+	var right = 512 - Landform.BRICK_WIDTH;
+	tx += right;
+	if (tx < 0) {
+		return result;
+	}
+	for (var ty = 0; ty < 224; ty += Landform.BRICK_WIDTH) {
+		var brick = this.getBrick({x:right, y:ty}, 1);
+
+		if (0 < brick) {
+			result.push(Enemy.assign(brick - 1, right, ty));
+//console.log('brick:' + brick);
+		}
+//		ctx.fillRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH - 2);
+	}
+	return result;
+};
+
 Landform.prototype.hitTest = function(target) {
 	if (!this.brick) {
 		return;
 	}
-	this.target = null;
-	var tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
-	if (tx < 0 || this.bw < tx) {
-		return;
-	}
-	var ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
-	var ix = ty * this.bw * 4 + tx * 4;
-	var bd = this.brick.data;
-
-	if (bd[ix + 3]) {
+	if (this.getBrick(target, 2)) {
 		target.fate();
 	}
 	this.target = target;
 };
 
+Landform.prototype.getBrickIndex = function(target) {
+	var tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+	if (tx < 0 || this.bw < tx) {
+		return -1;
+	}
+	var ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+
+	return ty * this.bw * 4 + tx * 4;
+};
+
+Landform.prototype.getBrick = function(target, c) {
+	if (!this.brick) {
+		return null;
+	}
+	var ix = this.getBrickIndex(target);
+
+	if (ix < 0) {
+		return null;
+	}
+	return this.brick.data[ix + c];
+};
+
 /*
  * for edit
  */
+Landform.prototype.putBrick = function(target, c, val) {
+	var ix = this.getBrickIndex(target);
+
+	if (ix < 0) {
+		return;
+	}
+	this.brick.data[ix + c] = val;
+	this.brick.data[ix + 3] = val ? 255 : 0;
+};
+
 Landform.prototype.drawEnemy = function(num, x, y) {
 	var obj = Enemy.LIST[num - 1];
 	var cnt = obj.formation ? 3 : 1;
 	var enemy = obj.instance;
 
+	if (!obj.instance) {
+		return null;
+	}
 	enemy.x = x + enemy.hW;
 	enemy.y = y + enemy.hH;
 	while (cnt--) {
@@ -105,23 +168,57 @@ Landform.prototype.drawEnemy = function(num, x, y) {
 };
 
 Landform.prototype.drawTarget = function() {
-	if (!this.target || !this.isEdit) {
+	if (!this.isEdit || !this.target) {
 		return;
 	}
-	var ctx = this.ctx;
 	var tx = Math.round((this.x + this.target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 	var ty = Math.round((this.y + this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var ctx = this.ctx;
 	var bw = Landform.BRICK_WIDTH;
 
 	if (0 < this.selection) {
 		var enemy = this.drawEnemy(this.selection, tx, ty);
 
-		bw = enemy.width;
+		if (enemy) {
+			bw = enemy.width;
+		}
 	}
 	ctx.save();
 	ctx.fillStyle = 'rgba(128, 255, 255, .4)';
 	ctx.fillRect(tx, ty, bw, bw);
 	ctx.restore();
+	this.touchDown(tx, ty);
+};
+
+Landform.prototype.touchDown = function(tx, ty) {
+	if (!this.which) {
+		this.tx = -1;
+		this.ty = -1;
+		this.brickVal = null;
+		return;
+	}
+	if (this.tx == tx && this.ty == ty) {
+		return;
+	}
+	if (0 < this.selection) {
+		var brick = this.getBrick(this.target, 1);
+
+		if (!brick || brick != this.selection) {
+			this.putBrick(this.target, 1, this.selection);
+		} else {
+			this.putBrick(this.target, 1, 0);
+		}
+	} else {
+		var brick = this.getBrick(this.target, 2);
+
+		if (this.brickVal == null) {
+			this.brickVal = 0 < brick ? 0 : 255;
+		}
+		this.putBrick(this.target, 2, this.brickVal);
+	}
+	this.touch = true;
+	this.tx = tx;
+	this.ty = ty;
 };
 
 Landform.prototype.drawBrick = function() {
@@ -138,17 +235,21 @@ Landform.prototype.drawBrick = function() {
 	var bd = this.brick.data;
 
 	ctx.save();
-	ctx.font = "6px 'Times New Roman'";
-	ctx.strokeStyle = 'rgba(0, 160, 0, .4)';
 	ctx.fillStyle = 'rgba(' + red + ', ' + green + ', 255, .4)';
 	for (var y = 0, ry = 0; y < this.bh; y++, ry += Landform.BRICK_WIDTH) {
 		var ix = (y * this.bw + startX) * 4;
 
-		for (var x = startX, rx = sx; x < endX; x++, rx += Landform.BRICK_WIDTH) {
-			if (0 <= x && bd[ix + 3]) {
+		for (var x = startX, rx = sx; x < endX; x++, rx += Landform.BRICK_WIDTH, ix += 4) {
+			if (x < 0) {
+				continue;
+			}
+			var enemyNum = bd[ix + 1];
+			if (enemyNum) {
+				this.drawEnemy(enemyNum, rx, ry);
+			}
+			if (bd[ix + 2] == 255) {
 				ctx.fillRect(rx, ry, brickWidth, brickWidth);
 			}
-			ix += 4;
 		}
 	}
 	ctx.restore();
@@ -170,6 +271,7 @@ Landform.prototype.draw = function() {
 	ctx.drawImage(this.img, 0, 0);
 	this.drawBrick();
 	this.drawTarget();
+//this.scanEnemy();
 	ctx.restore();
 	if (this.touch && this.brick) {
 		this.updateMap();
@@ -220,7 +322,9 @@ console.log(bw + ' x ' + bh + ' | ' + dst.length);
 					dot = true;
 				}
 			}
-			dst[ix + 3] = dot ? 255 : 0;
+			var val = dot ? 255 : 0;
+			dst[ix + 2] = val;
+			dst[ix + 3] = val;
 			sx += Landform.BRICK_WIDTH * 4;
 			ix += 4;
 		}

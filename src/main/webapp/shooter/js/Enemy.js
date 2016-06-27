@@ -16,6 +16,13 @@ Enemy.LIST = [
 	{name:'Dragon', type:EnmDragonHead, img:'enmDragonHead.png'},
 	{name:'Waver(formation)', type:EnmWaver, img:'enmWaver.png', formation: true}
 ];
+Enemy.assign = function(ix, x, y) {
+	var enemy = Object.assign({}, Enemy.LIST[ix % Enemy.LIST.length]);
+
+	enemy.x = x;
+	enemy.y = y;
+	return enemy;
+};
 
 Enemy.prototype.trigger = function() {
 	if (this.triggerCycle++ < Enemy.TRIGGER_CYCLE) {

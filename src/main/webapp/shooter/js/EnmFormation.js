@@ -50,10 +50,7 @@ EnmFormation.prototype.move = function(target) {
 	if (this.steps++ % EnmFormation.STEP != 0) {
 		return;
 	}
-	var enemy = this.enemies[this.count];
-
-	this.count++;
-	return enemy;
+	return [this.enemies[this.count++]];
 };
 
 EnmFormation.prototype.drawExplosion = function(ctx) {

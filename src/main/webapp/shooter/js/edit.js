@@ -29,13 +29,7 @@ $(document).ready(function() {
 		landform.loadMapData(file);
 	});
 	setupActorList(landform);
-
-	$(canvas).mousemove(function(e) {
-		var magni = landform.magni;
-		var mx = e.offsetX / magni;
-		var my = e.offsetY / magni;
-		landform.target = {x: mx, y: my};
-	});
+	setupMouse(landform);
 	win.resize(function() {
 		var body = $('body');
 		var header = $('#header');
@@ -80,6 +74,28 @@ function setupActorList(landform) {
 	actorList.parent().trigger('create');
 	actorList.find('input').click(function() {
 		landform.selection = this.value;
+	});
+}
+
+function setupMouse(landform) {
+	var canvas = $(landform.canvas);
+
+	canvas.mousedown(function(e) {
+		var magni = landform.magni;
+
+		landform.target = {x: e.offsetX / magni, y: e.offsetY / magni};
+		landform.which = e.which;
+	});
+	canvas.mousemove(function(e) {
+		var magni = landform.magni;
+
+		landform.target = {x: e.offsetX / magni, y: e.offsetY / magni};
+	});
+	canvas.mouseup(function() {
+		landform.which = null;
+	});
+	canvas.mouseleave(function() {
+		landform.target = null;
 	});
 }
 

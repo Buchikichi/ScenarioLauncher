@@ -54,8 +54,10 @@ Ship.prototype.move = function() {
 	if (this.y < this.hH || this.bottom < this.y) {
 		this.y = this.svY;
 	}
-	if (this.trigger && this.shotList.length < Ship.MAX_SHOTS) {
+	if (this.trigger) {
 		this.trigger = false;
-		return new Shot(this.field, this.x + this.hW, this.y);
+		if (this.shotList.length < Ship.MAX_SHOTS) {
+			return new Shot(this.field, this.x + this.hW, this.y);
+		}
 	}
 };

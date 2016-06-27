@@ -6,6 +6,7 @@ function EnmTentacle(field, x, y) {
 
 	this.speed = .8;
 	this.hitPoint = 16;
+	this.appears = false;
 	this.img.src = 'img/enmTentacle.png';
 	// Joint
 	this.push(new EnmTentacleHead(.8));
@@ -34,6 +35,18 @@ EnmTentacle.prototype._move = Enemy.prototype.move;
 EnmTentacle.prototype.move = function(target) {
 	this.aim(target);
 	this._move(target);
+	if (this.appears) {
+		return;
+	}
+	this.appears = true;
+	var result = [];
+	var joint = this.next;
+
+	while (joint) {
+		result.push(joint);
+		joint = joint.next;
+	}
+	return result;
 };
 
 EnmTentacle.prototype.drawNormal = function(ctx) {

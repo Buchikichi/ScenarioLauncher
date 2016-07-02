@@ -76,12 +76,12 @@ Field.prototype.setupEnemy = function() {
 		this.actorList.push(new EnmTentacle(this, x, y));
 	} else if (type < 15) {
 		this.actorList.push(new EnmHanker(this, x, y));
-	} else if (type < 30) {
+	} else if (type < 20) {
 		var y = Math.random() * (this.hH - 32) + this.hH;
 		this.actorList.push(new EnmBouncer(this, x, y));
-	} else {
+	} else if (type < 30) {
 		var y = Math.random() * this.hH + this.hH / 2;
-		this.actorList.push(new EnmWaver(this, x, y));
+		this.actorList.push(new EnmJerky(this, x, y));
 //		this.actorList.push(new EnmFormation(this, x, y).setup(EnmWaver, 8));
 	}
 };

@@ -7,13 +7,8 @@ function EnmHanker() {
 	this.hitPoint = 8;
 	this.score = 100;
 	this.img.src = 'img/enmHanker.png';
+	this.routine = [
+		new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO)
+	];
 }
-
 EnmHanker.prototype = Object.create(Enemy.prototype);
-
-EnmHanker.prototype._move = Enemy.prototype.move;
-EnmHanker.prototype.move = function(target) {
-	this.aim(target);
-	this.radian = this.dir;
-	this._move(target);
-};

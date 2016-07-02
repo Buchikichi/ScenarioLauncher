@@ -48,6 +48,10 @@ Ship.prototype.move = function() {
 	if (this.isGone) {
 		return;
 	}
+	if (this.isHitWall) {
+		this.fate();
+		return;
+	}
 	if (this.x < this.hW || this.right < this.x) {
 		this.x = this.svX;
 	}

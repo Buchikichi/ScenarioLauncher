@@ -8,9 +8,8 @@ function EnmJerky() {
 	this.score = 10;
 	this.img.src = 'img/enmJerky.png';
 	this.routine = [
-		new Movement('x').add(Gizmo.TYPE_CHASE, 'x'),
-		new Movement('y').add(Gizmo.TYPE_CHASE, 'y')
+		new Movement('x').add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_X),
+		new Movement('y').add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_Y)
 	];
 }
-
 EnmJerky.prototype = Object.create(Enemy.prototype);

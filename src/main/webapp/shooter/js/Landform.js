@@ -1,3 +1,6 @@
+/**
+ * Landform.
+ */
 function Landform(canvas) {
 	var landform = this;
 
@@ -108,9 +111,7 @@ Landform.prototype.hitTest = function(target) {
 	if (!this.brick) {
 		return;
 	}
-	if (this.getBrick(target, 2)) {
-		target.fate();
-	}
+	target.isHitWall = this.getBrick(target, 2);
 	this.target = target;
 };
 

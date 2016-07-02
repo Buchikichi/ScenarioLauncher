@@ -16,6 +16,7 @@ function Actor(field, x, y) {
 	this.speed = 1;
 	this.hitPoint = 1;
 	this.score = 0;
+	this.isHitWall = false;
 	this.minX = 0;
 	this.minY = 0;
 	this.maxX = this.field.width;

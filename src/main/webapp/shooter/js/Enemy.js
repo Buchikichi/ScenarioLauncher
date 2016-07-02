@@ -5,6 +5,7 @@ function Enemy() {
 	Actor.apply(this, arguments);
 	this.routine = null;
 	this.routineIx = 0;
+	this.routineCnt = 0;
 	this.triggerCycle = 0;
 }
 Enemy.prototype = Object.create(Actor.prototype);
@@ -41,15 +42,7 @@ Enemy.prototype.move = function(target) {
 	if (this.routine) {
 		var mov = this.routine[this.routineIx];
 
-		mov.list.forEach(function(giz) {
-			enemy.dir = giz.calc(enemy, target);
-		});
-		if (this.dir == null) {
-			this.routineIx++;
-			if (this.routine.length <= this.routineIx) {
-				this.routineIx = 0;
-			}
-		}
+		mov.tick(this, target);
 	}
 	this.actor_move(target);
 };

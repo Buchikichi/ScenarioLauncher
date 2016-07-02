@@ -26,4 +26,7 @@ Shot.prototype.draw = function(ctx) {
 	ctx.fillStyle = 'rgba(255, 255, 0, 0.7)';
 	ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
 	ctx.fill();
+	if (this.isHitWall) {
+		this.fate();
+	}
 };

@@ -72,9 +72,9 @@ Field.prototype.setupEnemy = function() {
 			numOfDragon++;
 		}
 	});
-	if (type < 7 && numOfTentacle < 3) {
+	if (type < 3 && numOfTentacle < 3) {
 		this.actorList.push(new EnmTentacle(this, x, y));
-	} else if (type < 15) {
+	} else if (type < 10) {
 		this.actorList.push(new EnmHanker(this, x, y));
 	} else if (type < 20) {
 		var y = Math.random() * (this.hH - 32) + this.hH;
@@ -198,6 +198,7 @@ Field.prototype.draw = function() {
 		if (actor.isGone) {
 			return;
 		}
+		field.landform.hitTest(actor);
 		var child = actor.move(ship);
 
 		if (child instanceof Actor) {
@@ -234,11 +235,9 @@ Field.prototype.draw = function() {
 		enemyList.forEach(function(enemy) {
 			enemy.isHit(shot);
 		});
-		field.landform.hitTest(shot);
 	});
 	this.actorList = validActors;
 	this.ship.shotList = shotList;
-	this.landform.hitTest(this.ship);
 	this.landform.draw();
 	this.score += score;
 	this.showScore();

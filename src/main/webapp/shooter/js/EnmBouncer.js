@@ -18,7 +18,11 @@ EnmBouncer.prototype.move = function(target) {
 		this.dx = -this.dx;
 		this.shuttle--;
 	}
-	if (this.field.height <= this.y) {
+	if (this.isHitWall) {
+		this.x = this.svX;
+		this.y = this.svY;
+	}
+	if (this.field.height <= this.y || this.isHitWall) {
 		this.dy = -this.dy;
 	} else {
 		this.dy += .3;

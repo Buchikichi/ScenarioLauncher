@@ -52,7 +52,7 @@ Field.prototype.setupBgm = function(stage) {
 };
 
 Field.prototype.setupEnemy = function() {
-	if (this.isGameOver() && 10 < this.actorList.length) {
+	if (this.isGameOver()) {
 		return;
 	}
 	if (Field.MAX_ENEMIES < this.actorList.length) {
@@ -225,10 +225,10 @@ Field.prototype.draw = function() {
 					validActors.push(bullet);
 				}
 			}
-			if (actor.explosion && actor.score) {
-				score += actor.score;
-				actor.score = 0;
-			}
+		}
+		if (actor.explosion && actor.score) {
+			score += actor.score;
+			actor.score = 0;
 		}
 	});
 	shotList.forEach(function(shot) {

@@ -23,10 +23,10 @@ Gizmo.prototype.tick = function(src, target) {
 	if (this.type == Gizmo.TYPE.OWN) {
 		if (this.destination == Gizmo.DEST.ROTATE_L) {
 			src.dir -= src.step;
-		} else if (this.destination == Gizmo.DEST.ROTATE_L) {
+		} else if (this.destination == Gizmo.DEST.ROTATE_R) {
 			src.dir += src.step;
 		}
-		return true;
+		return;
 	}
 	var dx = target.x - src.x;
 	var dy = target.y - src.y;
@@ -45,7 +45,7 @@ Gizmo.prototype.tick = function(src, target) {
 				src.radian = Math.atan2(dy, dx);
 			}
 		}
-		return true;
+		return;
 	}
 	if (this.type == Gizmo.TYPE.CHASE) {
 		if (this.destination == Gizmo.DEST.TO) {
@@ -57,12 +57,8 @@ Gizmo.prototype.tick = function(src, target) {
 		} else if (this.destination == Gizmo.DEST.TO_Y && dy) {
 			src.dir = Math.atan2(dy, 0);
 			src.radian = src.dir;
-		} else {
-			return false;
 		}
-		return true;
 	}
-	return true;
 };
 
 /**
@@ -75,29 +71,44 @@ function Movement(cond) {
 	this.count = count == cond ? count : null;
 	this.list = [];
 }
+Movement.COND = {
+	X: 'x',
+	Y: 'y'
+};
 
 Movement.prototype.add = function(type, target) {
 	this.list.push(new Gizmo(type, target));
 	return this;
 };
 
-Movement.prototype.tick = function(src, target) {
-	var behave = false;
-
-	this.list.forEach(function(giz) {
-		if (giz.tick(src, target)) {
-			behave = true;
-		}
-	});
+Movement.prototype.isValid = function(src, target) {
+	if (!this.cond) {
+		return;
+	}
 	if (this.count) {
 		if (src.routineCnt++ < this.count) {
-			behave = true;
-		} else {
-			src.routineCnt = 0;
-			behave = false;
+			return true;
 		}
+		src.routineCnt = 0;
+		return false;
 	}
-	if (!behave) {
+	var dx = target.x - src.x;
+	var dy = target.y - src.y;
+
+	if (this.cond == Movement.COND.X && Math.abs(dx) <= src.speed) {
+		return false;
+	}
+	if (this.cond == Movement.COND.Y && Math.abs(dy) <= src.speed) {
+		return false;
+	}
+	return true;
+};
+
+Movement.prototype.tick = function(src, target) {
+	this.list.forEach(function(gizmo) {
+		gizmo.tick(src, target);
+	});
+	if (!this.isValid(src, target)) {
 		src.routineIx++;
 		if (src.routine.length <= src.routineIx) {
 			src.routineIx = 0;

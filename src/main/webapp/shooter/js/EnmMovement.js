@@ -57,6 +57,25 @@ Gizmo.prototype.tick = function(src, target) {
 		} else if (this.destination == Gizmo.DEST.TO_Y && dy) {
 			src.dir = Math.atan2(dy, 0);
 			src.radian = src.dir;
+		} else if (this.destination == Gizmo.DEST.ROTATE) {
+			var radian = src.dir;
+			var diff = radian - Math.atan2(dy, dx);
+			var step = Math.PI / 60;
+
+			if (Math.PI < diff) {
+				diff -= Actor.PI2;
+			} else if (radian < -Math.PI) {
+				diff += Actor.PI2;
+			}
+			if (Math.abs(diff) <= step) {
+				return;
+			}
+			if (0 < diff) {
+				src.dir -= step;
+			} else {
+				src.dir += step;
+			}
+			src.radian = src.dir;
 		}
 	}
 };

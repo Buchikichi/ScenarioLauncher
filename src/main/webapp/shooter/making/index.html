@@ -104,7 +104,7 @@ ShooterはJavaScriptで動いていますが、ちょっとしたクラスのよ
       <div data-role="collapsible">
         <h3>敵を動かす</h3>
         <div>
-          4種類の敵キャラクターを作成しています。<br/>
+          作成した、いくつかの敵キャラクターを紹介します。<br/>
           <div class="ui-body ui-body-a ui-corner-all">
             <img src="../img/enmWaver.png" class="char"/>
             Waver<br/>
@@ -196,6 +196,34 @@ Actor.prototype.drawNormal = function(ctx) {
 };
 </pre>
             canvasにイメージを貼り付ける時に、rotateメソッドを使って画像を回転させています。
+          </div>
+          <div class="ui-body ui-body-a ui-corner-all">
+            <img src="../img/enmJuno.png" class="char"/>
+            Juno<br/>
+            2016-07-05に木星軌道投入成功を記念して、Junoというキャラクターを作成しました。<br/>
+            進む方向をプレイヤーに近づけながら進みます。<br/>
+            あまりきれいなロジックではないので、スマートなロジックを研究中です。<br/>
+            泥酔しながら作ったので後で修正します。
+            <pre class="prettyprint linenums">
+var radian = src.dir;
+var diff = radian - Math.atan2(dy, dx);
+var step = Math.PI / 60;
+
+if (Math.PI &lt; diff) {
+	diff -= Actor.PI2;
+} else if (radian &lt; -Math.PI) {
+	diff += Actor.PI2;
+}
+if (Math.abs(diff) &lt;= step) {
+	return;
+}
+if (0 &lt; diff) {
+	src.dir -= step;
+} else {
+	src.dir += step;
+}
+src.radian = src.dir;
+</pre>
           </div>
           <div class="ui-body ui-body-a ui-corner-all">
             <img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleJoint.png" class="char"/><img src="../img/enmTentacleHead.png" class="char"/>

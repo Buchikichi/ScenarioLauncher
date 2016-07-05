@@ -80,6 +80,8 @@ Field.prototype.setupEnemy = function() {
 		var y = Math.random() * (this.hH - 32) + this.hH;
 		this.actorList.push(new EnmBouncer(this, x, y));
 	} else if (type < 30) {
+		this.actorList.push(new EnmJuno(this, x, y));
+	} else if (type < 40) {
 		var y = Math.random() * this.hH + this.hH / 2;
 		this.actorList.push(new EnmJerky(this, x, y));
 //		this.actorList.push(new EnmFormation(this, x, y).setup(EnmWaver, 8));

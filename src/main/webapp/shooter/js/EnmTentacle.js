@@ -85,7 +85,7 @@ function EnmTentacleJoint(speed) {
 EnmTentacleJoint.prototype = Object.create(Chain.prototype);
 
 EnmTentacleJoint.prototype.addRadian = function(rad) {
-	this.radian = this.trimRadian(this.radian + rad);
+	this.radian = Math.trim(this.radian + rad);
 	if (this.next) {
 		this.next.addRadian(rad);
 	}

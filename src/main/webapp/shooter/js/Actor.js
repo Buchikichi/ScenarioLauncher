@@ -37,7 +37,6 @@ function Actor(field, x, y) {
 	this.enter();
 }
 Actor.MAX_EXPLOSION = 12;
-Actor.PI2 = Math.PI * 2;
 Actor.DEG_STEP = Math.PI / 180;
 
 Actor.prototype.recalculation = function() {
@@ -74,19 +73,10 @@ Actor.prototype.aim = function(target) {
 	}
 };
 
-Actor.prototype.trimRadian = function(radian) {
-	if (Math.PI < radian) {
-		return radian - Actor.PI2;
-	} else if (radian < -Math.PI) {
-		return radian + Actor.PI2;
-	}
-	return radian;
-};
-
 Actor.prototype.closeGap = function(target) {
 	var dx = target.x - this.x;
 	var dy = target.y - this.y;
-	var diff = this.trimRadian(this.radian - Math.atan2(dy, dx));
+	var diff = Math.trim(this.radian - Math.atan2(dy, dx));
 
 	if (Math.abs(diff) <= Actor.DEG_STEP) {
 		return 0;
@@ -146,7 +136,7 @@ Actor.prototype.drawExplosion = function(ctx) {
 	ctx.save();
 	ctx.translate(this.x, this.y);
 	ctx.beginPath();
-	ctx.arc(0, 0, size, 0, Actor.PI2, false);
+	ctx.arc(0, 0, size, 0, Math.PI2, false);
 	ctx.fill();
 	ctx.restore();
 };
@@ -207,7 +197,7 @@ Actor.prototype.fate = function(target) {
 			ctx.save();
 			ctx.translate(target.x, target.y);
 			ctx.beginPath();
-			ctx.arc(0, 0, 5, 0, Actor.PI2, false);
+			ctx.arc(0, 0, 5, 0, Math.PI2, false);
 			ctx.fill();
 			ctx.restore();
 			this.absorb.play();

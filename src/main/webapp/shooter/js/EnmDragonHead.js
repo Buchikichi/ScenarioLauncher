@@ -50,7 +50,7 @@ EnmDragonHead.prototype.eject = function() {
 
 EnmDragonHead.prototype._move = Enemy.prototype.move;
 EnmDragonHead.prototype.move = function(target) {
-	var rad = this.trimRadian(this.radian + this.closeGap(target) * 1.8);
+	var rad = Math.trim(this.radian + this.closeGap(target) * 1.8);
 
 	this.dir = rad;
 	this.radian = rad;

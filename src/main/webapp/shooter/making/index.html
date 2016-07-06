@@ -202,27 +202,32 @@ Actor.prototype.drawNormal = function(ctx) {
             Juno<br/>
             2016-07-05に木星軌道投入成功を記念して、Junoというキャラクターを作成しました。<br/>
             進む方向をプレイヤーに近づけながら進みます。<br/>
-            あまりきれいなロジックではないので、スマートなロジックを研究中です。<br/>
-            泥酔しながら作ったので後で修正します。
+            ちょっと怒られそうな感じですが、Mathを拡張しています。(MathExtension.js)<br/>
+            trim() は、ラジアンを -pi から +pi の範囲内に収まるように調整します。<br/>
+            close() は、srcの角度をtargetの角度へpitch分狭めます。
             <pre class="prettyprint linenums">
-var radian = src.dir;
-var diff = radian - Math.atan2(dy, dx);
-var step = Math.PI / 60;
+Math.trim = Math.trim || function(radian) {
+	var rad = radian;
 
-if (Math.PI &lt; diff) {
-	diff -= Actor.PI2;
-} else if (radian &lt; -Math.PI) {
-	diff += Actor.PI2;
-}
-if (Math.abs(diff) &lt;= step) {
-	return;
-}
-if (0 &lt; diff) {
-	src.dir -= step;
-} else {
-	src.dir += step;
-}
-src.radian = src.dir;
+	while (Math.PI &lt; rad) {
+		rad -= Math.PI2;
+	}
+	while (rad &lt; -Math.PI) {
+		rad += Math.PI2;
+	}
+	return rad;
+};
+Math.close = Math.close || function(src, target, pitch) {
+	var diff = Math.trim(src - target);
+
+	if (Math.abs(diff) &lt;= pitch) {
+		return src;
+	}
+	if (0 &lt; diff) {
+		return src - pitch;
+	}
+	return src + pitch;
+};
 </pre>
           </div>
           <div class="ui-body ui-body-a ui-corner-all">

@@ -11,18 +11,17 @@ function Star(field, ra, dec, v, spect, x, y) {
 	this.x = x;
 	this.y = y;
 }
-Star.prototype.PI2 = Math.PI * 2;
-Star.prototype.MIN_V = -144;
-Star.prototype.MAX_V = 1408;
-Star.prototype.V_WIDTH = Star.prototype.MAX_V - Star.prototype.MIN_V;
+Star.MIN_V = -144;
+Star.MAX_V = 1408;
+Star.V_WIDTH = Star.MAX_V - Star.MIN_V;
 
 Star.prototype.getRatio = function(v) {
-	return (this.V_WIDTH - (v - this.MIN_V)) / this.V_WIDTH;
+	return (Star.V_WIDTH - (v - Star.MIN_V)) / Star.V_WIDTH;
 };
 
 Star.prototype.getColor = function(spect) {
 	var color;
-	var alpha = this.ratio * .6;
+	var alpha = this.ratio * .5;
 
 	switch (spect) {
 	case 'O':
@@ -85,6 +84,6 @@ Star.prototype.draw = function(ctx) {
 	}
 	ctx.beginPath();
 	ctx.fillStyle = this.color;
-	ctx.arc(this.x, this.y, this.ratio * 2.5, 0, this.PI2, false);
+	ctx.arc(this.x, this.y, this.ratio * 2.5, 0, Math.PI2, false);
 	ctx.fill();
 };

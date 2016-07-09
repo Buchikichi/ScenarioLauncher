@@ -18,9 +18,9 @@ function Field() {
 
 Field.prototype.init = function() {
 	var view = $('#view');
+	var canvas = document.getElementById('canvas');
 
-	this.canvas = document.createElement('canvas');
-	view.append(this.canvas);
+	this.ctx = canvas.getContext('2d');
 	this.loadStars();
 	this.loadConstellation();
 };
@@ -28,8 +28,7 @@ Field.prototype.init = function() {
 Field.prototype.resetCanvas = function(width) {
 	this.width = width;
 	this.height = width;
-	$(this.canvas).attr('width', this.width).attr('height', this.height);
-	this.ctx = this.canvas.getContext('2d');
+	$('#canvas').attr('width', this.width).attr('height', this.height);
 	this.ctx.font = "12px 'Times New Roman'";
 	this.zoom(0);
 };
@@ -74,11 +73,11 @@ Field.prototype.rotateH = function(diff) {
 };
 
 Field.prototype.rotateV = function(diff) {
-	this.rotationV -= diff / 4;
-	if (90 < this.rotationV) {
-		this.rotationV = 90;
-	} else if (this.rotationV < -90) {
-		this.rotationV = -90;
+	this.rotationV -= diff * Math.PI / 720;
+	if (this.rotationV < -Math.SQ) {
+		this.rotationV = -Math.SQ;
+	} else if (Math.SQ < this.rotationV) {
+		this.rotationV = Math.SQ;
 	}
 };
 
@@ -91,17 +90,14 @@ Field.prototype.zoom = function(delta) {
 };
 
 Field.prototype.seek = function() {
-	console.log('seek');
 	if (arguments.length == 1) {
 		var target = this.starMap[arguments[0]];
-		var longitude = target.ra * 180 / Math.PI;
-		var latitude = target.dec * 180 / Math.PI;
+		this.seekH = -target.ra;
+		this.seekV = target.dec;
 	} else {
-		var longitude = arguments[0];
-		var latitude = arguments[1];
+		this.seekH = -arguments[0];
+		this.seekV = arguments[1];
 	}
-	this.seekH = (-longitude) % 360;
-	this.seekV = latitude;
 };
 
 Field.prototype.drawConstellation = function(rhRad, rvRad) {
@@ -163,8 +159,8 @@ Field.prototype.draw = function() {
 	var ctx = this.ctx;
 	var hW = this.width / 2;
 	var hH = this.height / 2;
-	var rhRad = this.rotationH * Math.PI / 180;
-	var rvRad = -this.rotationV * Math.PI / 180;
+	var rhRad = this.rotationH;
+	var rvRad = -this.rotationV;
 
 	ctx.clearRect(0, 0, this.width, this.height);
 	ctx.save();
@@ -177,8 +173,10 @@ Field.prototype.draw = function() {
 //	ctx.fillText('h:' + this.rotationH, 0, 40);
 	ctx.fillText('v:' + this.rotationV, 0, 40);
 	// rotation
-	this.rotationH += this.dx;
-	this.rotationH %= 360;
+	if (this.dx != 0) {
+		this.rotationH += this.dx * Math.PI / 180;
+		this.rotationH = Math.trim(this.rotationH);
+	}
 	if (0 < Math.abs(this.dx)) {
 		var sign = this.dx < 0 ? -1 : 1;
 
@@ -186,21 +184,21 @@ Field.prototype.draw = function() {
 	}
 	// seek
 	if (this.seekV != null) {
-		var diffV = (this.rotationV - this.seekV) / 5;
+		var pitch = Math.abs(Math.trim(this.rotationV - this.seekV)) / 8;
 
-		if (Math.abs(diffV) < 1) {
+		if (pitch < Math.PI / 180) {
 			this.seekV = null;
 		} else {
-			this.rotationV -= diffV;
+			this.rotationV = Math.close(this.rotationV, this.seekV, pitch);
 		}
 	}
 	if (this.seekH != null) {
-		var diffH = (this.rotationH - this.seekH) / 5;
+		var pitch = Math.abs(Math.trim(this.rotationH - this.seekH)) / 8;
 
-		if (Math.abs(diffH) < 1) {
+		if (pitch < Math.PI / 180) {
 			this.seekH = null;
 		} else {
-			this.rotationH -= diffH;
+			this.rotationH = Math.close(this.rotationH, this.seekH, pitch);
 		}
 	}
 };

@@ -99,7 +99,7 @@ Landform.prototype.scanEnemy = function() {
 		var brick = this.getBrick({x:right, y:ty}, 1);
 
 		if (0 < brick) {
-			result.push(Enemy.assign(brick - 1, right, ty));
+			result.push(Enemy.assign(brick - 1, right, ty + Landform.BRICK_WIDTH));
 //console.log('brick:' + brick);
 		}
 //		ctx.fillRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH - 2);

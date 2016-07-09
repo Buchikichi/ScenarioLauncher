@@ -6,9 +6,10 @@ function Gizmo(type, destination) {
 	this.destination = destination;
 }
 Gizmo.TYPE = {
-	OWN: 0,
-	AIM: 1,
-	CHASE: 2
+	FIXED: 0,
+	OWN: 1,
+	AIM: 2,
+	CHASE: 3
 };
 Gizmo.DEST = {
 	TO: 0,
@@ -20,6 +21,13 @@ Gizmo.DEST = {
 };
 
 Gizmo.prototype.tick = function(src, target) {
+	var landform = src.field.landform;
+
+	if (this.type == Gizmo.TYPE.FIXED) {
+		src.speed = landform.speed;
+		src.dir = landform.dir + Math.PI;
+		return;
+	}
 	if (this.type == Gizmo.TYPE.OWN) {
 		if (this.destination == Gizmo.DEST.ROTATE_L) {
 			src.dir -= src.step;

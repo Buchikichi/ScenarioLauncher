@@ -72,6 +72,7 @@ Field.prototype.setupEnemy = function() {
 			numOfDragon++;
 		}
 	});
+return;
 	if (type < 3 && numOfTentacle < 3) {
 		this.actorList.push(new EnmTentacle(this, x, y));
 	} else if (type < 10) {
@@ -167,7 +168,7 @@ Field.prototype.scroll = function() {
 		var enemy;
 
 		if (obj.formation) {
-			enemy = new EnmFormation(this, obj.x, obj.y).setup(obj.type, 8);
+			enemy = new EnmFormation(field, obj.x, obj.y).setup(obj.type, 8);
 		} else {
 			enemy = new obj.type(field, obj.x, obj.y);
 		}

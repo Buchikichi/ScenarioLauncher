@@ -97,28 +97,16 @@ function loadNames(field) {
 				var anchor = $('<a></a>').text(rec.name);
 				var li = $('<li></li>').append(anchor);
 
-				if (rec.star) {
-					anchor.attr('star', rec.star);
-				} else {
-					anchor.attr('longitude', rec.longitude);
-					anchor.attr('latitude', rec.latitude);
-				}
 				if (rec.text) {
 					li.attr('data-filtertext', rec.text);
 				}
 				ul.append(li);
 				anchor.click(function() {
-					var a = $(this);
-					var star = a.attr('star');
-
-					if (star) {
-						field.seek(star);
+					if (rec.star) {
+						field.seek(rec.star);
 						return;
 					}
-					var longitude = a.attr('longitude');
-					var latitude = a.attr('latitude');
-//					console.log('longitude:' + longitude + '/latitude:' + latitude);
-					field.seek(longitude, latitude);
+					field.seek(rec.longitude, rec.latitude);
 				});
 			});
 			ul.filterable('refresh');
@@ -133,5 +121,5 @@ function activate(field) {
 	setTimeout(function() {
 		field.draw();
 		activate(field);
-	}, 66);
+	}, 33);
 }

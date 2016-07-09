@@ -10,11 +10,11 @@ function Field() {
 	this.dx = 0;
 	this.rotationH = 0;
 	this.rotationV = 0;
-	this.seekH = null;
-	this.seekV = null;
+	this.seekTarget = null;
 	this.magnification = 1;
 	this.init();
 }
+Field.MIN_RAD = Math.PI / 900;
 
 Field.prototype.init = function() {
 	var view = $('#view');
@@ -23,11 +23,14 @@ Field.prototype.init = function() {
 	this.ctx = canvas.getContext('2d');
 	this.loadStars();
 	this.loadConstellation();
+	this.ripple = new Ripple(this);
 };
 
 Field.prototype.resetCanvas = function(width) {
 	this.width = width;
 	this.height = width;
+	this.hW = this.width / 2;
+	this.hH = this.height / 2;
 	$('#canvas').attr('width', this.width).attr('height', this.height);
 	this.ctx.font = "12px 'Times New Roman'";
 	this.zoom(0);
@@ -40,9 +43,7 @@ Field.prototype.loadStars = function() {
 		'success': function(list) {
 			// {"dec":-0.29169937,"id":32349,"ra":1.76781854,"s":"A","v":-144}
 			list.forEach(function(rec) {
-				var x = parseInt(Math.random() * field.width);
-				var y = parseInt(Math.random() * field.height);
-				var star = new Star(field, rec.ra, rec.dec, rec.v, rec.s, x, y);
+				var star = new Star(field, rec.ra, rec.dec, rec.v, rec.s);
 
 				field.stars.push(star);
 				field.starMap[rec.id] = star;
@@ -73,7 +74,7 @@ Field.prototype.rotateH = function(diff) {
 };
 
 Field.prototype.rotateV = function(diff) {
-	this.rotationV -= diff * Math.PI / 720;
+	this.rotationV -= diff * Math.PI / 1800;
 	if (this.rotationV < -Math.SQ) {
 		this.rotationV = -Math.SQ;
 	} else if (Math.SQ < this.rotationV) {
@@ -91,13 +92,11 @@ Field.prototype.zoom = function(delta) {
 
 Field.prototype.seek = function() {
 	if (arguments.length == 1) {
-		var target = this.starMap[arguments[0]];
-		this.seekH = -target.ra;
-		this.seekV = target.dec;
+		this.seekTarget = this.starMap[arguments[0]];
 	} else {
-		this.seekH = -arguments[0];
-		this.seekV = arguments[1];
+		this.seekTarget = new Star(this, arguments[0], arguments[1]);
 	}
+	this.ripple.stop();
 };
 
 Field.prototype.drawConstellation = function(rhRad, rvRad) {
@@ -157,14 +156,12 @@ Field.prototype.draw = function() {
 	}
 	var field = this;
 	var ctx = this.ctx;
-	var hW = this.width / 2;
-	var hH = this.height / 2;
 	var rhRad = this.rotationH;
 	var rvRad = -this.rotationV;
 
 	ctx.clearRect(0, 0, this.width, this.height);
 	ctx.save();
-	ctx.translate(hW, hH);
+	ctx.translate(this.hW, this.hH);
 	this.drawConstellation(rhRad, rvRad);
 	var cnt = this.drawStars(rhRad, rvRad);
 	ctx.restore();
@@ -174,7 +171,7 @@ Field.prototype.draw = function() {
 	ctx.fillText('v:' + this.rotationV, 0, 40);
 	// rotation
 	if (this.dx != 0) {
-		this.rotationH += this.dx * Math.PI / 180;
+		this.rotationH += this.dx * Math.PI / 300;
 		this.rotationH = Math.trim(this.rotationH);
 	}
 	if (0 < Math.abs(this.dx)) {
@@ -183,22 +180,27 @@ Field.prototype.draw = function() {
 		this.dx += -sign;
 	}
 	// seek
-	if (this.seekV != null) {
-		var pitch = Math.abs(Math.trim(this.rotationV - this.seekV)) / 8;
+	if (this.seekTarget) {
+		var target = this.seekTarget;
+		var dec = target.dec;
+		var ra = -target.ra;
+		var pitchV = Math.abs(Math.trim(this.rotationV - dec)) / 8;
+		var pitchH = Math.abs(Math.trim(this.rotationH - ra)) / 8;
+		var moved = false;
 
-		if (pitch < Math.PI / 180) {
-			this.seekV = null;
-		} else {
-			this.rotationV = Math.close(this.rotationV, this.seekV, pitch);
+		if (Field.MIN_RAD <= pitchV) {
+			this.rotationV = Math.close(this.rotationV, dec, pitchV);
+			moved = true;
+		}
+		if (Field.MIN_RAD <= pitchH) {
+			this.rotationH = Math.close(this.rotationH, ra, pitchH);
+			moved = true;
+		}
+		if (!moved) {
+			target.move(rhRad, rvRad);
+			this.ripple.begin(target.x, target.y);
+			this.seekTarget = null;
 		}
 	}
-	if (this.seekH != null) {
-		var pitch = Math.abs(Math.trim(this.rotationH - this.seekH)) / 8;
-
-		if (pitch < Math.PI / 180) {
-			this.seekH = null;
-		} else {
-			this.rotationH = Math.close(this.rotationH, this.seekH, pitch);
-		}
-	}
+	this.ripple.draw(ctx);
 };

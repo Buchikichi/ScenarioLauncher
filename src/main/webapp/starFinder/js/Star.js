@@ -1,15 +1,13 @@
 /**
  * Star.
  */
-function Star(field, ra, dec, v, spect, x, y) {
+function Star(field, ra, dec, v, spect) {
 	this.field = field;
 	this.ra = ra;
 	this.dec = dec;
 	this.v = v;
 	this.ratio = this.getRatio(v);
 	this.color = this.getColor(spect);
-	this.x = x;
-	this.y = y;
 }
 Star.MIN_V = -144;
 Star.MAX_V = 1408;
@@ -76,7 +74,7 @@ Star.prototype.move = function(rhRad, rvRad) {
 	this.x = Math.cos(radZ) * wx - Math.sin(radZ) * wy;
 	this.y = Math.sin(radZ) * wx + Math.cos(radZ) * wy;
 //console.log('x:' + this.x);
-}
+};
 
 Star.prototype.draw = function(ctx) {
 	if (this.z < 0) {
@@ -84,6 +82,6 @@ Star.prototype.draw = function(ctx) {
 	}
 	ctx.beginPath();
 	ctx.fillStyle = this.color;
-	ctx.arc(this.x, this.y, this.ratio * 2.5, 0, Math.PI2, false);
+	ctx.arc(this.x, this.y, this.ratio * 2.8, 0, Math.PI2, false);
 	ctx.fill();
 };

@@ -6,19 +6,24 @@ function Field(width, height) {
 	this.height = height;
 	this.hW = width / 2;
 	this.hH = height / 2;
-	this.ship = new Ship(this, 100, 100);
+	this.ship = new Ship(this, -100, 100);
 	this.ship.isGone = true;
 	this.shipTarget = null;
+	this.shipRemain = 0;
 	this.actorList = [];
 	this.score = 0;
 	this.hiscore = 0;
 	this.enemyCycle = 0;
 }
 
+Field.WIDTH = 512;
+Field.HEIGHT = 224;
 Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
 Field.MAX_LOOSING_RATE = 100;
+Field.MAX_SHIP = 3;
+Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
 
 Field.prototype.setup = function() {
 	var view = $('#view');
@@ -39,7 +44,6 @@ Field.prototype.setup = function() {
 	canvas.height = this.height;
 	this.ctx = canvas.getContext('2d');
 	this.setupBgm(1);
-	this.reset();
 };
 
 Field.prototype.setupBgm = function(stage) {
@@ -72,7 +76,6 @@ Field.prototype.setupEnemy = function() {
 			numOfDragon++;
 		}
 	});
-return;
 	if (type < 3 && numOfTentacle < 3) {
 		this.actorList.push(new EnmTentacle(this, x, y));
 	} else if (type < 10) {
@@ -99,17 +102,18 @@ Field.prototype.reset = function() {
 	this.landform.x = -512;
 	this.ship.x = 100;
 	this.ship.y = 100;
+	this.ship.enter();
 	this.actorList = [this.ship];
-	this.loosingRate = Field.MAX_LOOSING_RATE;
-	this.score = 0;
-	this.showScore();
+	this.hibernate = Field.MAX_HIBERNATE;
+	this.bgm.currentTime = 0;
+	this.bgm.play();
 };
 
 Field.prototype.startGame = function() {
 	$('#gameOver').hide();
-	this.bgm.currentTime = 0;
-	this.bgm.play();
-	this.ship.enter();
+	this.loosingRate = Field.MAX_LOOSING_RATE;
+	this.score = 0;
+	this.shipRemain = Field.MAX_SHIP;
 	this.reset();
 };
 
@@ -174,12 +178,12 @@ Field.prototype.scroll = function() {
 		}
 		field.actorList.push(enemy);
 	});
-	if (Field.ENEMY_CYCLE < this.enemyCycle++) {
-		this.enemyCycle = 0;
-		if (die(this.loosingRate / 30)) {
-			this.setupEnemy();
-		}
-	}
+//	if (Field.ENEMY_CYCLE < this.enemyCycle++) {
+//		this.enemyCycle = 0;
+//		if (die(this.loosingRate / 30)) {
+//			this.setupEnemy();
+//		}
+//	}
 	if (Field.MIN_LOOSING_RATE < this.loosingRate) {
 		var step = this.loosingRate / 10000;
 
@@ -245,7 +249,15 @@ Field.prototype.draw = function() {
 	this.score += score;
 	this.showScore();
 	if (!this.isGameOver() && ship.isGone) {
-		this.endGame();
+		this.bgm.pause();
+		if (0 < --this.hibernate) {
+			return;
+		}
+		if (0 < --this.shipRemain) {
+			this.reset();
+		} else {
+			this.endGame();
+		}
 	}
 };
 
@@ -256,4 +268,5 @@ Field.prototype.showScore = function() {
 	$('#score > div > div:eq(1)').text(this.score);
 	$('#score > div:eq(1) > div:eq(1)').text(this.hiscore);
 //	$('#score > div:eq(2)').text(this.actorList.length + ':' + parseInt(this.loosingRate));
+	$('#remain > div > div:eq(0)').width(this.shipRemain * 16);
 };

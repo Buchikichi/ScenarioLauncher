@@ -90,7 +90,7 @@ Landform.prototype.scanEnemy = function() {
 
 
 
-	var right = 512 - Landform.BRICK_WIDTH;
+	var right = Field.WIDTH;
 	tx += right;
 	if (tx < 0) {
 		return result;

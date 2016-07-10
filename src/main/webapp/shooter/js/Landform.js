@@ -24,7 +24,6 @@ function Landform(canvas) {
 	this.touch = false;
 	this.img = new Image();
 	this.img.onload = function() {
-		landform.x = 0;
 		landform.width = this.width;
 		landform.height = this.height;
 		landform.bw = this.width / Landform.BRICK_WIDTH;
@@ -70,11 +69,20 @@ Landform.prototype.loadMapData = function(file) {
 /*
  * for play.
  */
+Landform.prototype.reset = function() {
+	this.x = -Field.WIDTH;
+};
+
 Landform.prototype.forward = function() {
-	this.x += Math.cos(this.dir) * this.speed;
-	if (this.width < this.x) {
-		this.x = -512;
+	if (!this.width) {
+		return true;
 	}
+	this.x += Math.cos(this.dir) * this.speed;
+	if (this.x < this.width - Field.WIDTH) {
+		return true;
+	}
+	this.reset();
+	return false;
 };
 
 Landform.prototype.scanEnemy = function() {

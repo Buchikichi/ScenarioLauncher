@@ -1,11 +1,11 @@
 /**
  * Field.
  */
-function Field(width, height) {
-	this.width = width;
-	this.height = height;
-	this.hW = width / 2;
-	this.hH = height / 2;
+function Field() {
+	this.width = Field.WIDTH;
+	this.height = Field.HEIGHT;
+	this.hW = this.width / 2;
+	this.hH = this.height / 2;
 	this.ship = new Ship(this, -100, 100);
 	this.ship.isGone = true;
 	this.shipTarget = null;
@@ -14,6 +14,8 @@ function Field(width, height) {
 	this.score = 0;
 	this.hiscore = 0;
 	this.enemyCycle = 0;
+	this.stage = 0;
+	this.setup();
 }
 
 Field.WIDTH = 512;
@@ -30,9 +32,6 @@ Field.prototype.setup = function() {
 	var canvas = document.getElementById('canvas');
 
 	this.landform = new Landform(canvas);
-	this.landform.speed = 1;
-	this.landform.load('./img/stage01bg.png');
-	this.landform.loadMapData('./img/stage01map.png');
 	for (var ix = 0; ix < 2; ix++) {
 		var bg = $('<div></div>').attr('id', 'bg' + ix).addClass('bg');
 
@@ -43,16 +42,26 @@ Field.prototype.setup = function() {
 	canvas.width = this.width;
 	canvas.height = this.height;
 	this.ctx = canvas.getContext('2d');
-	this.setupBgm(1);
-};
-
-Field.prototype.setupBgm = function(stage) {
 	this.bgm = new Audio();
-	this.bgm.src = 'audio/bgm-edo-beth.mp3';
 	this.bgm.volume = .7;
 	$(this.bgm).on('ended', function() {
 		this.play();
 	});
+};
+
+Field.prototype.nextStage = function() {
+	var stage = Stage.LIST[this.stage];
+
+	this.landform.speed = stage.speed;
+	this.landform.load('./img/' + stage.img);
+	this.landform.loadMapData('./img/' + stage.map);
+	this.bgm.src = 'audio/' + stage.bgm;
+	this.bgm.currentTime = 0;
+	this.bgm.play();
+	this.stage++;
+	if (Stage.LIST.length <= this.stage) {
+		this.stage = 0;
+	}
 };
 
 Field.prototype.setupEnemy = function() {
@@ -63,7 +72,7 @@ Field.prototype.setupEnemy = function() {
 		return;
 	}
 	var type = parseInt(Math.random() * 100);
-	var x = this.width;
+	var x = Field.WIDTH;
 	var y = Math.random() * 125 + 25;
 	var numOfTentacle = 0;
 	var numOfDragon = 0;
@@ -99,9 +108,10 @@ Field.prototype.reset = function() {
 		bg.prop('mX', 0);
 		bg.prop('mY', 0);
 	});
-	this.landform.x = -512;
+	this.landform.reset();
 	this.ship.x = 100;
 	this.ship.y = 100;
+	this.ship.trigger = false;
 	this.ship.enter();
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
@@ -114,6 +124,8 @@ Field.prototype.startGame = function() {
 	this.loosingRate = Field.MAX_LOOSING_RATE;
 	this.score = 0;
 	this.shipRemain = Field.MAX_SHIP;
+	this.stage = 0;
+	this.nextStage();
 	this.reset();
 };
 
@@ -167,7 +179,11 @@ Field.prototype.scroll = function() {
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
-	this.landform.forward();
+	if (!this.landform.forward()) {
+		if (!this.isGameOver()) {
+			this.nextStage();
+		}
+	}
 	this.landform.scanEnemy().forEach(function(obj) {
 		var enemy;
 

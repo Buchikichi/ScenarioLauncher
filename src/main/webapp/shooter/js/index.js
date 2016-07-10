@@ -5,9 +5,8 @@ var keys = {};
 var phase = 0;
 $(document).ready(function() {
 	var view = $('#view');
-	var field = new Field(512, 224);
+	var field = new Field();
 
-	field.setup();
 	loop(field);
 	//
 	$(window).keydown(function(e) {

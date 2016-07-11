@@ -7,10 +7,12 @@ function Enemy() {
 	this.routineIx = 0;
 	this.routineCnt = 0;
 	this.triggerCycle = 0;
+	this.constraint = false;
 }
 Enemy.prototype = Object.create(Actor.prototype);
 
 Enemy.TRIGGER_CYCLE = 30;
+Enemy.TRIGGER_ALLOWANCE = 100;
 Enemy.LIST = [
 	{name:'Waver', type:EnmWaver, img:'enmWaver.png'},
 	{name:'Battery', type:EnmBattery, img:'enmBattery.png'},
@@ -48,4 +50,10 @@ Enemy.prototype.move = function(target) {
 		mov.tick(this, target);
 	}
 	this.actor_move(target);
+	if (this.trigger() && Enemy.TRIGGER_ALLOWANCE < this.calcDistance(target)) {
+		if (this.constraint) {
+			return;
+		}
+		return [new Bullet(this.field, this.x, this.y).aim(target)];
+	}
 };

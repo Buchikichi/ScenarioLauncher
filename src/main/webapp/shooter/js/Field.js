@@ -221,6 +221,7 @@ Field.prototype.draw = function() {
 		if (actor.isGone) {
 			return;
 		}
+		actor.constraint = !die(field.loosingRate / 10);
 		field.landform.hitTest(actor);
 		var child = actor.move(ship);
 
@@ -241,13 +242,6 @@ Field.prototype.draw = function() {
 		} else if (actor instanceof Enemy) {
 			ship.isHit(actor);
 			enemyList.push(actor);
-			if (actor.trigger() && 100 < actor.calcDistance(ship)) {
-				if (die(field.loosingRate / 10)) {
-					var bullet = new Bullet(field, actor.x, actor.y);
-					bullet.aim(ship);
-					validActors.push(bullet);
-				}
-			}
 		}
 		if (actor.explosion && actor.score) {
 			score += actor.score;

@@ -71,6 +71,7 @@ Actor.prototype.aim = function(target) {
 	} else {
 		this.dir = null;
 	}
+	return this;
 };
 
 Actor.prototype.closeGap = function(target) {

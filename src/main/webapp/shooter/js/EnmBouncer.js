@@ -27,7 +27,7 @@ EnmBouncer.prototype.move = function(target) {
 	} else {
 		this.dy += .3;
 	}
-	this._move(target);
+	return this._move(target);
 };
 
 EnmBouncer.prototype.drawNormal = function(ctx) {

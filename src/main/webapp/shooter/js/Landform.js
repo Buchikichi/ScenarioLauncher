@@ -34,7 +34,6 @@ function Landform(canvas) {
 		landform.viewY = this.height - Field.HEIGHT;
 	}
 	this.isEdit = false;
-	this.brick = null;
 	this.touch = false;
 }
 Landform.BRICK_WIDTH = 8;
@@ -398,6 +397,15 @@ Landform.prototype.getImageData = function() {
 	return ctx.getImageData(0, 0, this.width, this.height);
 };
 
+Landform.prototype.getBrickData = function(ctx) {
+	if (this.brick != null) {
+		return this.brick;
+	}
+	var bw = this.width / Landform.BRICK_WIDTH;
+	var bh = this.height / Landform.BRICK_WIDTH;
+	return ctx.createImageData(bw, bh);
+};
+
 Landform.prototype.generateBrick = function(ctx) {
 	if (!this.img.src || !this.img.complete) {
 		return;
@@ -405,7 +413,7 @@ Landform.prototype.generateBrick = function(ctx) {
 	var img = this.getImageData();
 	var bw = this.width / Landform.BRICK_WIDTH;
 	var bh = this.height / Landform.BRICK_WIDTH;
-	var brick = ctx.createImageData(bw, bh);
+	var brick = this.getBrickData(ctx);
 	var dst = brick.data;
 	var sx = 0;
 	var ix = 0;

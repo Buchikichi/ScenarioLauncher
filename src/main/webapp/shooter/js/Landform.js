@@ -8,8 +8,10 @@ function Landform(canvas) {
 	this.ctx = canvas.getContext('2d');
 	this.x = 0;
 	this.y = 0;
+	this.viewY = 0;
 	this.dir = 0;
 	this.speed = 0;
+	this.scroll = Stage.SCROLL.OFF;
 	this.col = 0;
 	this.colDir = 1;
 	this.magni = 1;
@@ -28,6 +30,7 @@ function Landform(canvas) {
 		landform.height = this.height;
 		landform.bw = this.width / Landform.BRICK_WIDTH;
 		landform.bh = this.height / Landform.BRICK_WIDTH;
+		landform.viewY = this.height - Field.HEIGHT;
 	}
 	this.isEdit = false;
 	this.brick = null;
@@ -73,10 +76,42 @@ Landform.prototype.reset = function() {
 	this.x = -Field.WIDTH;
 };
 
-Landform.prototype.forward = function() {
+Landform.prototype.scrollV = function(target) {
+	if (this.scroll == Stage.SCROLL.OFF) {
+		return;
+	}
+	var field = target.field;
+	var diff = field.hH - target.y;
+
+	if (Math.abs(diff) < this.speed) {
+		return;
+	}
+	var speed = diff / 3;
+
+	this.y -= speed;
+	if (this.scroll == Stage.SCROLL.ON) {
+		if (this.y < 0) {
+			this.y = 0;
+			return;
+		}
+		if (this.viewY < this.y) {
+			this.y = this.viewY;
+			return;
+		}
+	}
+	if (this.y < 0) {
+		this.y += this.height;
+	} else if (this.height < this.y) {
+		this.y -= this.height;
+	}
+	target.y += speed;
+};
+
+Landform.prototype.forward = function(target) {
 	if (!this.width) {
 		return true;
 	}
+	this.scrollV(target);
 	this.x += Math.cos(this.dir) * this.speed;
 	if (this.x < this.width - Field.WIDTH) {
 		return true;
@@ -130,6 +165,7 @@ Landform.prototype.getBrickIndex = function(target) {
 	}
 	var ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
 
+	ty %= this.bh;
 	return ty * this.bw * 4 + tx * 4;
 };
 
@@ -148,6 +184,20 @@ Landform.prototype.getBrick = function(target, c) {
 /*
  * for edit
  */
+Landform.prototype.wheel = function(delta) {
+	if (delta < 0){
+		this.y += Landform.BRICK_WIDTH;
+		if (this.height <= this.y) {
+			this.y = 0;
+		}
+	} else {
+		if (this.y == 0) {
+			this.y = this.height;
+		}
+		this.y -= Landform.BRICK_WIDTH;
+	}
+};
+
 Landform.prototype.putBrick = function(target, c, val) {
 	var ix = this.getBrickIndex(target);
 
@@ -241,12 +291,17 @@ Landform.prototype.drawBrick = function() {
 	var sx = Math.round(this.x / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 	var startX = sx / Landform.BRICK_WIDTH;
 	var endX = Math.min(startX + 512 / Landform.BRICK_WIDTH, this.bw);
+	var sy = Math.round(this.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var startY = sy / Landform.BRICK_WIDTH;
+	var bh = this.bh / 2 - 2;
 	var bd = this.brick.data;
 
 	ctx.save();
 	ctx.fillStyle = 'rgba(' + red + ', ' + green + ', 255, .4)';
-	for (var y = 0, ry = 0; y < this.bh; y++, ry += Landform.BRICK_WIDTH) {
-		var ix = (y * this.bw + startX) * 4;
+	for (var y = 0; y < bh; y++) {
+		var iy = startY + y;
+		var ry = iy * Landform.BRICK_WIDTH;
+		var ix = ((iy % this.bh) * this.bw + startX) * 4;
 
 		for (var x = startX, rx = sx; x < endX; x++, rx += Landform.BRICK_WIDTH, ix += 4) {
 			if (x < 0) {
@@ -276,8 +331,11 @@ Landform.prototype.draw = function() {
 
 	ctx.save();
 	ctx.scale(this.magni, this.magni);
-	ctx.translate(-this.x, this.y);
+	ctx.translate(-this.x, -this.y);
 	ctx.drawImage(this.img, 0, 0);
+	if (this.viewY < this.y) {
+		ctx.drawImage(this.img, 0, this.height);
+	}
 	this.drawBrick();
 	this.drawTarget();
 //this.scanEnemy();

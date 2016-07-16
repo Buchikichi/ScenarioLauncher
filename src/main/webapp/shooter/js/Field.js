@@ -52,7 +52,9 @@ Field.prototype.setup = function() {
 Field.prototype.nextStage = function() {
 	var stage = Stage.LIST[this.stage];
 
+	this.landform.y = 0;
 	this.landform.speed = stage.speed;
+	this.landform.scroll = stage.scroll;
 	this.landform.load('./img/' + stage.img);
 	this.landform.loadMapData('./img/' + stage.map);
 	this.bgm.src = 'audio/' + stage.bgm;
@@ -179,7 +181,7 @@ Field.prototype.scroll = function() {
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
-	if (!this.landform.forward()) {
+	if (!this.landform.forward(this.ship)) {
 		if (!this.isGameOver()) {
 			this.nextStage();
 		}
@@ -211,7 +213,6 @@ Field.prototype.draw = function() {
 	var field = this;
 	var ctx = this.ctx;
 	var ship = this.ship;
-	var shotList = [];
 	var enemyList = [];
 	var validActors = [];
 	var score = 0;
@@ -235,9 +236,7 @@ Field.prototype.draw = function() {
 		}
 		actor.draw(ctx);
 		validActors.push(actor);
-		if (actor instanceof Shot) {
-			shotList.push(actor);
-		} else if (actor instanceof Bullet) {
+		if (actor instanceof Bullet) {
 			ship.isHit(actor);
 		} else if (actor instanceof Enemy) {
 			ship.isHit(actor);
@@ -248,13 +247,12 @@ Field.prototype.draw = function() {
 			actor.score = 0;
 		}
 	});
-	shotList.forEach(function(shot) {
+	this.ship.shotList.forEach(function(shot) {
 		enemyList.forEach(function(enemy) {
 			enemy.isHit(shot);
 		});
 	});
 	this.actorList = validActors;
-	this.ship.shotList = shotList;
 	this.landform.draw();
 	this.score += score;
 	this.showScore();

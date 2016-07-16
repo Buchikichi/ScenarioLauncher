@@ -10,13 +10,13 @@ function EnmDragonBody() {
 
 EnmDragonBody.prototype = Object.create(Enemy.prototype);
 
-EnmDragonBody.prototype.move = function(target) {
-	if (0 < this.explosion) {
-		this.explosion--;
-		if (this.explosion == 0) {
-			this.eject();
-		}
-	}
+EnmDragonBody.prototype._recalculation = Actor.prototype.recalculation;
+EnmDragonBody.prototype.recalculation = function() {
+	this._recalculation();
+	this.minX = -this.field.width;
+	this.minY = -this.field.height;
+	this.maxX = this.field.width * 2;
+	this.maxY = this.field.height * 2;
 };
 
 EnmDragonBody.prototype.trigger = function() {

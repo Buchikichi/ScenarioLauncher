@@ -66,43 +66,6 @@ Field.prototype.nextStage = function() {
 	}
 };
 
-Field.prototype.setupEnemy = function() {
-	if (this.isGameOver()) {
-		return;
-	}
-	if (Field.MAX_ENEMIES < this.actorList.length) {
-		return;
-	}
-	var type = parseInt(Math.random() * 100);
-	var x = Field.WIDTH;
-	var y = Math.random() * 125 + 25;
-	var numOfTentacle = 0;
-	var numOfDragon = 0;
-
-	this.actorList.forEach(function(actor) {
-		if (actor instanceof EnmTentacle) {
-			numOfTentacle++;
-		}
-		if (actor instanceof EnmDragonHead) {
-			numOfDragon++;
-		}
-	});
-	if (type < 3 && numOfTentacle < 3) {
-		this.actorList.push(new EnmTentacle(this, x, y));
-	} else if (type < 10) {
-		this.actorList.push(new EnmJuno(this, x, y));
-	} else if (type < 15) {
-		this.actorList.push(new EnmHanker(this, x, y));
-	} else if (type < 20) {
-		var y = Math.random() * (this.hH - 32) + this.hH;
-		this.actorList.push(new EnmBouncer(this, x, y));
-	} else if (type < 25) {
-		var y = Math.random() * this.hH + this.hH / 2;
-		this.actorList.push(new EnmJerky(this, x, y));
-//		this.actorList.push(new EnmFormation(this, x, y).setup(EnmWaver, 8));
-	}
-};
-
 Field.prototype.reset = function() {
 	$('.bg').each(function(ix, obj) {
 		var bg = $(this);
@@ -196,12 +159,6 @@ Field.prototype.scroll = function() {
 		}
 		field.actorList.push(enemy);
 	});
-//	if (Field.ENEMY_CYCLE < this.enemyCycle++) {
-//		this.enemyCycle = 0;
-//		if (die(this.loosingRate / 30)) {
-//			this.setupEnemy();
-//		}
-//	}
 	if (Field.MIN_LOOSING_RATE < this.loosingRate) {
 		var step = this.loosingRate / 10000;
 
@@ -223,6 +180,7 @@ Field.prototype.draw = function() {
 			return;
 		}
 		actor.constraint = !die(field.loosingRate / 10);
+		field.landform.effect(actor);
 		field.landform.hitTest(actor);
 		var child = actor.move(ship);
 

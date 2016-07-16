@@ -101,12 +101,6 @@ Actor.prototype.move = function(target) {
 	}
 	this.x += this.dx * this.speed;
 	this.y += this.dy * this.speed;
-	if (this.x < this.minX || this.maxX < this.x) {
-		this.eject();
-	}
-	if (this.y < this.minY || this.maxY < this.y) {
-		this.eject();
-	}
 	if (0 < this.explosion) {
 		this.explosion--;
 		if (this.explosion == 0) {

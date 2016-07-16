@@ -12,6 +12,7 @@ function Landform(canvas) {
 	this.dir = 0;
 	this.speed = 0;
 	this.scroll = Stage.SCROLL.OFF;
+	this.effectV = 0;
 	this.col = 0;
 	this.colDir = 1;
 	this.magni = 1;
@@ -74,9 +75,37 @@ Landform.prototype.loadMapData = function(file) {
  */
 Landform.prototype.reset = function() {
 	this.x = -Field.WIDTH;
+	this.y = 0;
+};
+
+Landform.prototype.effect = function(target) {
+	var field = target.field;
+
+	target.y += this.effectV;
+	if (target.x < target.minX || target.maxX < target.x) {
+		target.eject();
+	}
+	if (this.scroll == Stage.SCROLL.OFF) {
+		if (target.y < target.minY || target.maxY < target.y) {
+			target.eject();
+		}
+		return;
+	}
+	if (this.scroll == Stage.SCROLL.ON) {
+		if (target.y < target.minY || this.height + target.maxY < target.y) {
+			target.eject();
+		}
+		return;
+	}
+	if (target.y < 0) {
+		target.y += this.height;
+	} else if (this.height < target.y) {
+		target.y -= this.height;
+	}
 };
 
 Landform.prototype.scrollV = function(target) {
+	this.effectV = 0;
 	if (this.scroll == Stage.SCROLL.OFF) {
 		return;
 	}
@@ -104,7 +133,7 @@ Landform.prototype.scrollV = function(target) {
 	} else if (this.height < this.y) {
 		this.y -= this.height;
 	}
-	target.y += speed;
+	this.effectV = speed;
 };
 
 Landform.prototype.forward = function(target) {

@@ -144,11 +144,6 @@ Field.prototype.scroll = function() {
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
-	if (!this.landform.forward(this.ship)) {
-		if (!this.isGameOver()) {
-			this.nextStage();
-		}
-	}
 	this.landform.scanEnemy().forEach(function(obj) {
 		var enemy;
 
@@ -159,6 +154,11 @@ Field.prototype.scroll = function() {
 		}
 		field.actorList.push(enemy);
 	});
+	if (!this.landform.forward(this.ship)) {
+		if (!this.isGameOver()) {
+			this.nextStage();
+		}
+	}
 	if (Field.MIN_LOOSING_RATE < this.loosingRate) {
 		var step = this.loosingRate / 10000;
 
@@ -184,9 +184,6 @@ Field.prototype.draw = function() {
 		field.landform.hitTest(actor);
 		var child = actor.move(ship);
 
-		if (child instanceof Actor) {
-			validActors.push(child);
-		}
 		if (child instanceof Array) {
 			child.forEach(function(enemy) {
 				validActors.push(enemy);

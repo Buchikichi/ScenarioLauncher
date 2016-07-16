@@ -79,10 +79,10 @@ Landform.prototype.reset = function() {
 };
 
 Landform.prototype.effect = function(target) {
-	var field = target.field;
+	var maxX = Math.max(target.field.width + target.width, target.maxX);
 
 	target.y += this.effectV;
-	if (target.x < target.minX || target.maxX < target.x) {
+	if (target.x < target.minX || maxX < target.x) {
 		target.eject();
 	}
 	if (this.scroll == Stage.SCROLL.OFF) {
@@ -92,7 +92,7 @@ Landform.prototype.effect = function(target) {
 		return;
 	}
 	if (this.scroll == Stage.SCROLL.ON) {
-		if (target.y < target.minY || this.height + target.maxY < target.y) {
+		if (target.y < -this.height || this.height + target.maxY < target.y) {
 			target.eject();
 		}
 		return;
@@ -111,6 +111,7 @@ Landform.prototype.scrollV = function(target) {
 	}
 	var field = target.field;
 	var diff = field.hH - target.y;
+	var svY = this.y;
 
 	if (Math.abs(diff) < this.speed) {
 		return;
@@ -119,19 +120,16 @@ Landform.prototype.scrollV = function(target) {
 
 	this.y -= speed;
 	if (this.scroll == Stage.SCROLL.ON) {
+		if (this.y < 0 || this.viewY < this.y) {
+			this.y = svY;
+			return;
+		}
+	} else {
 		if (this.y < 0) {
-			this.y = 0;
-			return;
+			this.y += this.height;
+		} else if (this.height < this.y) {
+			this.y -= this.height;
 		}
-		if (this.viewY < this.y) {
-			this.y = this.viewY;
-			return;
-		}
-	}
-	if (this.y < 0) {
-		this.y += this.height;
-	} else if (this.height < this.y) {
-		this.y -= this.height;
 	}
 	this.effectV = speed;
 };
@@ -151,6 +149,10 @@ Landform.prototype.forward = function(target) {
 
 Landform.prototype.scanEnemy = function() {
 	var result = [];
+
+	if (!this.brick) {
+		return result;
+	}
 	var tx = Math.round(this.x / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 	if (tx === this.lastScan) {
 		return result;
@@ -162,17 +164,20 @@ Landform.prototype.scanEnemy = function() {
 
 
 
-	var right = Field.WIDTH;
-	tx += right;
+	var tx = Math.round((this.x + Field.WIDTH - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+
 	if (tx < 0) {
 		return result;
 	}
-	for (var ty = 0; ty < 224; ty += Landform.BRICK_WIDTH) {
-		var brick = this.getBrick({x:right, y:ty}, 1);
+	var x = Field.WIDTH + Landform.BRICK_WIDTH;
+	for (var ty = 0; ty < this.bh; ty++) {
+		var ix = ty * this.bw * 4 + tx * 4;
+		var brick = this.brick.data[ix + 1];
 
 		if (0 < brick) {
-			result.push(Enemy.assign(brick - 1, right, ty + Landform.BRICK_WIDTH));
-//console.log('brick:' + brick);
+			var y = -this.y + (ty + 1) * Landform.BRICK_WIDTH;
+
+			result.push(Enemy.assign(brick - 1, x, y));
 		}
 //		ctx.fillRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH - 2);
 	}
@@ -367,7 +372,6 @@ Landform.prototype.draw = function() {
 	}
 	this.drawBrick();
 	this.drawTarget();
-//this.scanEnemy();
 	ctx.restore();
 	if (this.touch && this.brick) {
 		this.updateMap();

@@ -17,10 +17,6 @@ function Actor(field, x, y) {
 	this.hitPoint = 1;
 	this.score = 0;
 	this.isHitWall = false;
-	this.minX = 0;
-	this.minY = 0;
-	this.maxX = this.field.width;
-	this.maxY = this.field.height;
 	this.recalculation();
 	this.img = new Image();
 	this.img.onload = function() {

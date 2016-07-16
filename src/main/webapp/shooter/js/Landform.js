@@ -327,12 +327,11 @@ Landform.prototype.drawBrick = function() {
 	var endX = Math.min(startX + 512 / Landform.BRICK_WIDTH, this.bw);
 	var sy = Math.round(this.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 	var startY = sy / Landform.BRICK_WIDTH;
-	var bh = this.bh / 2 - 2;
 	var bd = this.brick.data;
 
 	ctx.save();
 	ctx.fillStyle = 'rgba(' + red + ', ' + green + ', 255, .4)';
-	for (var y = 0; y < bh; y++) {
+	for (var y = 0; y < this.bh; y++) {
 		var iy = startY + y;
 		var ry = iy * Landform.BRICK_WIDTH;
 		var ix = ((iy % this.bh) * this.bw + startX) * 4;

@@ -18,10 +18,15 @@ function Actor(field, x, y) {
 	this.score = 0;
 	this.isHitWall = false;
 	this.recalculation();
+	this.imgPatterns = null;
+	this.imgPatNum = 0;
 	this.img = new Image();
 	this.img.onload = function() {
 		actor.width = this.width;
 		actor.height = this.height;
+		if (actor.imgPatterns) {
+			actor.height /= actor.imgPatterns;
+		}
 		actor.recalculation();
 	};
 	this.sfx = new Audio();
@@ -113,10 +118,14 @@ Actor.prototype.drawNormal = function(ctx) {
 	if (!this.img.src) {
 		return;
 	}
+	var sw = this.width;
+	var sh = this.height;
+	var sy = sh * (parseInt(this.imgPatNum) + (this.imgPatterns ? parseInt(this.imgPatterns / 2) : 0));
+
 	ctx.save();
 	ctx.translate(this.x, this.y);
 	ctx.rotate(this.radian);
-	ctx.drawImage(this.img, -this.hW, -this.hH);
+	ctx.drawImage(this.img, 0 , sy, sw, sh, -this.hW, -this.hH, sw, sh);
 	ctx.restore();
 };
 

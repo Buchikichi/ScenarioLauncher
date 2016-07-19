@@ -31,6 +31,7 @@ function Landform(canvas) {
 		landform.height = this.height;
 		landform.bw = this.width / Landform.BRICK_WIDTH;
 		landform.bh = this.height / Landform.BRICK_WIDTH;
+		landform.viewX = this.width - Field.HALF_WIDTH;
 		landform.viewY = this.height - Field.HEIGHT;
 	}
 	this.isEdit = false;
@@ -39,6 +40,11 @@ function Landform(canvas) {
 Landform.BRICK_WIDTH = 8;
 Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
 Landform.COL_MAX = 512;
+Landform.NEXT = {
+	NONE: 0,
+	ARRIV: 1,
+	PAST: 2
+};
 
 Landform.prototype.load = function(file) {
 	if (file instanceof File) {
@@ -135,21 +141,29 @@ Landform.prototype.scrollV = function(target) {
 
 Landform.prototype.forward = function(target) {
 	if (!this.width) {
-		return true;
+		return Landform.NEXT.NONE;
 	}
 	this.scrollV(target);
 	this.x += Math.cos(this.dir) * this.speed;
-	if (this.x < this.width - Field.WIDTH) {
-		return true;
+//console.log('x:' + this.x + '/' + this.viewX);
+	if (this.viewX <= this.x) {
+//console.log('PAST!!');
+		//this.reset();
+		return Landform.NEXT.PAST;
 	}
-	this.reset();
-	return false;
+	var diff = Math.abs(this.width - Field.WIDTH - this.x);
+	if (diff <= this.speed) {
+//console.log('ARRIV!!:' + this.x);
+		this.x = this.width - Field.WIDTH + this.speed;
+		return Landform.NEXT.ARRIV;
+	}
+	return Landform.NEXT.NONE;
 };
 
 Landform.prototype.scanEnemy = function() {
 	var result = [];
 
-	if (!this.brick) {
+	if (!this.brick || this.width - Field.WIDTH <= this.x) {
 		return result;
 	}
 	var tx = Math.round(this.x / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;

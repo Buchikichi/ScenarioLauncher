@@ -14,18 +14,25 @@ function Field() {
 	this.score = 0;
 	this.hiscore = 0;
 	this.enemyCycle = 0;
-	this.stage = 0;
+	this.stage = Stage.LIST[0];
+	this.stageNum = 0;
 	this.setup();
 }
 
 Field.WIDTH = 512;
 Field.HEIGHT = 224;
+Field.HALF_WIDTH = Field.WIDTH / 2;
+Field.HALF_HEIGHT = Field.HEIGHT / 2;
 Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
 Field.MAX_LOOSING_RATE = 100;
 Field.MAX_SHIP = 3;
 Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
+Field.PHASE = {
+	NORMAL: 0,
+	BOSS: 1
+};
 
 Field.prototype.setup = function() {
 	var view = $('#view');
@@ -49,21 +56,26 @@ Field.prototype.setup = function() {
 	});
 };
 
-Field.prototype.nextStage = function() {
-	var stage = Stage.LIST[this.stage];
+Field.prototype.setBgm = function(bgm) {
+	this.bgm.src = 'audio/' + bgm;
+	this.bgm.currentTime = 0;
+	this.bgm.play();
+};
 
-	this.landform.y = 0;
+Field.prototype.nextStage = function() {
+	var stage = Stage.LIST[this.stageNum];
+
+	this.stage = stage;
+	this.landform.reset();
 	this.landform.speed = stage.speed;
 	this.landform.scroll = stage.scroll;
 	this.landform.load('./img/' + stage.img);
 	this.landform.loadMapData('./img/' + stage.map);
-	this.bgm.src = 'audio/' + stage.bgm;
-	this.bgm.currentTime = 0;
-	this.bgm.play();
-	this.stage++;
-	if (Stage.LIST.length <= this.stage) {
-		this.stage = 0;
+	this.stageNum++;
+	if (Stage.LIST.length <= this.stageNum) {
+		this.stageNum = 0;
 	}
+	this.setBgm(this.stage.bgm);
 };
 
 Field.prototype.reset = function() {
@@ -73,6 +85,7 @@ Field.prototype.reset = function() {
 		bg.prop('mX', 0);
 		bg.prop('mY', 0);
 	});
+	this.phase = Field.PHASE.NORMAL;
 	this.landform.reset();
 	this.ship.x = 100;
 	this.ship.y = 100;
@@ -80,8 +93,7 @@ Field.prototype.reset = function() {
 	this.ship.enter();
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
-	this.bgm.currentTime = 0;
-	this.bgm.play();
+	this.setBgm(this.stage.bgm);
 };
 
 Field.prototype.startGame = function() {
@@ -89,7 +101,7 @@ Field.prototype.startGame = function() {
 	this.loosingRate = Field.MAX_LOOSING_RATE;
 	this.score = 0;
 	this.shipRemain = Field.MAX_SHIP;
-	this.stage = 0;
+	this.stageNum = 0;
 	this.nextStage();
 	this.reset();
 };
@@ -144,6 +156,9 @@ Field.prototype.scroll = function() {
 		bg.prop('mX', mX);
 		bg.prop('mY', mY);
 	});
+	if (this.phase == Field.PHASE.BOSS) {
+		return;
+	}
 	this.landform.scanEnemy().forEach(function(obj) {
 		var enemy;
 
@@ -154,10 +169,17 @@ Field.prototype.scroll = function() {
 		}
 		field.actorList.push(enemy);
 	});
-	if (!this.landform.forward(this.ship)) {
-		if (!this.isGameOver()) {
-			this.nextStage();
-		}
+	var next = this.landform.forward(this.ship);
+
+	if (this.isGameOver()) {
+		return;
+	}
+	if (next == Landform.NEXT.ARRIV && this.stage.boss) {
+console.log('boss!!');
+		this.phase = Field.PHASE.BOSS;
+		this.setBgm(this.stage.boss);
+	} else if (next == Landform.NEXT.PAST) {
+		this.nextStage();
 	}
 	if (Field.MIN_LOOSING_RATE < this.loosingRate) {
 		var step = this.loosingRate / 10000;
@@ -207,6 +229,9 @@ Field.prototype.draw = function() {
 			enemy.isHit(shot);
 		});
 	});
+	if (this.phase == Field.PHASE.BOSS && enemyList.length == 0) {
+		this.phase = Field.PHASE.NORMAL;
+	}
 	this.actorList = validActors;
 	this.landform.draw();
 	this.score += score;
@@ -231,5 +256,5 @@ Field.prototype.showScore = function() {
 	$('#score > div > div:eq(1)').text(this.score);
 	$('#score > div:eq(1) > div:eq(1)').text(this.hiscore);
 //	$('#score > div:eq(2)').text(this.actorList.length + ':' + parseInt(this.loosingRate));
-	$('#remain > div > div:eq(0)').width(this.shipRemain * 16);
+	$('#remain > div > div:eq(0)').width((this.shipRemain - 1) * 16);
 };

@@ -74,7 +74,6 @@ Ship.prototype.move = function() {
 
 	// gradient
 	if (.1 < Math.abs(this.imgPatNum)) {
-//console.log('pat:' + this.imgPatNum);
 		if (this.imgPatNum < 0) {
 			this.imgPatNum += .1;
 		} else {

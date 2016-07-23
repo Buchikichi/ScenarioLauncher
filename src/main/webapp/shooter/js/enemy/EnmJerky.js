@@ -3,7 +3,7 @@
  */
 function EnmJerky() {
 	Enemy.apply(this, arguments);
-	this.speed = 3;
+	this.speed = 2;
 	this.hitPoint = 1;
 	this.score = 10;
 	this.anim = new Animator(this, 'enmJerky.png', Animator.TYPE.NONE);

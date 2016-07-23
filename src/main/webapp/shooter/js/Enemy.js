@@ -42,6 +42,17 @@ Enemy.prototype.trigger = function() {
 	return true;
 };
 
+Enemy.prototype.fire = function(target) {
+	var bullet = new Bullet(this.field, this.x, this.y);
+	var dist = this.calcDistance(target);
+	var estimation = dist / bullet.speed * this.field.landform.speed;
+	var dx = target.x - this.x + estimation;
+	var dy = target.y - this.y;
+
+	bullet.dir = Math.atan2(dy, dx);
+	return [bullet];
+};
+
 Enemy.prototype.actor_move = Actor.prototype.move;
 Enemy.prototype.move = function(target) {
 	var enemy = this;
@@ -56,6 +67,6 @@ Enemy.prototype.move = function(target) {
 		if (this.constraint) {
 			return;
 		}
-		return [new Bullet(this.field, this.x, this.y).aim(target)];
+		return this.fire(target);
 	}
 };

@@ -18,6 +18,10 @@ canvas {
 	border: 1px lightgray solid;
 	background-color: black;
 }
+#actorList label {
+	background-repeat: no-repeat;
+	background-position: 30px 50%;
+}
 </style>
 </head>
 
@@ -41,8 +45,11 @@ canvas {
       <img id="mapImage"/>
     </div>
     <div id="editPanel" data-role="panel" data-position="right" data-display="overlay">
-      <div id="actorList" data-role="controlgroup">
-        <input id="brick" type="radio" name="actor" value="0" checked="checked"/><label for="brick">brick</label>
+      <div id="actorList" data-role="controlgroup" data-mini="true">
+        <button class="ui-btn ui-btn-b" disabled>Brick</button>
+        <input id="brick" type="radio" name="actor" value="b0" checked="checked"/><label for="brick">Brick</label>
+        <input id="plate" type="radio" name="actor" value="b1"/><label for="plate">Plate</label>
+        <button class="ui-btn ui-btn-b" disabled>Enemies</button>
       </div>
     </div>
   </div>

@@ -4,7 +4,8 @@
 function EnmJuno() {
 	Enemy.apply(this, arguments);
 	this.dir = Math.PI;
-	this.speed = 1.5;
+	this.speed = 2;
+	this.effect = false;
 	this.hitPoint = 75; // 2016-7-5
 	this.score = 750;
 	this.anim = new Animator(this, 'enmJuno.png', Animator.TYPE.NONE);

@@ -67,6 +67,11 @@ function setupActorList(landform) {
 		var label = $('<label></label>').text(rec.name).attr('for', id);
 		var img = $('<img/>').attr('src', 'img/' + rec.img);
 
+		label.css('background-image', 'url("./img/' + rec.img + '")');
+		if (rec.h) {
+			img.attr('width', rec.h);
+			img.attr('height', rec.h);
+		}
 		rec.instance = new rec.type(landform);
 		container.append(input);
 		container.append(label.prepend(img));

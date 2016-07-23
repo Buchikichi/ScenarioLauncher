@@ -35,6 +35,8 @@ function Landform(canvas) {
 		landform.viewX = this.width - Field.HALF_WIDTH;
 		landform.viewY = this.height - Field.HEIGHT;
 	}
+	this.reverse = new Image();
+	this.reverse.src = './img/reverse.png';
 	this.isEdit = false;
 	this.touch = false;
 }
@@ -148,14 +150,15 @@ Landform.prototype.forward = function(target) {
 		return Landform.NEXT.NONE;
 	}
 	this.scrollV(target);
-	this.effectH = Math.cos(this.dir) * this.speed;
-	this.x += this.effectH;
 //console.log('x:' + this.x + '/' + this.viewX);
 	if (this.viewX <= this.x) {
 //console.log('PAST!!');
 		//this.reset();
+		this.effectH = 0;
 		return Landform.NEXT.PAST;
 	}
+	this.effectH = Math.cos(this.dir) * this.speed;
+	this.x += this.effectH;
 	var diff = Math.abs(this.width - Field.WIDTH - this.x);
 	if (diff <= this.speed) {
 //console.log('ARRIV!!:' + this.x);
@@ -171,33 +174,41 @@ Landform.prototype.scanEnemy = function() {
 	if (!this.brick || this.width - Field.WIDTH <= this.x) {
 		return result;
 	}
-	var tx = Math.round(this.x / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	if (tx === this.lastScan) {
-		return result;
-	}
-	this.lastScan = tx;
-//	var ctx = this.ctx;
-
-//	ctx.fillStyle = 'rgba(255, 0, 0, .8)';
-
-
-
+	// right
 	var tx = Math.round((this.x + Field.WIDTH - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
 
 	if (tx < 0) {
 		return result;
 	}
+	if (tx === this.lastScan) {
+		return result;
+	}
+	this.lastScan = tx;
 	var x = Field.WIDTH + Landform.BRICK_WIDTH;
 	for (var ty = 0; ty < this.bh; ty++) {
 		var ix = ty * this.bw * 4 + tx * 4;
 		var brick = this.brick.data[ix + 1];
 
-		if (0 < brick) {
+		if (0 < brick && brick <= Enemy.MAX_TYPE) {
 			var y = -this.y + (ty + 1) * Landform.BRICK_WIDTH;
 
 			result.push(Enemy.assign(brick - 1, x, y));
 		}
-//		ctx.fillRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH - 2);
+	}
+	// left
+	tx = Math.round(this.x / Landform.BRICK_WIDTH);
+	if (tx < 0) {
+		return result;
+	}
+	for (var ty = 0; ty < this.bh; ty++) {
+		var ix = ty * this.bw * 4 + tx * 4;
+		var brick = this.brick.data[ix + 1];
+
+		if (Enemy.MAX_TYPE < brick) {
+			var y = -this.y + (ty + 1) * Landform.BRICK_WIDTH;
+
+			result.push(Enemy.assign(brick - 1 - Enemy.MAX_TYPE, 0, y));
+		}
 	}
 	return result;
 };
@@ -261,9 +272,12 @@ Landform.prototype.putBrick = function(target, c, val) {
 };
 
 Landform.prototype.drawEnemy = function(num, x, y) {
-	var obj = Enemy.LIST[num - 1];
+	var reverse = Enemy.MAX_TYPE < num;
+	var ix = reverse ? num - Enemy.MAX_TYPE : num;
+	var obj = Enemy.LIST[ix - 1];
 	var cnt = obj.formation ? 3 : 1;
 	var enemy = obj.instance;
+	var ctx = this.ctx;
 
 	if (!obj.instance) {
 		return null;
@@ -271,9 +285,15 @@ Landform.prototype.drawEnemy = function(num, x, y) {
 	enemy.x = x + enemy.hW;
 	enemy.y = y + enemy.hH;
 	while (cnt--) {
-		enemy.draw(this.ctx);
+		enemy.draw(ctx);
 		enemy.x += 2;
 		enemy.y += 2;
+	}
+	if (reverse) {
+		ctx.save();
+		ctx.translate(enemy.x, enemy.y);
+		ctx.drawImage(this.reverse, -8, -4);
+		ctx.restore();
 	}
 	return enemy;
 };
@@ -286,9 +306,10 @@ Landform.prototype.drawTarget = function() {
 	var ty = Math.round((this.y + this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 	var ctx = this.ctx;
 	var bw = Landform.BRICK_WIDTH;
+	var selection = parseInt(this.selection);
 
-	if (0 < this.selection) {
-		var enemy = this.drawEnemy(this.selection, tx, ty);
+	if (0 < selection) {
+		var enemy = this.drawEnemy(selection, tx, ty);
 
 		if (enemy) {
 			bw = enemy.width;
@@ -311,11 +332,16 @@ Landform.prototype.touchDown = function(tx, ty) {
 	if (this.tx == tx && this.ty == ty) {
 		return;
 	}
-	if (0 < this.selection) {
+	var selection = parseInt(this.selection);
+	if (0 < selection) {
+		// enemy
 		var brick = this.getBrick(this.target, 1);
+		var reverse = brick - Enemy.MAX_TYPE;
 
-		if (!brick || brick != this.selection) {
-			this.putBrick(this.target, 1, this.selection);
+		if (!brick || (brick != selection && reverse != selection)) {
+			this.putBrick(this.target, 1, selection);
+		} else if (brick == selection) {
+			this.putBrick(this.target, 1, selection + Enemy.MAX_TYPE);
 		} else {
 			this.putBrick(this.target, 1, 0);
 		}

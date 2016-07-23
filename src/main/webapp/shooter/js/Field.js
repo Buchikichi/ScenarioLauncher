@@ -94,7 +94,6 @@ Field.prototype.reset = function() {
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
 	this.setBgm(this.stage.bgm);
-this.hasCascade = false;
 };
 
 Field.prototype.startGame = function() {
@@ -170,10 +169,6 @@ Field.prototype.scroll = function() {
 		}
 		field.actorList.push(enemy);
 	});
-//	if (!this.hasCascade) {
-//		this.hasCascade = true;
-//		this.actorList.push(new Cascade(field, 400, 20));
-//	}
 	var next = this.landform.forward(this.ship);
 
 	if (this.isGameOver()) {

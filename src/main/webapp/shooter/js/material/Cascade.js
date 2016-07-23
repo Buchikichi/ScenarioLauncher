@@ -1,6 +1,8 @@
 function Cascade(field, x, y) {
 	Chain.apply(this, arguments);
 
+	this.anim = new Animator(this, 'material.Cascade.png', Animator.TYPE.NONE);
+	this.radian = Math.SQ;
 	this.radius = Cascade.RADIUS;
 	this.appears = false;
 	for (var cnt = 0; cnt < Cascade.MAX_JOINT; cnt++) {
@@ -30,16 +32,6 @@ Cascade.prototype.move = function(target) {
 	return result;
 };
 
-Cascade.prototype.draw = function(ctx) {
-	ctx.save();
-	ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
-	ctx.translate(this.x, this.y);
-	ctx.beginPath();
-	ctx.arc(0, 0, this.radius, 0, Math.PI2, false);
-	ctx.fill();
-	ctx.restore();
-};
-
 Cascade.prototype.fate = NOP;
 Cascade.prototype.trigger = NOP;
 
@@ -49,7 +41,10 @@ Cascade.prototype.trigger = NOP;
 function CascadeChild(field, x, y, weight) {
 	Chain.apply(this, arguments);
 
+	this.maxX = this.field.width + 100;
+	this.effect = false;
 	this.weight = weight;
+	this.radian = Math.SQ * .9;
 	this.radius = Cascade.RADIUS;
 	this.step = 0;
 }
@@ -70,16 +65,20 @@ CascadeChild.prototype.move = function(target) {
 	if (parseInt(diff * 1000) == 0) {
 		this.step *= .98;
 	}
-	var radian = this.addRadian(this.step);
+	var radian = Math.trim(this.radian + this.step);
 	var dist = this.radius + prev.radius;
 
+	if (radian < 0) {
+		radian = 0;
+	}
+	this.radian = radian;
 	this.x = prev.x + Math.cos(radian) * dist;
 	this.y = prev.y + Math.sin(radian) * dist;
 };
 
 CascadeChild.prototype.draw = function(ctx) {
 	ctx.save();
-	ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+	ctx.fillStyle = 'rgba(60, 200, 0, 0.8)';
 	ctx.translate(this.x, this.y);
 	ctx.beginPath();
 	ctx.arc(0, 0, this.radius, 0, Math.PI2, false);
@@ -87,5 +86,15 @@ CascadeChild.prototype.draw = function(ctx) {
 	ctx.restore();
 };
 
-CascadeChild.prototype.fate = NOP;
+CascadeChild.prototype.fate = function(target) {
+	var radian = Math.PI / 400;
+
+	this.step -= radian;
+	var joint = this.next;
+
+	while (joint) {
+		joint.step -= radian * .8;
+		joint = joint.next;
+	}
+};
 CascadeChild.prototype.trigger = NOP;

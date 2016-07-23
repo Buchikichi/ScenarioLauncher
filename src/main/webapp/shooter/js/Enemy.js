@@ -13,8 +13,9 @@ Enemy.prototype = Object.create(Actor.prototype);
 
 Enemy.TRIGGER_CYCLE = 30;
 Enemy.TRIGGER_ALLOWANCE = 100;
+Enemy.MAX_TYPE = 0x7f;
 Enemy.LIST = [
-	{name:'Waver', type:EnmWaver, img:'enmWaver.png'},
+	{name:'Waver', type:EnmWaver, img:'enmWaver.png', h:16},
 	{name:'Battery', type:EnmBattery, img:'enmBattery.png'},
 	{name:'Bouncer', type:EnmBouncer, img:'enmBouncer.png'},
 	{name:'Hanker', type:EnmHanker, img:'enmHanker.png'},
@@ -22,7 +23,8 @@ Enemy.LIST = [
 	{name:'Juno', type:EnmJuno, img:'enmJuno.png'},
 	{name:'Tentacle', type:EnmTentacle, img:'enmTentacle.png'},
 	{name:'Dragon', type:EnmDragonHead, img:'enmDragonHead.png'},
-	{name:'Waver(formation)', type:EnmWaver, img:'enmWaver.png', formation: true}
+	{name:'Waver(formation)', type:EnmWaver, img:'enmWaver.png', h:16, formation: true},
+	{name:'Cascade', type:Cascade, img:'material.Cascade.icon.png'}
 ];
 Enemy.assign = function(ix, x, y) {
 	var enemy = Object.assign({}, Enemy.LIST[ix % Enemy.LIST.length]);

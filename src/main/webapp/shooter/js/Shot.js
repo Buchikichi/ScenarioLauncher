@@ -8,6 +8,7 @@ function Shot() {
 	this.height = 8;
 	this.recalculation();
 	this.speed = 12;
+	this.effect = false;
 	this.size = 2;
 	this.maxX = this.field.width;
 	this.sfx.src = 'audio/sfx-fire.mp3';

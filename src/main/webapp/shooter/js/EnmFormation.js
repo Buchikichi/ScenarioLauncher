@@ -3,6 +3,7 @@
  */
 function EnmFormation() {
 	Actor.apply(this, arguments);
+	this.effect = false;
 	this.bonus = 800;
 	this.score = this.bonus;
 	this.steps = 0;

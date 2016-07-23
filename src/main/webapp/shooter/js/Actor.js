@@ -14,19 +14,15 @@ function Actor(field, x, y) {
 	this.width = 16;
 	this.height = 16;
 	this.speed = 1;
+	this.effect = true;
 	this.hitPoint = 1;
 	this.score = 0;
 	this.isHitWall = false;
 	this.recalculation();
-	this.imgPatterns = null;
-	this.imgPatNum = 0;
 	this.img = new Image();
 	this.img.onload = function() {
 		actor.width = this.width;
 		actor.height = this.height;
-		if (actor.imgPatterns) {
-			actor.height /= actor.imgPatterns;
-		}
 		actor.recalculation();
 	};
 	this.sfx = new Audio();
@@ -108,6 +104,9 @@ Actor.prototype.move = function(target) {
 			this.eject();
 		}
 	}
+	if (this.anim) {
+		this.anim.next(this.dir);
+	}
 };
 
 /**
@@ -115,18 +114,9 @@ Actor.prototype.move = function(target) {
  * @param ctx
  */
 Actor.prototype.drawNormal = function(ctx) {
-	if (!this.img.src) {
-		return;
+	if (this.anim) {
+		this.anim.draw(ctx);
 	}
-	var sw = this.width;
-	var sh = this.height;
-	var sy = sh * (parseInt(this.imgPatNum) + (this.imgPatterns ? parseInt(this.imgPatterns / 2) : 0));
-
-	ctx.save();
-	ctx.translate(this.x, this.y);
-	ctx.rotate(this.radian);
-	ctx.drawImage(this.img, 0 , sy, sw, sh, -this.hW, -this.hH, sw, sh);
-	ctx.restore();
 };
 
 Actor.prototype.drawExplosion = function(ctx) {
@@ -209,3 +199,5 @@ Actor.prototype.fate = function(target) {
 		this.sfx.play();
 	}
 };
+
+function NOP() {};

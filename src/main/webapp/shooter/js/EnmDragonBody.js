@@ -5,7 +5,7 @@ function EnmDragonBody() {
 	Enemy.apply(this, arguments);
 	this.hitPoint = Number.MAX_SAFE_INTEGER;
 	this.score = 0;
-	this.img.src = 'img/enmDragonBody.png';
+	this.anim = new Animator(this, 'enmDragonBody.png', Animator.TYPE.NONE);
 }
 
 EnmDragonBody.prototype = Object.create(Enemy.prototype);

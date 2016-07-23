@@ -4,10 +4,10 @@
 function Ship(field, x, y) {
 	Actor.apply(this, arguments);
 	this.speed = 4;
+	this.effect = false;
 	this.shotList = [];
 	this.trigger = false;
-	this.imgPatterns = Ship.PATTERNS * 2 + 1;
-	this.img.src = 'img/ship001.png';
+	this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 }
 Ship.MAX_SHOTS = 7;
 Ship.PATTERNS = 2;
@@ -71,27 +71,6 @@ Ship.prototype.move = function() {
 	if (this.y < this.hH || this.bottom < this.y) {
 		this.y = this.svY;
 	}
-
-	// gradient
-	if (.1 < Math.abs(this.imgPatNum)) {
-		if (this.imgPatNum < 0) {
-			this.imgPatNum += .1;
-		} else {
-			this.imgPatNum -= .1;
-		}
-	}
-	if (this.dir != null) {
-		this.imgPatNum += Math.sin(this.dir) / 3;
-		if (this.imgPatNum < -Ship.PATTERNS) {
-			this.imgPatNum = -Ship.PATTERNS;
-		} else if (Ship.PATTERNS < this.imgPatNum) {
-			this.imgPatNum = Ship.PATTERNS;
-		}
-	}
-	//this.imgPatNum = Math.round(this.imgPatNum, 3);
-	this.imgPatNum *= 1000;
-	this.imgPatNum = Math.round(this.imgPatNum) / 1000;
-
 	// shot & missile
 	this.sieveShots();
 	if (this.trigger) {

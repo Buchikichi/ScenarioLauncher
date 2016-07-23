@@ -1,14 +1,11 @@
 /**
  * Shooterメイン処理.
  */
-var keys = {};
-var phase = 0;
 $(document).ready(function() {
 	var view = $('#view');
 	var field = new Field();
+	var keys = {};
 
-	loop(field);
-	//
 	$(window).keydown(function(e) {
 		var ix = 'k' + e.keyCode;
 		keys[ix] = e.keyCode;
@@ -72,15 +69,15 @@ $(document).ready(function() {
 	view.bind('touchstart', start);
 	view.bind('touchmove', touch);
 	view.bind('touchend', end);
+
+	var activate = function() {
+		field.inkey(keys);
+		field.scroll();
+		field.draw();
+		setTimeout(activate, 33);
+	};
+	activate();
 });
-function loop(field) {
-	field.inkey(keys);
-	field.scroll();
-	field.draw();
-	setTimeout(function() {
-		loop(field);
-	}, 33);
-}
 /**
  * さいころ
  */

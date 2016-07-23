@@ -6,7 +6,7 @@ function EnmBattery() {
 	this.speed = 0;
 	this.hitPoint = 1;
 	this.score = 10;
-	this.img.src = 'img/enmBattery.png';
+	this.anim = new Animator(this, 'enmBattery.png', Animator.TYPE.NONE);
 	this.base = new Image();
 	this.base.src = 'img/enmBatteryBase.png';
 	this.routine = [

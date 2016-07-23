@@ -12,6 +12,7 @@ function Landform(canvas) {
 	this.dir = 0;
 	this.speed = 0;
 	this.scroll = Stage.SCROLL.OFF;
+	this.effectH = 0;
 	this.effectV = 0;
 	this.col = 0;
 	this.colDir = 1;
@@ -86,6 +87,9 @@ Landform.prototype.reset = function() {
 Landform.prototype.effect = function(target) {
 	var maxX = Math.max(target.field.width + target.width, target.maxX);
 
+	if (target.effect) {
+		target.x -= this.effectH;
+	}
 	target.y += this.effectV;
 	if (target.x < target.minX || maxX < target.x) {
 		target.eject();
@@ -144,7 +148,8 @@ Landform.prototype.forward = function(target) {
 		return Landform.NEXT.NONE;
 	}
 	this.scrollV(target);
-	this.x += Math.cos(this.dir) * this.speed;
+	this.effectH = Math.cos(this.dir) * this.speed;
+	this.x += this.effectH;
 //console.log('x:' + this.x + '/' + this.viewX);
 	if (this.viewX <= this.x) {
 //console.log('PAST!!');

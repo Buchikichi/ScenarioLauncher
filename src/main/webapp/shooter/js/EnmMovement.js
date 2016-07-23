@@ -24,8 +24,6 @@ Gizmo.prototype.tick = function(src, target) {
 	var landform = src.field.landform;
 
 	if (this.type == Gizmo.TYPE.FIXED) {
-		src.speed = landform.speed;
-		src.dir = landform.dir + Math.PI;
 		return;
 	}
 	if (this.type == Gizmo.TYPE.OWN) {
@@ -58,7 +56,6 @@ Gizmo.prototype.tick = function(src, target) {
 	if (this.type == Gizmo.TYPE.CHASE) {
 		if (this.destination == Gizmo.DEST.TO) {
 			src.dir = Math.atan2(dy, dx);
-			src.radian = src.dir;
 		} else if (this.destination == Gizmo.DEST.TO_X && dx) {
 			src.dir = Math.atan2(0, dx);
 			src.radian = src.dir;

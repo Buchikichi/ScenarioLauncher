@@ -4,10 +4,10 @@
 function EnmJuno() {
 	Enemy.apply(this, arguments);
 	this.dir = Math.PI;
-	this.speed = 3;
+	this.speed = 1.5;
 	this.hitPoint = 75; // 2016-7-5
 	this.score = 750;
-	this.img.src = 'img/enmJuno.png';
+	this.anim = new Animator(this, 'enmJuno.png', Animator.TYPE.NONE);
 	this.routine = [
 		new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)
 	];

@@ -13,6 +13,8 @@ function Actor(field, x, y) {
 	this.radian = 0;
 	this.width = 16;
 	this.height = 16;
+	this.gravity = 0;
+	this.reaction = 0;
 	this.speed = 1;
 	this.effect = true;
 	this.hitPoint = 1;
@@ -90,20 +92,33 @@ Actor.prototype.closeGap = function(target) {
  * @param target
  */
 Actor.prototype.move = function(target) {
+	if (0 < this.explosion) {
+		this.explosion--;
+		if (this.explosion == 0) {
+			this.eject();
+			return;
+		}
+	}
 	this.svX = this.x;
 	this.svY = this.y;
 	if (this.dir != null) {
 		this.x += Math.cos(this.dir) * this.speed;
 		this.y += Math.sin(this.dir) * this.speed;
 	}
-	this.x += this.dx * this.speed;
-	this.y += this.dy * this.speed;
-	if (0 < this.explosion) {
-		this.explosion--;
-		if (this.explosion == 0) {
-			this.eject();
+	if (this.gravity != 0) {
+		// floating
+		var y = this.field.landform.scanFloor(this) - this.hH;
+
+		if (this.y < y) {
+			this.dy += this.gravity;
+		} else if (y < this.y) {
+			this.y = y;
+			this.dy *= -this.reaction;
+			this.radian = this.field.landform.getHorizontalAngle(this);
 		}
 	}
+	this.x += this.dx * this.speed;
+	this.y += this.dy * this.speed;
 	if (this.anim) {
 		this.anim.next(this.dir);
 	}

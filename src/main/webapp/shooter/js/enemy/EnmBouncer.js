@@ -3,10 +3,13 @@
  */
 function EnmBouncer() {
 	Enemy.apply(this, arguments);
-	this.dx = -(Math.random() * 3 + 1);
+	this.dir = this.x <= 0 ? 0 : Math.PI;
+	this.speed = 2.5;
+	this.gravity = .1;
+	this.reaction = .95;
 	this.hitPoint = 3;
 	this.score = 50;
-	this.shuttle = parseInt(Math.random() * 4) + 1;
+	this.shuttle = 2;
 	this.img.src = 'img/enmBouncer.png';
 }
 
@@ -14,18 +17,15 @@ EnmBouncer.prototype = Object.create(Enemy.prototype);
 
 EnmBouncer.prototype._move = Enemy.prototype.move;
 EnmBouncer.prototype.move = function(target) {
-	if (this.shuttle && (this.x < 0 || this.field.width < this.x)) {
+	if (this.shuttle && (this.x < 0 || this.field.width + Landform.BRICK_WIDTH < this.x)) {
+		this.dir = Math.trim(this.dir + Math.PI);
+		this.x = this.svX;
 		this.dx = -this.dx;
 		this.shuttle--;
 	}
 	if (this.isHitWall) {
 		this.x = this.svX;
 		this.y = this.svY;
-	}
-	if (this.field.height <= this.y || this.isHitWall) {
-		this.dy = -this.dy;
-	} else {
-		this.dy += .3;
 	}
 	return this._move(target);
 };

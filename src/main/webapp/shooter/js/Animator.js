@@ -41,7 +41,25 @@ Animator.prototype.next = function(dir) {
 		}
 	}
 	if (dir != null) {
-		if (this.type == Animator.TYPE.V) {
+		if (this.type == Animator.TYPE.X) {
+			this.patNum += Math.cos(dir) * .5;
+			var num = Math.floor(this.patNum);
+
+			if (num < 0) {
+				this.patNum = this.numX - .1;
+			} else if (this.numX <= num) {
+				this.patNum = 0;
+			}
+		} else if (this.type == Animator.TYPE.Y) {
+			this.patNum += Math.sin(dir) * .5;
+			var num = Math.floor(this.patNum);
+
+			if (num < 0) {
+				this.patNum = this.numY - .1;
+			} else if (this.numY <= num) {
+				this.patNum = 0;
+			}
+		} else if (this.type == Animator.TYPE.V) {
 			var limit = Math.floor(this.numY / 2);
 
 			this.patNum += Math.sin(dir) / 3;
@@ -49,14 +67,6 @@ Animator.prototype.next = function(dir) {
 				this.patNum = -limit;
 			} else if (limit < this.patNum) {
 				this.patNum = limit;
-			}
-		} else if (this.type == Animator.TYPE.Y) {
-			this.patNum += Math.sin(dir);
-
-			if (this.patNum < 0) {
-				this.patNum = this.numY - 1;
-			} else if (this.numY < this.patNum) {
-				this.patNum = 0;
 			}
 		}
 	}
@@ -73,10 +83,12 @@ Animator.prototype.draw = function(ctx) {
 	var sx = 0;
 	var sy = 0;
 
-	if (this.type == Animator.TYPE.V) {
-		sy = sh * (parseInt(this.patNum) + (this.numY ? parseInt(this.numY / 2) : 0));
+	if (this.type == Animator.TYPE.X) {
+		sx = sw * Math.floor(this.patNum);
 	} else if (this.type == Animator.TYPE.Y) {
-		sy = sh * parseInt(this.patNum);
+		sy = sh * Math.floor(this.patNum);
+	} else if (this.type == Animator.TYPE.V) {
+		sy = sh * (parseInt(this.patNum) + (this.numY ? parseInt(this.numY / 2) : 0));
 	}
 	ctx.save();
 	ctx.translate(actor.x, actor.y);

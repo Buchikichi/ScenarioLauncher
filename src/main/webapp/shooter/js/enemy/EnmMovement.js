@@ -44,7 +44,19 @@ Gizmo.prototype.tick = function(src, target) {
 		dy = 0;
 	}
 	if (this.type == Gizmo.TYPE.AIM) {
-		if (this.destination == Gizmo.DEST.ROTATE) {
+		if (this.destination == Gizmo.DEST.TO_X) {
+			if (dx < 0) {
+				src.radian = Math.PI;
+			} else {
+				src.radian = 0;
+			}
+		} else if (this.destination == Gizmo.DEST.TO_Y) {
+			if (dx < 0) {
+				src.radian = Math.SQ;
+			} else {
+				src.radian = -Math.SQ;
+			}
+		} else if (this.destination == Gizmo.DEST.ROTATE) {
 			var dist = src.calcDistance(target);
 
 			if (src.speed < dist) {
@@ -58,10 +70,8 @@ Gizmo.prototype.tick = function(src, target) {
 			src.dir = Math.atan2(dy, dx);
 		} else if (this.destination == Gizmo.DEST.TO_X && dx) {
 			src.dir = Math.atan2(0, dx);
-			src.radian = src.dir;
 		} else if (this.destination == Gizmo.DEST.TO_Y && dy) {
 			src.dir = Math.atan2(dy, 0);
-			src.radian = src.dir;
 		} else if (this.destination == Gizmo.DEST.ROTATE) {
 			var step = Math.PI / 60;
 

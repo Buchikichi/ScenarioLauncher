@@ -221,6 +221,46 @@ Landform.prototype.hitTest = function(target) {
 	this.target = target;
 };
 
+Landform.prototype.scanFloor = function(target) {
+	if (!this.brick) {
+		return;
+	}
+	var y = target.y;
+	var brick = this.getBrick(target, 2);
+
+	if (0 < brick) {
+		y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+		while (0 < brick) {
+			y -= Landform.BRICK_WIDTH;
+			var temp = {x:target.x, y:y};
+			brick = this.getBrick(temp, 2);
+		}
+		y += Landform.BRICK_WIDTH;
+	} else {
+		y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+		while (y < this.height && !brick) {
+			y += Landform.BRICK_WIDTH;
+			var temp = {x:target.x, y:y};
+
+			brick = this.getBrick(temp, 2);
+		}
+		if (!brick) {
+			// abyss
+			y = this.height + target.height + Landform.BRICK_WIDTH;
+		}
+	}
+	return y;
+};
+
+Landform.prototype.getHorizontalAngle = function(target) {
+	var left = {x:target.x - Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
+	var right = {x:target.x + Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
+	var leftY = this.scanFloor(left);
+	var rightY = this.scanFloor(right);
+
+	return Math.atan2(rightY - leftY, target.width);
+};
+
 Landform.prototype.getBrickIndex = function(target) {
 	var tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
 	if (tx < 0 || this.bw < tx) {

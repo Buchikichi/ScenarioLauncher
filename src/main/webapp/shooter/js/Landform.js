@@ -14,6 +14,7 @@ function Landform(canvas) {
 	this.scroll = Stage.SCROLL.OFF;
 	this.effectH = 0;
 	this.effectV = 0;
+	this.next = Landform.NEXT.NONE;
 	this.col = 0;
 	this.colDir = 1;
 	this.magni = 1;
@@ -150,20 +151,23 @@ Landform.prototype.forward = function(target) {
 		return Landform.NEXT.NONE;
 	}
 	this.scrollV(target);
-//console.log('x:' + this.x + '/' + this.viewX);
 	if (this.viewX <= this.x) {
-//console.log('PAST!!');
-		//this.reset();
 		this.effectH = 0;
-		return Landform.NEXT.PAST;
+		if (this.next != Landform.NEXT.PAST) {
+			this.next = Landform.NEXT.PAST;
+			return Landform.NEXT.PAST;
+		}
+		return Landform.NEXT.NONE;
 	}
 	this.effectH = Math.cos(this.dir) * this.speed;
 	this.x += this.effectH;
-	var diff = Math.abs(this.width - Field.WIDTH - this.x);
-	if (diff <= this.speed) {
-//console.log('ARRIV!!:' + this.x);
-		this.x = this.width - Field.WIDTH + this.speed;
-		return Landform.NEXT.ARRIV;
+	if (this.width - Field.WIDTH <= this.x) {
+		if (this.next != Landform.NEXT.ARRIV) {
+			this.x = this.width - Field.WIDTH;
+			this.effectH = 0;
+			this.next = Landform.NEXT.ARRIV;
+			return Landform.NEXT.ARRIV;
+		}
 	}
 	return Landform.NEXT.NONE;
 };
@@ -432,6 +436,11 @@ Landform.prototype.drawBrick = function() {
 				ctx.fillRect(rx, ry, brickWidth, brickWidth);
 			}
 		}
+	}
+	if (this.width - Field.WIDTH <= this.x) {
+		var x = this.width - Landform.BRICK_WIDTH;
+		ctx.fillStyle = 'rgba(255, 0, 0, .4)';
+		ctx.fillRect(x, 0, Landform.BRICK_WIDTH, this.height);
 	}
 	ctx.restore();
 	this.col += this.colDir * 16;

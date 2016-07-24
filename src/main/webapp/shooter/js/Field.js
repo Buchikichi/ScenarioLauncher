@@ -51,9 +51,7 @@ Field.prototype.setup = function() {
 	this.ctx = canvas.getContext('2d');
 	this.bgm = new Audio();
 	this.bgm.volume = .7;
-	$(this.bgm).on('ended', function() {
-		this.play();
-	});
+	this.bgm.loop = true;
 };
 
 Field.prototype.setBgm = function(bgm) {
@@ -90,6 +88,7 @@ Field.prototype.reset = function() {
 	this.ship.x = 100;
 	this.ship.y = 100;
 	this.ship.trigger = false;
+	this.ship.shotList = [];
 	this.ship.enter();
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
@@ -175,7 +174,6 @@ Field.prototype.scroll = function() {
 		return;
 	}
 	if (next == Landform.NEXT.ARRIV && this.stage.boss) {
-console.log('boss!!');
 		this.phase = Field.PHASE.BOSS;
 		this.setBgm(this.stage.boss);
 	} else if (next == Landform.NEXT.PAST) {

@@ -25,6 +25,7 @@ Enemy.LIST = [
 	{name:'Tentacle', type:EnmTentacle, img:'enmTentacle.png'},
 	{name:'Dragon', type:EnmDragonHead, img:'enmDragonHead.png'},
 	{name:'Waver(formation)', type:EnmWaver, img:'enmWaver.png', h:16, formation: true},
+	{name:'Molten', type:Molten, img:'boss.Molten.png'},
 	{name:'Cascade', type:Cascade, img:'material.Cascade.icon.png'}
 ];
 Enemy.assign = function(ix, x, y) {
@@ -66,10 +67,11 @@ Enemy.prototype.move = function(target) {
 	this.actor_move(target);
 	if (this.trigger() && Enemy.TRIGGER_ALLOWANCE < this.calcDistance(target)) {
 		if (this.constraint) {
-			return;
+			return [];
 		}
 		return this.fire(target);
 	}
+	return [];
 };
 
 /**

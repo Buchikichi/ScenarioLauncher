@@ -35,6 +35,8 @@ function Landform(canvas) {
 		landform.bh = this.height / Landform.BRICK_WIDTH;
 		landform.viewX = this.width - Field.HALF_WIDTH;
 		landform.viewY = this.height - Field.HEIGHT;
+		landform.arrivX = this.width - Field.WIDTH;
+		landform.noticeX = landform.arrivX - Field.HALF_WIDTH;
 	}
 	this.reverse = new Image();
 	this.reverse.src = './img/reverse.png';
@@ -46,8 +48,9 @@ Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
 Landform.COL_MAX = 512;
 Landform.NEXT = {
 	NONE: 0,
-	ARRIV: 1,
-	PAST: 2
+	NOTICE: 1,
+	ARRIV: 2,
+	PAST: 3
 };
 
 Landform.prototype.load = function(file) {
@@ -161,12 +164,17 @@ Landform.prototype.forward = function(target) {
 	}
 	this.effectH = Math.cos(this.dir) * this.speed;
 	this.x += this.effectH;
-	if (this.width - Field.WIDTH <= this.x) {
+	if (this.arrivX <= this.x) {
 		if (this.next != Landform.NEXT.ARRIV) {
 			this.x = this.width - Field.WIDTH;
 			this.effectH = 0;
 			this.next = Landform.NEXT.ARRIV;
 			return Landform.NEXT.ARRIV;
+		}
+	} else if (this.noticeX <= this.x) {
+		if (this.next != Landform.NEXT.NOTICE) {
+			this.next = Landform.NEXT.NOTICE;
+			return Landform.NEXT.NOTICE;
 		}
 	}
 	return Landform.NEXT.NONE;

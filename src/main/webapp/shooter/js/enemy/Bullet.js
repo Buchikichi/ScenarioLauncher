@@ -10,15 +10,15 @@ function Bullet(field, x, y) {
 }
 Bullet.prototype = Object.create(Actor.prototype);
 
-Bullet.prototype.drawNormal = function(ctx) {
+Bullet.prototype.draw = function(ctx) {
+	if (this.isHitWall) {
+		this.fate();
+		return;
+	}
 	ctx.save();
 	ctx.beginPath();
 	ctx.fillStyle = 'rgba(120, 200, 255, 0.7)';
 	ctx.arc(this.x, this.y, this.width / 3, 0, Math.PI * 2, false);
 	ctx.fill();
 	ctx.restore();
-};
-
-Bullet.prototype.drawExplosion = function(ctx) {
-	// nop
 };

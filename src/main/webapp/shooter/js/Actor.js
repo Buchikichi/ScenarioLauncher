@@ -28,12 +28,8 @@ function Actor(field, x, y) {
 		actor.height = this.height;
 		actor.recalculation();
 	};
-	this.sfx = new Audio();
-	this.sfx.src = 'audio/sfx-explosion.mp3';
-	this.sfx.volume = .4;
-	this.sfxAbsorb = new Audio();
-	this.sfxAbsorb.src = 'audio/sfx-absorb.mp3';
-	this.sfxAbsorb.volume = .3;
+	this.sfx = 'sfx-explosion';
+	this.sfxAbsorb = 'sfx-absorb';
 	this.enter();
 }
 Actor.MAX_EXPLOSION = 12;
@@ -200,9 +196,8 @@ Actor.prototype.fate = function(target) {
 		return;
 	}
 	this.explosion = Actor.MAX_EXPLOSION;
-	if (this.sfx) {
-		this.sfx.play();
-	}
+	var pan = (this.x - Field.HALF_WIDTH) / Field.HALF_WIDTH;
+	AudioMixer.INSTANCE.play(this.sfx, .2, false, pan);
 };
 
 
@@ -218,7 +213,8 @@ Actor.prototype.absorb = function(target) {
 		ctx.arc(0, 0, 5, 0, Math.PI2, false);
 		ctx.fill();
 		ctx.restore();
-		this.sfxAbsorb.play();
+		var pan = (this.x - Field.HALF_WIDTH) / Field.HALF_WIDTH;
+		AudioMixer.INSTANCE.play(this.sfxAbsorb, .3, false, pan);
 	}
 };
 

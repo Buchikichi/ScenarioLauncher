@@ -11,9 +11,9 @@ function Shot() {
 	this.effect = false;
 	this.size = 2;
 	this.maxX = this.field.width;
-	this.sfx.src = 'audio/sfx-fire.mp3';
-	this.sfx.volume = .5;
-	this.sfx.play();
+
+	var pan = (this.x - Field.HALF_WIDTH) / Field.HALF_WIDTH;
+	AudioMixer.INSTANCE.play('sfx-fire', .4, false, pan);
 }
 Shot.prototype = Object.create(Actor.prototype);
 

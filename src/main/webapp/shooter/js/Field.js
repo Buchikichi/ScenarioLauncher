@@ -49,15 +49,6 @@ Field.prototype.setup = function() {
 	canvas.width = this.width;
 	canvas.height = this.height;
 	this.ctx = canvas.getContext('2d');
-	this.bgm = new Audio();
-	this.bgm.volume = .7;
-	this.bgm.loop = true;
-};
-
-Field.prototype.setBgm = function(bgm) {
-	this.bgm.src = 'audio/' + bgm;
-	this.bgm.currentTime = 0;
-	this.bgm.play();
 };
 
 Field.prototype.nextStage = function() {
@@ -73,7 +64,7 @@ Field.prototype.nextStage = function() {
 	if (Stage.LIST.length <= this.stageNum) {
 		this.stageNum = 0;
 	}
-	this.setBgm(this.stage.bgm);
+	AudioMixer.INSTANCE.play(this.stage.bgm, .7, true);
 };
 
 Field.prototype.reset = function() {
@@ -92,7 +83,7 @@ Field.prototype.reset = function() {
 	this.ship.enter();
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
-	this.setBgm(this.stage.bgm);
+	AudioMixer.INSTANCE.play(this.stage.bgm, .7, true);
 };
 
 Field.prototype.startGame = function() {
@@ -107,7 +98,6 @@ Field.prototype.startGame = function() {
 
 Field.prototype.endGame = function() {
 	$('#gameOver').show('slow');
-	this.bgm.pause();
 };
 
 Field.prototype.isGameOver = function() {
@@ -173,9 +163,11 @@ Field.prototype.scroll = function() {
 	if (this.isGameOver()) {
 		return;
 	}
-	if (next == Landform.NEXT.ARRIV && this.stage.boss) {
+	if (next == Landform.NEXT.NOTICE) {
+		AudioMixer.INSTANCE.fade();
+	} else if (next == Landform.NEXT.ARRIV && this.stage.boss) {
 		this.phase = Field.PHASE.BOSS;
-		this.setBgm(this.stage.boss);
+		AudioMixer.INSTANCE.play(this.stage.boss, .7, true);
 	} else if (next == Landform.NEXT.PAST) {
 		this.nextStage();
 	}
@@ -235,7 +227,7 @@ Field.prototype.draw = function() {
 	this.score += score;
 	this.showScore();
 	if (!this.isGameOver() && ship.isGone) {
-		this.bgm.pause();
+		AudioMixer.INSTANCE.stop();
 		if (0 < --this.hibernate) {
 			return;
 		}

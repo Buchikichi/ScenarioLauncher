@@ -26,7 +26,7 @@ Field.HALF_HEIGHT = Field.HEIGHT / 2;
 Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
-Field.MAX_LOOSING_RATE = 100;
+Field.MAX_LOOSING_RATE = 200;
 Field.MAX_SHIP = 3;
 Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
 Field.PHASE = {
@@ -117,13 +117,13 @@ Field.prototype.isGameOver = function() {
 Field.prototype.inkey = function(keys) {
 	this.ship.dir = null;
 	if (this.isGameOver()) {
-		if (keys['k32']) {
+		if (keys[' ']) {
 			this.startGame();
 		}
 		return;
 	}
 	if (!this.ship.explosion) {
-		if (keys['k16'] || keys['k17']) {
+		if (keys['Control'] || keys['Shift']) {
 			this.ship.trigger = true;
 		}
 		this.ship.aim(this.shipTarget);
@@ -251,8 +251,16 @@ Field.prototype.showScore = function() {
 	if (this.hiscore < this.score) {
 		this.hiscore = this.score;
 	}
-	$('#score > div > div:eq(1)').text(this.score);
-	$('#score > div:eq(1) > div:eq(1)').text(this.hiscore);
-//	$('#score > div:eq(2)').text(this.actorList.length + ':' + parseInt(this.loosingRate));
-	$('#remain > div > div:eq(0)').width((this.shipRemain - 1) * 16);
+	var scoreNode = document.querySelector('#score > div > div:nth-child(2)');
+	var hiscoreNode = document.querySelector('#score > div:nth-child(2) > div:nth-child(2)');
+	var debugNode = document.querySelector('#score > div:nth-child(3)');
+	var remainNode = document.querySelector('#remain > div > div:nth-child(1)');
+
+	scoreNode.innerHTML = this.score;
+	hiscoreNode.innerHTML = this.hiscore;
+//	debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
+//	$(remainNode).width((this.shipRemain - 1) * 16);
+	if (this.shipRemain) {
+		remainNode.style.width = (this.shipRemain - 1) * 16 + 'px';
+	}
 };

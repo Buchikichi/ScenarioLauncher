@@ -1,22 +1,20 @@
 /**
  * Shooterメイン処理.
  */
-$(document).ready(function() {
-	var view = $('#view');
+document.addEventListener('DOMContentLoaded', function() {
+	var view = document.getElementById('view');
 	var field = new Field();
 	var keys = {};
 
-	$(window).keydown(function(e) {
-		var ix = 'k' + e.keyCode;
-		keys[ix] = e.keyCode;
-//console.log(ix);
-		if (!view.hasClass('addicting')) {
-			view.addClass('addicting');
+	window.addEventListener('keydown', function(event) {
+		keys[event.key] = true;
+//console.log('key[' + event.key + ']');
+		if (!view.classList.contains('addicting')) {
+			view.classList.add('addicting');
 		}
 	});
-	$(window).keyup(function(e) {
-		var ix = 'k' + e.keyCode;
-		delete keys[ix];
+	window.addEventListener('keyup', function(event) {
+		delete keys[event.key];
 	});
 	var which = 0;
 	var start = function(e) {
@@ -44,7 +42,7 @@ $(document).ready(function() {
 		var tx;
 		var ty;
 
-		view.removeClass('addicting');
+		view.classList.remove('addicting');
 		if (isMouse) {
 			if (!which) {
 				return;
@@ -62,13 +60,13 @@ $(document).ready(function() {
 		field.moveShipTo(null);
 		which = 0;
 	};
-	view.mousedown(start);
-	view.mousemove(touch);
-	view.mouseleave(end);
-	view.mouseup(end);
-	view.bind('touchstart', start);
-	view.bind('touchmove', touch);
-	view.bind('touchend', end);
+	view.addEventListener('mousedown', start);
+	view.addEventListener('mousemove', touch);
+	view.addEventListener('mouseleave', end);
+	view.addEventListener('mouseup', end);
+	view.addEventListener('touchstart', start);
+	view.addEventListener('touchmove', touch);
+	view.addEventListener('touchend', end);
 
 	var activate = function() {
 		field.inkey(keys);

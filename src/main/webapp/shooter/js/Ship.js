@@ -24,17 +24,17 @@ Ship.prototype.inkey = function(keys) {
 	var hit = false;
 	var dir = 0;
 
-	if (keys['k37']) {
+	if (keys['ArrowLeft'] || keys['Left']) {
 		dir = 1;
 		hit = true;
-	} else if (keys['k39']) {
+	} else if (keys['ArrowRight'] || keys['Right']) {
 		dir = -1;
 		hit = true;
 	}
-	if (keys['k38']) {
+	if (keys['ArrowUp'] || keys['Up']) {
 		dir = 2 - dir * .5;
 		hit = true;
-	} else if (keys['k40']) {
+	} else if (keys['ArrowDown'] || keys['Down']) {
 		dir *= .5;
 		hit = true;
 	}

@@ -13,6 +13,7 @@ function Actor(field, x, y) {
 	this.radian = 0;
 	this.width = 16;
 	this.height = 16;
+	this.margin = 0;
 	this.gravity = 0;
 	this.reaction = 0;
 	this.speed = 1;
@@ -38,10 +39,10 @@ Actor.DEG_STEP = Math.PI / 180;
 Actor.prototype.recalculation = function() {
 	this.hW = this.width / 2;
 	this.hH = this.height / 2;
-	this.minX = -this.width;
-	this.minY = -this.height;
-	this.maxX = this.field.width + this.width;
-	this.maxY = this.field.height + this.height;
+	this.minX = -this.width - this.margin;
+	this.minY = -this.height - this.margin;
+	this.maxX = this.field.width + this.width + this.margin;
+	this.maxY = this.field.height + this.height + this.margin;
 };
 
 Actor.prototype.enter = function() {

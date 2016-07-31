@@ -221,6 +221,7 @@ Field.prototype.draw = function() {
 	});
 	if (this.phase == Field.PHASE.BOSS && enemyList.length == 0) {
 		this.phase = Field.PHASE.NORMAL;
+		AudioMixer.INSTANCE.fade();
 	}
 	this.actorList = validActors;
 	this.landform.draw();
@@ -250,7 +251,7 @@ Field.prototype.showScore = function() {
 
 	scoreNode.innerHTML = this.score;
 	hiscoreNode.innerHTML = this.hiscore;
-//	debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
+	debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
 //	$(remainNode).width((this.shipRemain - 1) * 16);
 	if (this.shipRemain) {
 		remainNode.style.width = (this.shipRemain - 1) * 16 + 'px';

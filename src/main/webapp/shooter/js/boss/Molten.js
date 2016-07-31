@@ -3,8 +3,9 @@
  */
 function Molten() {
 	Enemy.apply(this, arguments);
+	this.margin = Field.HALF_WIDTH;
 	this.dir = 0;
-	this.speed = .9;
+	this.speed = 1;
 	this.effect = false;
 	this.hitPoint = Number.MAX_SAFE_INTEGER;
 	this.cycle = 0;
@@ -23,15 +24,6 @@ Molten.PHASE = {
 	length: 2
 };
 Molten.prototype = Object.create(Enemy.prototype);
-
-Molten.prototype._recalculation = Actor.prototype.recalculation;
-Molten.prototype.recalculation = function() {
-	this._recalculation();
-	this.minX = -this.field.width;
-	this.minY = -this.field.height;
-	this.maxX = this.field.width * 2;
-	this.maxY = this.field.height * 2;
-};
 
 Molten.prototype._move = Enemy.prototype.move;
 Molten.prototype.move = function(target) {
@@ -70,9 +62,10 @@ Molten.prototype.checkDestroy = function(target) {
  */
 function MoltenRock(field, x, y, parent) {
 	Enemy.apply(this, arguments);
+	this.margin = Field.HALF_WIDTH;
 	this.parent = parent;
 	this.dir = 0;
-	this.speed = 1.8;
+	this.speed = 1.3;
 	this.hitPoint = 5;
 	this.score = 10;
 	this.anim = new Animator(this, 'boss.MoltenRock.png', Animator.TYPE.NONE);
@@ -98,7 +91,7 @@ MoltenRock.prototype.move = function(target) {
 			var child = new MoltenRock(this.field, this.x, this.y, parent);
 
 			child.dir = dir;
-			child.speed = this.speed * 1.1;
+			child.speed = this.speed * 1.2;
 			child.hitPoint = this.hitPoint;
 			result.push(child);
 			parent.rock.push(child);

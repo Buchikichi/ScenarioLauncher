@@ -35,31 +35,19 @@ Field.PHASE = {
 };
 
 Field.prototype.setup = function() {
-	var view = $('#view');
 	var canvas = document.getElementById('canvas');
 
-	this.landform = new Landform(canvas);
-	for (var ix = 0; ix < 2; ix++) {
-		var bg = $('<div></div>').attr('id', 'bg' + ix).addClass('bg');
-
-		bg.prop('mX', 0);
-		bg.prop('mY', 0);
-		view.append(bg);
-	}
 	canvas.width = this.width;
 	canvas.height = this.height;
 	this.ctx = canvas.getContext('2d');
+	this.landform = new Landform(canvas);
 };
 
 Field.prototype.nextStage = function() {
 	var stage = Stage.LIST[this.stageNum];
 
 	this.stage = stage;
-	this.landform.reset();
-	this.landform.speed = stage.speed;
-	this.landform.scroll = stage.scroll;
-	this.landform.load('./img/' + stage.img);
-	this.landform.loadMapData('./img/' + stage.map);
+	this.landform.loadStage(stage);
 	this.stageNum++;
 	if (Stage.LIST.length <= this.stageNum) {
 		this.stageNum = 0;
@@ -68,12 +56,6 @@ Field.prototype.nextStage = function() {
 };
 
 Field.prototype.reset = function() {
-	$('.bg').each(function(ix, obj) {
-		var bg = $(this);
-
-		bg.prop('mX', 0);
-		bg.prop('mY', 0);
-	});
 	this.phase = Field.PHASE.NORMAL;
 	this.landform.reset();
 	this.ship.x = 100;
@@ -134,17 +116,6 @@ Field.prototype.moveShipTo = function(target) {
 Field.prototype.scroll = function() {
 	var field = this;
 
-	$('.bg').each(function(ix, obj) {
-		var bg = $(this);
-		var mX = bg.prop('mX');
-		var mY = bg.prop('mY');
-		var position = -mX + 'px ' + -mY + 'px';
-
-		bg.css('background-position', position);
-		mX += (ix + 1) * .4;
-		bg.prop('mX', mX);
-		bg.prop('mY', mY);
-	});
 	if (this.phase == Field.PHASE.BOSS) {
 		return;
 	}
@@ -251,8 +222,7 @@ Field.prototype.showScore = function() {
 
 	scoreNode.innerHTML = this.score;
 	hiscoreNode.innerHTML = this.hiscore;
-	debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
-//	$(remainNode).width((this.shipRemain - 1) * 16);
+//	debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);
 	if (this.shipRemain) {
 		remainNode.style.width = (this.shipRemain - 1) * 16 + 'px';
 	}

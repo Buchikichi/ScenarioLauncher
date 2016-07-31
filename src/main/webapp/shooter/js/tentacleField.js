@@ -39,6 +39,7 @@ Field.prototype.resize = function(magni) {
 };
 
 Field.prototype.inkey = function(keys) {
+	this.ship.dir = null;
 	this.ship.inkey(keys);
 };
 

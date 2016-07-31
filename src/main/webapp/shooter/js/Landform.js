@@ -82,6 +82,34 @@ Landform.prototype.loadMapData = function(file) {
 	}
 };
 
+Landform.prototype.loadStage = function(stage) {
+	var landform = this;
+
+	this.reset();
+	this.scroll = stage.scroll;
+	this.loadMapData('./img/' + stage.map);
+	var divList = document.getElementsByClassName('bg');
+	for (var cnt = 0; cnt < divList.length; cnt++) {
+		var div = divList[cnt];
+
+		div.style.backgroundImage = 'none';
+		div.setAttribute('data-x', 0);
+		div.setAttribute('data-y', 0);
+	}
+	stage.background.forEach(function(bg, ix) {
+		if (ix == 0) {
+			landform.speed = bg.speed;
+			landform.load('./img/' + bg.img);
+			return;
+		}
+		// background-image: url("../img/stage01bg1.png");
+		var div = document.getElementById('bg' + ix);
+
+		div.style.backgroundImage = 'url("./img/' + bg.img + '")';
+		div.setAttribute('data-speed', bg.speed);
+	});
+};
+
 /*
  * for play.
  */
@@ -149,11 +177,34 @@ Landform.prototype.scrollV = function(target) {
 	this.effectV = speed;
 };
 
+Landform.prototype.forwardBg = function(target) {
+	var divList = document.getElementsByClassName('bg');
+
+	for (var cnt = 0; cnt < divList.length; cnt++) {
+		var div = divList[cnt];
+		var speed = parseFloat(div.getAttribute('data-speed'));
+		if (!speed) {
+			continue;
+		}
+		var ratio = this.speed / speed;
+		var x = parseFloat(div.getAttribute('data-x'));
+		var y = parseFloat(div.getAttribute('data-y'));
+		var position = -x + 'px ' + -y + 'px';
+
+		div.style.backgroundPosition = position;
+		x += speed;
+		y += -this.effectV / ratio;
+		div.setAttribute('data-x', x);
+		div.setAttribute('data-y', y);
+	}
+};
+
 Landform.prototype.forward = function(target) {
 	if (!this.width) {
 		return Landform.NEXT.NONE;
 	}
 	this.scrollV(target);
+	this.forwardBg();
 	if (this.viewX <= this.x) {
 		this.effectH = 0;
 		if (this.next != Landform.NEXT.PAST) {
@@ -473,6 +524,9 @@ Landform.prototype.draw = function() {
 	this.drawBrick();
 	this.drawTarget();
 	ctx.restore();
+	if (!this.brick || !this.isEdit) {
+		return;
+	}
 	if (this.touch && this.brick) {
 		this.updateMap();
 		this.touch = false;
@@ -482,11 +536,12 @@ Landform.prototype.draw = function() {
 Landform.prototype.updateMap = function() {
 	var canvas = document.createElement('canvas');
 	var ctx = canvas.getContext('2d');
+	var mapImage = document.getElementById('mapImage');
 
 	canvas.width = this.brick.width;
 	canvas.height = this.brick.height;
 	ctx.putImageData(this.brick, 0, 0);
-	$('#mapImage').attr('src', canvas.toDataURL('image/png'));
+	mapImage.setAttribute('src', canvas.toDataURL('image/png'));
 };
 
 Landform.prototype.getImageData = function() {

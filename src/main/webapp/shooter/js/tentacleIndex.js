@@ -24,15 +24,12 @@ $(document).ready(function() {
 		field.resize(magni);
 	});
 	win.resize();
-	win.keydown(function(e) {
-		var ix = 'k' + e.keyCode;
-		keys[ix] = e.keyCode;
-//console.log(ix);
+	window.addEventListener('keydown', function(event) {
+		keys[event.key] = true;
 	});
-	win.keyup(function(e) {
-		var ix = 'k' + e.keyCode;
-		delete keys[ix];
+	window.addEventListener('keyup', function(event) {
+		delete keys[event.key];
 	});
-	console.log('Ready!!!');
+//	console.log('Ready!!!');
 	activate();
 });

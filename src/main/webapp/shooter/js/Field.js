@@ -69,7 +69,9 @@ Field.prototype.reset = function() {
 };
 
 Field.prototype.startGame = function() {
-	$('#gameOver').hide();
+	var gameOver = document.getElementById('gameOver');
+
+	gameOver.classList.add('hidden');
 	this.loosingRate = Field.MAX_LOOSING_RATE;
 	this.score = 0;
 	this.shipRemain = Field.MAX_SHIP;
@@ -79,11 +81,15 @@ Field.prototype.startGame = function() {
 };
 
 Field.prototype.endGame = function() {
-	$('#gameOver').show('slow');
+	var gameOver = document.getElementById('gameOver');
+
+	gameOver.classList.remove('hidden');
 };
 
 Field.prototype.isGameOver = function() {
-	return $('#gameOver').is(':visible');
+	var gameOver = document.getElementById('gameOver');
+
+	return !gameOver.classList.contains('hidden');
 };
 
 Field.prototype.inkey = function(keys) {

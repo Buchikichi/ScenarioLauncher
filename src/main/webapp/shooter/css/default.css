@@ -57,6 +57,9 @@ div.bg {
 	font-size: x-large;
 	margin-top: 100px;
 }
+#gameOver.hidden {
+	display: none;
+}
 #gameInfo {
 	display: table;
 	table-layout: fixed;

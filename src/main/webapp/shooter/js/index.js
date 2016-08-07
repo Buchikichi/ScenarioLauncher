@@ -2,7 +2,9 @@
  * Shooterメイン処理.
  */
 document.addEventListener('DOMContentLoaded', function() {
+	var loading = document.getElementById('loading');
 	var view = document.getElementById('view');
+	var audio = AudioMixer.INSTANCE;
 	var field = new Field();
 	var keys = {};
 
@@ -23,7 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		var ty;
 
 		if (field.isGameOver()) {
-			field.startGame();
+			if (audio.isComplete()) {
+				field.startGame();
+			}
 			return;
 		}
 		if (isMouse) {
@@ -74,5 +78,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		field.draw();
 		setTimeout(activate, 33);
 	};
-	activate();
+	var checkLoading = function() {
+		var msg = audio.loaded + '/' + audio.max;
+
+		loading.innerHTML = msg;
+		if (audio.isComplete()) {
+			loading.parentNode.removeChild(loading);
+			activate();
+			return;
+		}
+		setTimeout(checkLoading, 1000);
+	};
+	checkLoading();
 });

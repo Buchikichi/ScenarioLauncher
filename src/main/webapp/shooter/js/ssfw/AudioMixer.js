@@ -6,17 +6,25 @@ function AudioMixer() {
 	if (window.AudioContext || window.webkitAudioContext) {
 		this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 	}
+	this.max = 0;
+	this.loaded = 0;
 	this.dic = [];
 	this.bgm = null;
 }
 AudioMixer.INSTANCE = new AudioMixer();
 
+AudioMixer.prototype.isComplete = function() {
+	return 0 < this.max && this.max == this.loaded;
+};
+
 AudioMixer.prototype.add = function(key) {
+	var mixer = this;
 	var ctx = this.ctx;
 	var dic = this.dic;
 	var request = new XMLHttpRequest();
 	var audioSrc = 'audio/' + key + '.mp3';
 
+	this.max++;
 	request.open('GET', audioSrc, true);
 	request.responseType = 'arraybuffer';
 	request.addEventListener('load', function() {
@@ -25,12 +33,14 @@ AudioMixer.prototype.add = function(key) {
 
 			audio.src = audioSrc;
 			dic[key] = audio;
+			mixer.loaded++;
 			return;
 		}
 		var audioData = request.response;
 
 		ctx.decodeAudioData(audioData, function(buff) {
 			dic[key] = buff;
+			mixer.loaded++;
 		});
 	});
 	request.send();

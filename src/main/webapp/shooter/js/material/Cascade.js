@@ -1,7 +1,7 @@
 function Cascade(field, x, y) {
 	Chain.apply(this, arguments);
 
-	this.anim = new Animator(this, 'material.Cascade.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'material/cascade.png', Animator.TYPE.NONE);
 	this.radian = Math.SQ;
 	this.radius = Cascade.RADIUS;
 	this.appears = false;

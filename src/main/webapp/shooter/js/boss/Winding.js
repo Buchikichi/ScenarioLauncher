@@ -24,7 +24,7 @@ Winding.prototype = Object.create(Chain.prototype);
 Winding.RADIUS = 16;
 Winding.RADIAN_STEP = Math.SQ;
 Winding.RATIO_MAX = 50;
-Winding.MAX_JOINT = 16;
+Winding.MAX_JOINT = 20;
 
 Winding.prototype._move = Enemy.prototype.move;
 Winding.prototype.move = function(target) {

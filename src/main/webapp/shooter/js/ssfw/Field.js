@@ -168,7 +168,7 @@ Field.prototype.draw = function() {
 		if (actor.isGone) {
 			return;
 		}
-		actor.constraint = !die(field.loosingRate / 10);
+		actor.constraint = parseInt(Math.random() * field.loosingRate / 10) != 0;
 		var child = actor.move(ship);
 
 		if (child instanceof Array) {

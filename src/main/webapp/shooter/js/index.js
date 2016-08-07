@@ -76,9 +76,3 @@ document.addEventListener('DOMContentLoaded', function() {
 	};
 	activate();
 });
-/**
- * さいころ
- */
-function die(max) {
-	return parseInt(Math.random() * (max + 1)) == 0;
-}

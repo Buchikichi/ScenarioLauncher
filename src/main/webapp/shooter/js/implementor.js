@@ -15,6 +15,10 @@ Enemy.LIST = [
 Stage.LIST = [
 //	new Stage(Stage.SCROLL.OFF, 'stage-map.png', 'bgm-edo-beth').addBoss('bgm-edo-omega-zero')
 //		.bg('stage-bg.png').bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
+//	new Stage(Stage.SCROLL.OFF, 'stage1.map.png', 'bgm-MadNightDance').addBoss('bgm-edo-omega-zero')
+//		.bg('stage1.1.0.png', 1.3).bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
+//	new Stage(Stage.SCROLL.ON, 'stage2.map.png', 'bgm-pierrot-cards')
+//		.bg('stage2.1.0.png').bg('stage2.1.1.png', .7).bg('stage01bg1.png', .9),
 	new Stage(Stage.SCROLL.OFF, 'stage00map.png', 'bgm-edo-beth')
 		.bg('stage00bg.png').bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
 	new Stage(Stage.SCROLL.OFF, 'stage01map.png', 'bgm-MadNightDance').addBoss('bgm-edo-omega-zero')

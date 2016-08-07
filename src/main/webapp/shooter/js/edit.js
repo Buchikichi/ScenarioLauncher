@@ -110,7 +110,3 @@ function setupMouse(landform) {
 		landform.wheel(delta);
 	});
 }
-
-function Field(){}
-Field.WIDTH = 512;
-Field.HEIGHT = 224;

@@ -6,7 +6,7 @@ function Molten() {
 	this.margin = Field.HALF_WIDTH;
 	this.dir = 0;
 	this.speed = 1;
-	this.effect = false;
+	this.effectH = false;
 	this.hitPoint = Number.MAX_SAFE_INTEGER;
 	this.cycle = 0;
 	this.phase = Molten.PHASE.TARGET;

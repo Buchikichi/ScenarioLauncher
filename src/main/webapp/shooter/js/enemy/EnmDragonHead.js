@@ -9,7 +9,7 @@ function EnmDragonHead() {
 		this.x -= 50;
 	}
 	this.speed = 1.8;
-	this.effect = false;
+	this.effectH = false;
 	this.hitPoint = 200;
 	this.score = 1000;
 	this.radian = Math.PI;

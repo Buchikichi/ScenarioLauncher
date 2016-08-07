@@ -4,7 +4,7 @@
 function Ship(field, x, y) {
 	Actor.apply(this, arguments);
 	this.speed = 4;
-	this.effect = false;
+	this.effectH = false;
 	this.shotList = [];
 	this.trigger = false;
 	this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);

@@ -10,6 +10,7 @@ Enemy.LIST = [
 	{name:'Dragon', type:EnmDragonHead, img:'enmDragonHead.png'},
 	{name:'Waver(formation)', type:EnmWaver, img:'enmWaver.png', h:16, formation: true},
 	{name:'Molten', type:Molten, img:'boss.Molten.png'},
+	{name:'Winding', type:Winding, img:'boss/Winding.png'},
 	{name:'Cascade', type:Cascade, img:'material.Cascade.icon.png'}
 ];
 Stage.LIST = [
@@ -17,7 +18,7 @@ Stage.LIST = [
 //		.bg('stage-bg.png').bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
 //	new Stage(Stage.SCROLL.OFF, 'stage1.map.png', 'bgm-MadNightDance').addBoss('bgm-edo-omega-zero')
 //		.bg('stage1.1.0.png', 1.3).bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
-//	new Stage(Stage.SCROLL.ON, 'stage2.map.png', 'bgm-pierrot-cards')
+//	new Stage(Stage.SCROLL.ON, 'stage2.map.png', 'bgm-pierrot-cards').addBoss('bgm-edo-omega-zero')
 //		.bg('stage2.1.0.png').bg('stage2.1.1.png', .7).bg('stage01bg1.png', .9),
 	new Stage(Stage.SCROLL.OFF, 'stage00map.png', 'bgm-edo-beth')
 		.bg('stage00bg.png').bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),

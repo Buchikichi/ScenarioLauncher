@@ -3,7 +3,8 @@
  */
 function EnmDragonBody() {
 	Enemy.apply(this, arguments);
-	this.effect = false;
+	this.effectH = false;
+	this.effectV = false;
 	this.hitPoint = Number.MAX_SAFE_INTEGER;
 	this.score = 0;
 	this.anim = new Animator(this, 'enmDragonBody.png', Animator.TYPE.NONE);

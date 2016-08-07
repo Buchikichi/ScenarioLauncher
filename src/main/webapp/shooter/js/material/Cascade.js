@@ -42,7 +42,8 @@ function CascadeChild(field, x, y, weight) {
 	Chain.apply(this, arguments);
 
 	this.maxX = this.field.width + 100;
-	this.effect = false;
+	this.effectH = false;
+	this.effectV = false;
 	this.weight = weight;
 	this.radian = Math.SQ * .9;
 	this.radius = Cascade.RADIUS;

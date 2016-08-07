@@ -17,7 +17,8 @@ function Actor(field, x, y) {
 	this.gravity = 0;
 	this.reaction = 0;
 	this.speed = 1;
-	this.effect = true;
+	this.effectH = true;
+	this.effectV = true;
 	this.hitPoint = 1;
 	this.absorbed = false;
 	this.score = 0;
@@ -130,6 +131,11 @@ Actor.prototype.drawNormal = function(ctx) {
 	if (this.anim) {
 		this.anim.draw(ctx);
 	}
+//	ctx.save();
+//	ctx.translate(this.x, this.y);
+//	ctx.fillStyle = 'white';
+//	ctx.fillText(this.hitPoint, 0, 20);
+//	ctx.restore();
 };
 
 Actor.prototype.drawExplosion = function(ctx) {

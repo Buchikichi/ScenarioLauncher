@@ -121,10 +121,12 @@ Landform.prototype.reset = function() {
 Landform.prototype.effect = function(target) {
 	var maxX = Math.max(target.field.width + target.width, target.maxX);
 
-	if (target.effect) {
+	if (target.effectH) {
 		target.x -= this.effectH;
 	}
-	target.y += this.effectV;
+	if (target.effectV) {
+		target.y += this.effectV;
+	}
 	if (target.x < target.minX || maxX < target.x) {
 		target.eject();
 	}

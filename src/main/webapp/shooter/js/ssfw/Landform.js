@@ -38,6 +38,7 @@ function Landform(canvas) {
 		landform.arrivX = this.width - Field.WIDTH;
 		landform.noticeX = landform.arrivX - Field.HALF_WIDTH;
 	}
+	this.bgList = [];
 	this.reverse = new Image();
 	this.reverse.src = './img/reverse.png';
 	this.isEdit = false;
@@ -84,29 +85,22 @@ Landform.prototype.loadMapData = function(file) {
 
 Landform.prototype.loadStage = function(stage) {
 	var landform = this;
+	var ctx = this.ctx;
 
 	this.reset();
 	this.scroll = stage.scroll;
 	this.loadMapData('./img/' + stage.map);
-	var divList = document.getElementsByClassName('bg');
-	for (var cnt = 0; cnt < divList.length; cnt++) {
-		var div = divList[cnt];
-
-		div.style.backgroundImage = 'none';
-		div.setAttribute('data-x', 0);
-		div.setAttribute('data-y', 0);
-	}
+	this.bgList = [];
 	stage.background.forEach(function(bg, ix) {
+		if (!bg.pattern) {
+			bg.pattern = ctx.createPattern(bg.img, 'repeat');
+		}
 		if (ix == 0) {
 			landform.speed = bg.speed;
-			landform.load('./img/' + bg.img);
+			landform.load(bg.img.src);
 			return;
 		}
-		// background-image: url("../img/stage01bg1.png");
-		var div = document.getElementById('bg' + ix);
-
-		div.style.backgroundImage = 'url("./img/' + bg.img + '")';
-		div.setAttribute('data-speed', bg.speed);
+		landform.bgList.unshift(bg);
 	});
 };
 
@@ -116,6 +110,9 @@ Landform.prototype.loadStage = function(stage) {
 Landform.prototype.reset = function() {
 	this.x = -Field.WIDTH;
 	this.y = 0;
+	this.bgList.forEach(function(bg, ix) {
+		bg.reset();
+	});
 };
 
 Landform.prototype.effect = function(target) {
@@ -180,25 +177,9 @@ Landform.prototype.scrollV = function(target) {
 };
 
 Landform.prototype.forwardBg = function(target) {
-	var divList = document.getElementsByClassName('bg');
-
-	for (var cnt = 0; cnt < divList.length; cnt++) {
-		var div = divList[cnt];
-		var speed = parseFloat(div.getAttribute('data-speed'));
-		if (!speed) {
-			continue;
-		}
-		var ratio = this.speed / speed;
-		var x = parseFloat(div.getAttribute('data-x'));
-		var y = parseFloat(div.getAttribute('data-y'));
-		var position = -x + 'px ' + -y + 'px';
-
-		div.style.backgroundPosition = position;
-		x += speed;
-		y += -this.effectV / ratio;
-		div.setAttribute('data-x', x);
-		div.setAttribute('data-y', y);
-	}
+	this.bgList.forEach(function(bg) {
+		bg.forward();
+	});
 };
 
 Landform.prototype.forward = function(target) {
@@ -510,10 +491,28 @@ Landform.prototype.drawBrick = function() {
 	}
 };
 
+Landform.prototype.drawBg = function() {
+	var landform = this;
+	var ctx = this.ctx;
+
+	ctx.save();
+	ctx.scale(this.magni, this.magni);
+	this.bgList.forEach(function(bg, ix) {
+		ctx.globalAlpha = bg.alpha;
+		ctx.translate(-bg.x, bg.y);
+		ctx.beginPath();
+		ctx.fillStyle = bg.pattern;
+		ctx.rect(0, 0, landform.width, landform.height);
+		ctx.fill();
+	});
+	ctx.restore();
+};
+
 Landform.prototype.draw = function() {
 	if (!this.img.src || !this.img.complete) {
 		return;
 	}
+	var landform = this;
 	var ctx = this.ctx;
 
 	ctx.save();

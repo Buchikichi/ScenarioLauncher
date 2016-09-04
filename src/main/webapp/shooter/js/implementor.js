@@ -19,12 +19,12 @@ Stage.LIST = [
 //		.bg('stage-bg.png').bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
 //	new Stage(Stage.SCROLL.OFF, 'stage1.map.png', 'bgm-MadNightDance').addBoss('bgm-edo-omega-zero')
 //		.bg('stage1.1.0.png', 1.3).bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
-	new Stage(Stage.SCROLL.ON, 'stage2.map.png', 'bgm-pierrot-cards').addBoss('bgm-edo-omega-zero')
-		.bg('stage2.1.0.png').bg('stage2.1.1.png', .7).bg('stage01bg1.png', .9),
+//	new Stage(Stage.SCROLL.ON, 'stage2.map.png', 'bgm-pierrot-cards').addBoss('bgm-edo-omega-zero')
+//		.bg('stage2.1.0.png').bg('stage2.1.1.png', .7).bg('stage01bg1.png', .9),
 	new Stage(Stage.SCROLL.OFF, 'stage00map.png', 'bgm-edo-beth')
-		.bg('stage00bg.png').bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
+		.bg('stage00bg.png').bg('stage01bg0.png', .9, 0, .02).bg('stage01bg1.png', .7),
 	new Stage(Stage.SCROLL.OFF, 'stage01map.png', 'bgm-MadNightDance').addBoss('bgm-edo-omega-zero')
-		.bg('stage01bg.png', 1.3).bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
+		.bg('stage01bg.png', 1.3).bg('stage01bg1.png', .7, 0, .02).bg('stage01bg0.png', .6),
 	new Stage(Stage.SCROLL.LOOP, 'stage00map.png', 'bgm-edo-beth')
 		.bg('stage00bg.png').bg('stage01bg0.png', .9).bg('stage01bg1.png', .7),
 	new Stage(Stage.SCROLL.ON, 'stage02map.png', 'bgm-pierrot-cards')

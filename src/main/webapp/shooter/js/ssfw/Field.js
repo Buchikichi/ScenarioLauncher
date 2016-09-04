@@ -164,6 +164,7 @@ Field.prototype.draw = function() {
 	var score = 0;
 
 	ctx.clearRect(0, 0, this.width, this.height);
+	this.landform.drawBg();
 	this.actorList.forEach(function(actor) {
 		if (actor.isGone) {
 			return;

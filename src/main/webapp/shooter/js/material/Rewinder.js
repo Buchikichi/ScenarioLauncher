@@ -4,7 +4,7 @@ function Rewinder(field, x, y) {
 	this.step = Math.SQ / 100;
 	this.radius = Rewinder.RADIUS;
 	this.speed = 2.2;
-	this.hitPoint = 300;
+	this.hitPoint = Number.MAX_SAFE_INTEGER;
 	this.margin = Field.HALF_WIDTH;
 	this.ratio = Rewinder.RATIO_MAX;
 	this.delta = -.8;
@@ -26,14 +26,14 @@ Rewinder.MAX_JOINT = 16;
 Rewinder.prototype._move = Enemy.prototype.move;
 Rewinder.prototype.move = function(target) {
 	var result = [];
-	var rad = Math.trim(this.radian - Math.SQ / 2);
+	var rad = Math.trim(this.radian + Math.SQ / 2);
 
 	this._move(target);
 	if (this.appears) {
 		var joint = this.next;
 
 		while (joint) {
-			rad += Rewinder.RADIAN_STEP * this.ratio / 100;
+			rad -= Rewinder.RADIAN_STEP * this.ratio / 100;
 			joint.radian = Math.trim(rad);
 			joint = joint.next;
 		}

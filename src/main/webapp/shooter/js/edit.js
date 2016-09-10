@@ -45,8 +45,8 @@ $(document).ready(function() {
 	});
 	win.resize();
 
-landform.load('./img/stage2.1.0.png');
-landform.loadMapData('./img/stage2.map.png');
+landform.load('./img/stage3.1.0.png');
+landform.loadMapData('./img/stage3.map.png');
 	var activate = function() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		landform.draw();

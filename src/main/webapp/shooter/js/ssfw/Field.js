@@ -52,7 +52,7 @@ Field.prototype.nextStage = function() {
 	if (Stage.LIST.length <= this.stageNum) {
 		this.stageNum = 0;
 	}
-	AudioMixer.INSTANCE.play(this.stage.bgm, .7, true);
+	this.stage.playBgm();
 };
 
 Field.prototype.reset = function() {
@@ -65,7 +65,7 @@ Field.prototype.reset = function() {
 	this.ship.enter();
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
-	AudioMixer.INSTANCE.play(this.stage.bgm, .7, true);
+	this.stage.playBgm();
 };
 
 Field.prototype.startGame = function() {
@@ -164,7 +164,7 @@ Field.prototype.draw = function() {
 	var score = 0;
 
 	ctx.clearRect(0, 0, this.width, this.height);
-	this.landform.drawBg();
+	this.landform.drawBg(ctx);
 	this.actorList.forEach(function(actor) {
 		if (actor.isGone) {
 			return;

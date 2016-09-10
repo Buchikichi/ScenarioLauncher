@@ -51,8 +51,6 @@ Landform.NEXT = {
 Landform.prototype.load = function(file) {
 	if (file instanceof File) {
 		this.img.src = window.URL.createObjectURL(file);
-	} else {
-		this.img.src = file;
 	}
 };
 
@@ -78,12 +76,11 @@ Landform.prototype.loadMapData = function(file) {
 };
 
 Landform.prototype.loadStage = function(stage) {
-	var landform = this;
 	var fg = stage.getFg();
 
 	this.stage = stage;
 	this.loadMapData('./img/' + stage.map);
-	this.load(fg.img.src);
+	this.img.src = fg.img.src;
 	this.reset();
 };
 
@@ -92,7 +89,7 @@ Landform.prototype.loadStage = function(stage) {
  */
 Landform.prototype.reset = function() {
 	if (this.stage) {
-		this.stage.reset(this.ctx);
+		this.stage.reset();
 	}
 };
 
@@ -342,11 +339,8 @@ Landform.prototype.drawTarget = function() {
 	if (!this.isEdit || !this.target) {
 		return;
 	}
-	var fg = this.stage.getFg();
-	var gx = fg.x;
-	var gy = fg.y;
-	var tx = Math.round((gx + this.target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	var ty = Math.round((gy + this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var tx = Math.round((this.target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var ty = Math.round((this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 	var ctx = this.ctx;
 	var bw = Landform.BRICK_WIDTH;
 	var selection = parseInt(this.selection);
@@ -463,7 +457,7 @@ Landform.prototype.drawBg = function(ctx) {
 };
 
 Landform.prototype.draw = function() {
-	if (!this.img.src || !this.img.complete) {
+	if (!this.stage) {
 		return;
 	}
 	var landform = this;

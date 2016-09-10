@@ -18,7 +18,9 @@ $(document).ready(function() {
 		slider.slider('refresh');
 	});
 	slider.change(function() {
-		landform.x = slider.val() * Landform.BRICK_WIDTH;
+		var fg = landform.stage.getFg();
+
+		fg.x = slider.val() * Landform.BRICK_WIDTH;
 	});
 	$('#generateButton').click(function() {
 		landform.generateBrick(ctx);
@@ -45,8 +47,7 @@ $(document).ready(function() {
 	});
 	win.resize();
 
-landform.load('./img/stage3.1.0.png');
-landform.loadMapData('./img/stage3.map.png');
+//	landform.loadStage(new Stage(Stage.SCROLL.LOOP, 'stage1.map.png', [ new StageFg('stage1.1.0.png') ]));
 	var activate = function() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		landform.draw();

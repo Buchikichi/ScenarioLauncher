@@ -49,13 +49,10 @@ Stage.prototype.getFg = function() {
 	return fg;
 };
 
-Stage.prototype.reset = function(ctx) {
+Stage.prototype.reset = function() {
 	this.effectH = 0;
 	this.effectV = 0;
 	this.view.forEach(function(ground) {
-		if (!ground.pattern) {
-			ground.pattern = ctx.createPattern(ground.img, 'repeat');
-		}
 		ground.reset();
 	});
 };
@@ -168,12 +165,19 @@ StageView.prototype.forward = function() {
 	}
 };
 
+StageView.prototype.getPattern = function(ctx) {
+	if (!this.pattern && this.ready) {
+		this.pattern = ctx.createPattern(this.img, 'repeat');
+	}
+	return this.pattern;
+};
+
 StageView.prototype.draw = function(ctx) {
 	ctx.save();
 	ctx.globalAlpha = this.alpha;
 	ctx.translate(-this.x, -this.y);
 	ctx.beginPath();
-	ctx.fillStyle = this.pattern;
+	ctx.fillStyle = this.getPattern(ctx);
 	ctx.rect(0, 0, this.w2, this.h2);
 	ctx.fill();
 	ctx.restore();

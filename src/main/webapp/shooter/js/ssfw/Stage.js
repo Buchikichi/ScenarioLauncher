@@ -114,12 +114,13 @@ function StageView(img) {
 
 	this.ready = false;
 	this.pattern = null;
+	this.repeatX = 2;
 	this.img = new Image();
 	this.img.src = './img/' + img;
 	this.img.onload = function() {
 		stageView.width = this.width;
 		stageView.height = this.height;
-		stageView.w2 = this.width * 2;
+		stageView.w2 = this.width * stageView.repeatX;
 		stageView.h2 = this.height * 2;
 		stageView.viewX = this.width - Field.HALF_WIDTH;
 		stageView.viewY = this.height - Field.HEIGHT;
@@ -188,6 +189,7 @@ StageView.prototype.draw = function(ctx) {
  */
 function StageFg() {
 	StageView.apply(this, arguments);
+	this.repeatX = 1;
 }
 StageFg.prototype = Object.create(StageView.prototype);
 

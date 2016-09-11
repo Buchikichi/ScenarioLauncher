@@ -35,7 +35,8 @@ Enemy.prototype.trigger = function() {
 Enemy.prototype.fire = function(target) {
 	var bullet = new Bullet(this.field, this.x, this.y);
 	var dist = this.calcDistance(target);
-	var estimation = dist / bullet.speed * this.field.landform.speed;
+	var fg = this.field.stage.getFg();
+	var estimation = dist / bullet.speed * fg.speed;
 	var dx = target.x - this.x + estimation;
 	var dy = target.y - this.y;
 

@@ -6,7 +6,6 @@ function Landform(canvas) {
 
 	this.canvas = canvas;
 	this.ctx = canvas.getContext('2d');
-	this.viewY = 0;
 	this.scroll = Stage.SCROLL.OFF;
 	this.effectH = 0;
 	this.next = Landform.NEXT.NONE;
@@ -29,7 +28,6 @@ function Landform(canvas) {
 		landform.bw = this.width / Landform.BRICK_WIDTH;
 		landform.bh = this.height / Landform.BRICK_WIDTH;
 		landform.viewX = this.width - Field.HALF_WIDTH;
-		landform.viewY = this.height - Field.HEIGHT;
 		landform.arrivX = this.width - Field.WIDTH;
 		landform.noticeX = landform.arrivX - Field.HALF_WIDTH;
 	}
@@ -45,7 +43,8 @@ Landform.NEXT = {
 	NONE: 0,
 	NOTICE: 1,
 	ARRIV: 2,
-	PAST: 3
+	IDLE: 3,
+	PAST: 4
 };
 
 Landform.prototype.load = function(file) {
@@ -88,6 +87,7 @@ Landform.prototype.loadStage = function(stage) {
  * for play.
  */
 Landform.prototype.reset = function() {
+	this.next = Landform.NEXT.NONE;
 	if (this.stage) {
 		this.stage.reset();
 	}
@@ -130,7 +130,9 @@ Landform.prototype.forward = function(target) {
 	}
 	var fg = this.stage.getFg();
 
-	this.stage.scrollV(target);
+	if (this.next != Landform.NEXT.ARRIV) {
+		this.stage.scrollV(target);
+	}
 	if (this.viewX <= fg.x) {
 		this.effectH = 0;
 		if (this.next != Landform.NEXT.PAST) {
@@ -142,11 +144,15 @@ Landform.prototype.forward = function(target) {
 	this.stage.forward();
 	this.effectH = fg.effectH;
 	if (this.arrivX <= fg.x) {
-		if (this.next != Landform.NEXT.ARRIV) {
-			fg.x = this.width - Field.WIDTH;
+		if (this.next == Landform.NEXT.NOTICE) {
+			fg.x = this.arrivX;
 			this.effectH = 0;
 			this.next = Landform.NEXT.ARRIV;
 			return Landform.NEXT.ARRIV;
+		}
+		if (this.arrivX < fg.x) {
+			this.next = Landform.NEXT.IDLE;
+			return Landform.NEXT.IDLE;
 		}
 	} else if (this.noticeX <= fg.x) {
 		if (this.next != Landform.NEXT.NOTICE) {
@@ -160,13 +166,12 @@ Landform.prototype.forward = function(target) {
 Landform.prototype.scanEnemy = function() {
 	var result = [];
 
-	if (!this.brick || this.width - Field.WIDTH <= gx) {
+	if (!this.brick || this.next == Landform.NEXT.IDLE) {
 		return result;
 	}
 	var fg = this.stage.getFg();
 	var gx = fg.x;
 	var gy = fg.y;
-
 	// right
 	var tx = Math.round((gx + Field.WIDTH - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
 

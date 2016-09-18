@@ -7,7 +7,7 @@ function EnmTentacle(field, x, y) {
 	this.speed = 1.2;
 	this.hitPoint = 16;
 	this.appears = false;
-	this.anim = new Animator(this, 'enmTentacle.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'enemy/tentacle.png', Animator.TYPE.NONE);
 	this.routine = [
 		new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO)
 	];
@@ -67,7 +67,7 @@ function EnmTentacleJoint(speed) {
 	this.radius = 4;
 	this.radian = 0;
 	this.speed = speed;
-	this.anim = new Animator(this, 'enmTentacleJoint.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'enemy/tentacleJoint.png', Animator.TYPE.NONE);
 }
 EnmTentacleJoint.prototype = Object.create(Chain.prototype);
 
@@ -101,7 +101,7 @@ EnmTentacleJoint.prototype.trigger = NOP;
 function EnmTentacleHead(speed) {
 	EnmTentacleJoint.apply(this, arguments);
 
-	this.anim = new Animator(this, 'enmTentacleHead.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'enemy/tentacleHead.png', Animator.TYPE.NONE);
 }
 EnmTentacleHead.prototype = Object.create(EnmTentacleJoint.prototype);
 

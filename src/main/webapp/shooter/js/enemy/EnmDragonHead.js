@@ -14,7 +14,7 @@ function EnmDragonHead() {
 	this.score = 1000;
 	this.radian = Math.PI;
 	this.appears = false;
-	this.anim = new Animator(this, 'enmDragonHead.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'enemy/dragonHead.png', Animator.TYPE.NONE);
 
 	this.locus = [];
 	this.body = [];

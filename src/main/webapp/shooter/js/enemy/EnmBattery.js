@@ -6,9 +6,9 @@ function EnmBattery() {
 	this.speed = 0;
 	this.hitPoint = 1;
 	this.score = 10;
-	this.anim = new Animator(this, 'enmBattery.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'enemy/battery.png', Animator.TYPE.NONE);
 	this.base = new Image();
-	this.base.src = 'img/enmBatteryBase.png';
+	this.base.src = 'img/enemy/batteryBase.png';
 	this.routine = [
 		new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)
 	];

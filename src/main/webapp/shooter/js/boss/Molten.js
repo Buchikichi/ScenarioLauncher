@@ -12,7 +12,7 @@ function Molten() {
 	this.phase = Molten.PHASE.TARGET;
 	this.rock = [];
 	this.appears = false;
-	this.anim = new Animator(this, 'boss.Molten.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'boss/molten.png', Animator.TYPE.NONE);
 	this.routine = [
 		new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)
 	];
@@ -68,7 +68,7 @@ function MoltenRock(field, x, y, parent) {
 	this.speed = 1.3;
 	this.hitPoint = 5;
 	this.score = 10;
-	this.anim = new Animator(this, 'boss.MoltenRock.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'boss/moltenRock.png', Animator.TYPE.NONE);
 	this.routine = [
 		new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)
 	];

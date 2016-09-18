@@ -8,7 +8,7 @@ function EnmCrab() {
 	this.speed = 1.5;
 	this.hitPoint = 1;
 	this.score = 90;
-	this.anim = new Animator(this, 'enmCrab.png', Animator.TYPE.X, 8, 1);
+	this.anim = new Animator(this, 'enemy/crab.png', Animator.TYPE.X, 8, 1);
 	this.routine = [
 		new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_X)
 	];

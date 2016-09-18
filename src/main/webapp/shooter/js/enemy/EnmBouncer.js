@@ -10,7 +10,7 @@ function EnmBouncer() {
 	this.hitPoint = 3;
 	this.score = 50;
 	this.shuttle = 2;
-	this.img.src = 'img/enmBouncer.png';
+	this.img.src = 'img/enemy/bouncer.png';
 }
 
 EnmBouncer.prototype = Object.create(Enemy.prototype);

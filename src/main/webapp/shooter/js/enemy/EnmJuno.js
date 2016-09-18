@@ -4,13 +4,13 @@
 function EnmJuno() {
 	Enemy.apply(this, arguments);
 	this.dir = Math.PI;
-	this.speed = 2;
-	this.effectH = false;
-	this.hitPoint = 75; // 2016-7-5
+	this.speed = 3;
+	this.hitPoint = 16; // 2016-7-5
 	this.score = 750;
-	this.anim = new Animator(this, 'enmJuno.png', Animator.TYPE.NONE);
+	this.anim = new Animator(this, 'enemy/juno.png', Animator.TYPE.NONE);
 	this.routine = [
-		new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)
+		new Movement(200).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO),
+		new Movement(Number.MAX_VALUE).add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE)
 	];
 }
 EnmJuno.prototype = Object.create(Enemy.prototype);

@@ -4,7 +4,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 	var loading = document.getElementById('loading');
 	var view = document.getElementById('view');
-	var audio = AudioMixer.INSTANCE;
+	var repositories = [AudioMixer.INSTANCE, MotionManager.INSTANCE];
 	var field = new Field();
 	var keys = {};
 
@@ -24,10 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		var tx;
 		var ty;
 
-		if (field.isGameOver()) {
-			if (audio.isComplete()) {
-				field.startGame();
-			}
+		if (field.isGameOver() && !document.getElementById('loading')) {
+			field.startGame();
 			return;
 		}
 		if (isMouse) {
@@ -79,10 +77,19 @@ document.addEventListener('DOMContentLoaded', function() {
 		setTimeout(activate, 33);
 	};
 	var checkLoading = function() {
-		var msg = audio.loaded + '/' + audio.max;
+		var loaded = 0;
+		var max = 0;
+		var isComplete = true;
+
+		repositories.forEach(function(repo) {
+			loaded += repo.loaded;
+			max += repo.max;
+			isComplete &= repo.isComplete();
+		});
+		var msg = loaded + '/' + max;
 
 		loading.innerHTML = msg;
-		if (audio.isComplete()) {
+		if (isComplete) {
 			loading.parentNode.removeChild(loading);
 			activate();
 			return;

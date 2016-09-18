@@ -11,6 +11,7 @@ Enemy.LIST = [
 	{name:'Waver(formation)', type:EnmWaver, img:'enemy/waver.png', h:16, formation: true},
 	{name:'Molten', type:Molten, img:'boss/molten.png'},
 	{name:'Winding', type:Winding, img:'boss/winding.png'},
+	{name:'Titan', type:Titan, img:'boss/titan.icon.png'},
 	{name:'Cascade', type:Cascade, img:'material/cascade.icon.png'},
 	{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
 ];
@@ -40,7 +41,8 @@ Stage.LIST = [
 			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage02bg.png'),
 		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
 ];
-AudioMixer.INSTANCE.addAll([
+AudioMixer.INSTANCE.reserve([
 	'sfx-fire', 'sfx-explosion', 'sfx-absorb',
 	'bgm-edo-beth', 'bgm-MadNightDance', 'bgm-pierrot-cards', 'bgm-edo-omega-zero'
 ]);
+MotionManager.INSTANCE.reserve(['asf', '111_7.amc']);

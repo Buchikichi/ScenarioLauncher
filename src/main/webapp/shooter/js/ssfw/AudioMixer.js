@@ -3,54 +3,34 @@
  */
 'use strict';
 function AudioMixer() {
+	Repository.apply(this, arguments);
+	this.type = 'arraybuffer';
 	if (window.AudioContext || window.webkitAudioContext) {
 		this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 	}
-	this.max = 0;
-	this.loaded = 0;
 	this.dic = [];
 	this.bgm = null;
 }
+AudioMixer.prototype = Object.create(Repository.prototype);
 AudioMixer.INSTANCE = new AudioMixer();
 
-AudioMixer.prototype.isComplete = function() {
-	return 0 < this.max && this.max == this.loaded;
+AudioMixer.prototype.makeName = function(key) {
+	return 'audio/' + key + '.mp3';
 };
 
-AudioMixer.prototype.add = function(key) {
-	var mixer = this;
+AudioMixer.prototype.onload = function(key, name, data) {
 	var ctx = this.ctx;
 	var dic = this.dic;
-	var request = new XMLHttpRequest();
-	var audioSrc = 'audio/' + key + '.mp3';
 
-	this.max++;
-	request.open('GET', audioSrc, true);
-	request.responseType = 'arraybuffer';
-	request.addEventListener('load', function() {
-		if (!ctx) {
-			var audio = new Audio();
+	if (!ctx) {
+		var audio = new Audio();
 
-			audio.src = audioSrc;
-			dic[key] = audio;
-			mixer.loaded++;
-			return;
-		}
-		var audioData = request.response;
-
-		ctx.decodeAudioData(audioData, function(buff) {
-			dic[key] = buff;
-			mixer.loaded++;
-		});
-	});
-	request.send();
-};
-
-AudioMixer.prototype.addAll = function(keys) {
-	var mixer = this;
-
-	keys.forEach(function(key) {
-		mixer.add(key);
+		audio.src = name;
+		dic[key] = audio;
+		return;
+	}
+	ctx.decodeAudioData(data, function(buff) {
+		dic[key] = buff;
 	});
 };
 

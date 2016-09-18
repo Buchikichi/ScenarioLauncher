@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>to.kit.scenario</groupId>
   <artifactId>ScenarioLauncher</artifactId>
-  <version>0.1.40</version>
+  <version>0.1.42</version>
   <packaging>war</packaging>
   <name>ScenarioLauncher</name>
 
   <properties>
-    <appengine.version>1.9.40</appengine.version>
+    <appengine.version>1.9.42</appengine.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

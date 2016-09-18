@@ -3,6 +3,7 @@
  */
 document.addEventListener('DOMContentLoaded', function() {
 	var view = $('#view');
+	var slider = $('#slider');
 	var field = new Field();
 	var cx = 0;
 	var cy = 0;
@@ -63,10 +64,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		which = 0;
 	};
 	var activate = function() {
+		//field.nextMotion();
 		field.draw();
 		setTimeout(activate, 33);
 	};
 
+	setupFileList(field);
 	view.mousedown(start);
 	view.mousemove(touch);
 	view.mouseleave(end);
@@ -74,7 +77,27 @@ document.addEventListener('DOMContentLoaded', function() {
 	view.bind('touchstart', start);
 	view.bind('touchmove', touch);
 	view.bind('touchend', end);
+	slider.change(function() {
+		field.shiftMotion($(this).val());
+	});
 	$(window).resize(onResize);
 	activate();
 	$(window).resize();
 });
+
+function setupFileList(field) {
+	var ul = $('#searchPanel ul');
+	var list = ['07_05.amc', '09_06.amc', '131_04.amc', '135_06.amc'];
+
+	list.forEach(function(name) {
+		var anchor = $('<a></a>').text(name);
+		var li = $('<li></li>').append(anchor);
+
+		li.attr('data-filtertext', name);
+		ul.append(li);
+		anchor.click(function() {
+			field.loadMotion(name + '.json');
+		});
+	});
+	ul.filterable('refresh');
+}

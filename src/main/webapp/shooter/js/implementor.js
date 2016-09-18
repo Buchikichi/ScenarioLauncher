@@ -45,4 +45,4 @@ AudioMixer.INSTANCE.reserve([
 	'sfx-fire', 'sfx-explosion', 'sfx-absorb',
 	'bgm-edo-beth', 'bgm-MadNightDance', 'bgm-pierrot-cards', 'bgm-edo-omega-zero'
 ]);
-MotionManager.INSTANCE.reserve(['asf', '111_7.amc']);
+MotionManager.INSTANCE.reserve(['asf', '79_96.amc', '111_7.amc']);

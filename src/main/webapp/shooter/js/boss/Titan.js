@@ -4,33 +4,27 @@
 function Titan() {
 	Enemy.apply(this, arguments);
 	var asf = MotionManager.INSTANCE.dic['asf'];
-	var mot = MotionManager.INSTANCE.dic['111_7.amc'];
 
-	if (asf && mot) {
-		this.mot = mot;
-		this.num = 0;
-		this.motdir = 1;
+	this.hitPoint = Number.MAX_SAFE_INTEGER;
+	//
+	this.motionRoutine = new MotionRoutine([
+		new Motion(Motion.TYPE.ONLY_ONE, '111_7.amc', 4, Math.PI / 4, 0),
+		new Motion(Motion.TYPE.NORMAL, '79_96.amc', 4, -Math.PI * .4, 0),
+	]);
+	this.routineNum = 0;
+	this.routineLoop = 0; // 何回目のループか
+	if (asf) {
 		this.skeleton = new Skeleton(asf);
 	}
-	this.hitPoint = Number.MAX_SAFE_INTEGER;
-
 }
 Titan.prototype = Object.create(Enemy.prototype);
 
 Titan.prototype._move = Enemy.prototype.move;
 Titan.prototype.move = function(target) {
 	this._move(target);
-	var motion = this.mot[this.num];
+	var skeleton = this.skeleton;
 
-	this.skeleton.shift(motion);
-	this.num += this.motdir * 4;
-	if (this.mot.length <= this.num) {
-		this.num = this.mot.length - 1;
-		this.motdir *= -1;
-	} else if (this.num < 0) {
-		this.num = 0;
-		this.motdir *= -1;
-	}
+	this.motionRoutine.next(skeleton);
 };
 
 Titan.prototype.drawNormal = function(ctx) {

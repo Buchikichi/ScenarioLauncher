@@ -12,7 +12,7 @@ Bullet.prototype = Object.create(Actor.prototype);
 
 Bullet.prototype.draw = function(ctx) {
 	if (this.isHitWall) {
-		this.fate();
+		this.eject();
 		return;
 	}
 	ctx.save();

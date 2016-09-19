@@ -5,6 +5,8 @@
 function Skeleton(data) {
 	this.data = data;
 	this.map = {};
+	this.offsetX = 0;
+	this.offsetY = 0;
 	this.rotationH = Math.PI / 4;
 	this.rotationV = Math.PI / 8;
 	this.rotationMatrix = new Matrix(Matrix.NO_EFFECT);
@@ -67,8 +69,10 @@ Skeleton.prototype.shift = function(motionList) {
 		bone.motionMatrix = rz.multiply(ry).multiply(rx);
 		if (motion.p) {
 			var p = motion.p;
+			var x = p.x + skeleton.offsetX;
+			var y = p.y + skeleton.offsetY;
 
-			bone.translateMatrix = new Matrix([[1,0,0,p.x],[0,1,0,p.y],[0,0,1,p.z],[0,0,0,1]]);
+			bone.translateMatrix = new Matrix([[1,0,0,x],[0,1,0,y],[0,0,1,p.z],[0,0,0,1]]);
 		}
 	});
 };
@@ -127,7 +131,12 @@ Bone.prototype.drawLine = function(ctx) {
 	var nextY = -nextPt.y;
 	var prevX = prevPt.x;
 	var prevY = -prevPt.y;
+	var dx = nextX - prevX;
+	var dy = nextY - prevY;
 
+	this.cx = prevX + dx / 2;
+	this.cy = prevY + dy / 2;
+	this.radian = Math.atan2(dy, dx);
 	ctx.beginPath();
 	ctx.moveTo(prevX, prevY);
 	ctx.lineTo(nextX, nextY);

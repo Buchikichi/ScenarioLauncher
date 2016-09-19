@@ -182,9 +182,9 @@ Field.prototype.draw = function() {
 		actor.draw(ctx);
 		validActors.push(actor);
 		if (actor instanceof Bullet) {
-			ship.isHit(actor);
+			actor.isHit(ship);
 		} else if (actor instanceof Enemy) {
-			ship.isHit(actor);
+			actor.isHit(ship);
 			enemyList.push(actor);
 		}
 		if (actor.explosion && actor.score) {

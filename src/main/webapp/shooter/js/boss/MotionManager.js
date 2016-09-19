@@ -16,17 +16,34 @@ MotionManager.prototype.makeName = function(key) {
 /**
  * Motion.
  */
-function Motion(type, key, speed, h, v) {
+function Motion(type, key, speed, h) {
 	this.type = type;
 	this.key = key;
 	this.speed = speed;
 	this.h = h;
-	this.v = v;
+	this.v = 0;
+	this.x = 0;
+	this.y = 0;
 }
 Motion.TYPE = {
 	NORMAL: 0,
 	ONLY_ONE: 1,
 	REWIND: 2
+};
+
+Motion.prototype.rotateV = function(v) {
+	this.v = v;
+	return this;
+};
+
+Motion.prototype.offsetX = function(x) {
+	this.x = x;
+	return this;
+};
+
+Motion.prototype.offsetY = function(y) {
+	this.y = y;
+	return this;
 };
 
 Motion.prototype.reset = function() {
@@ -70,7 +87,7 @@ MotionRoutine.prototype.next = function(skeleton) {
 
 	if (motion == null) {
 		this.ix++;
-		if (this.max <= this.ix) {
+		if (this.max < this.ix) {
 			this.ix = 0;
 			this.loop++;
 		}
@@ -83,6 +100,8 @@ MotionRoutine.prototype.next = function(skeleton) {
 	}
 	skeleton.rotationH = this.current.h;
 	skeleton.rotationV = this.current.v;
+	skeleton.offsetX = this.current.x;
+	skeleton.offsetY = this.current.y;
 	skeleton.calcRotationMatrix();
 	skeleton.shift(motion);
 	return motion;

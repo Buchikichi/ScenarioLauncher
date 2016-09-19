@@ -24,6 +24,10 @@ function Motion(type, key, speed, h) {
 	this.v = 0;
 	this.x = 0;
 	this.y = 0;
+	this.triggerMin = Number.NaN;
+	this.triggerMax = Number.NaN;
+	this.reserve = null;
+	this.filling = null;
 }
 Motion.TYPE = {
 	NORMAL: 0,
@@ -43,6 +47,18 @@ Motion.prototype.offsetX = function(x) {
 
 Motion.prototype.offsetY = function(y) {
 	this.y = y;
+	return this;
+};
+
+Motion.prototype.shot = function(id, type, trigger) {
+	this.reserve = {id: id, type: type};
+	if (isFinite(trigger)) {
+		this.triggerMin = trigger;
+		this.triggerMax = trigger + this.speed;
+	} else {
+		this.triggerMin = trigger.min;
+		this.triggerMax = trigger.max;
+	}
 	return this;
 };
 
@@ -68,9 +84,25 @@ Motion.prototype.next = function() {
 	if (this.ix < 0) {
 		return null;
 	}
+	if (!this.filling) {
+		if (this.triggerMin <= this.ix && this.ix <= this.triggerMax) {
+			this.filling = this.reserve;
+		}
+	}
 	return this.mot[this.ix];
 };
 
+Motion.prototype.fire = function() {
+	if (!this.filling) {
+		return;
+	}
+	var result = this.filling;
+
+	this.filling = null;
+	return result;
+};
+
+//-----------------------------------------------------------------------------
 /**
  * MotionRoutine.
  */
@@ -98,11 +130,13 @@ MotionRoutine.prototype.next = function(skeleton) {
 		}
 		motion = this.current.next();
 	}
+	var filling = this.current.fire();
+
 	skeleton.rotationH = this.current.h;
 	skeleton.rotationV = this.current.v;
 	skeleton.offsetX = this.current.x;
 	skeleton.offsetY = this.current.y;
 	skeleton.calcRotationMatrix();
 	skeleton.shift(motion);
-	return motion;
+	return filling;
 };

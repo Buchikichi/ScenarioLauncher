@@ -10,9 +10,11 @@ function Titan(field, x, y) {
 	//
 	this.motionRoutine = new MotionRoutine([
 		new Motion(Motion.TYPE.ONLY_ONE, '111_7.amc', 10/*3*/, Math.PI / 4).offsetX(4).offsetY(-13),
-		new Motion(Motion.TYPE.NORMAL, '79_96.amc', 3, -Math.PI * .4), // shot
+		new Motion(Motion.TYPE.NORMAL, '79_96.amc', 3, -Math.PI * .4)
+			.shot('lhand', TitanShot, 200), // shot
 		new Motion(Motion.TYPE.NORMAL, '79_91.amc', 3, -Math.PI * .4), // throw
-		new Motion(Motion.TYPE.REWIND, '133_01.amc', 3, Math.PI).offsetX(-19), // crawl
+		new Motion(Motion.TYPE.REWIND, '133_01.amc', 3, Math.PI).offsetX(-19)
+			.shot('upperneck', TitanBullet, {min:400, max:600}), // crawl
 		new Motion(Motion.TYPE.NORMAL, '86_01b.amc', 3, Math.PI).offsetX(34), // jump
 	]);
 	if (asf) {
@@ -63,9 +65,9 @@ Titan.prototype.move = function(target) {
 	var list = [];
 	var titan = this;
 	var skeleton = this.skeleton;
+	var filling = this.motionRoutine.next(skeleton);
 
 	this._move(target);
-	this.motionRoutine.next(skeleton);
 	if (!this.appears) {
 		Object.keys(this.boneMap).forEach(function(key) {
 			list.push(titan.boneMap[key]);
@@ -76,6 +78,13 @@ Titan.prototype.move = function(target) {
 	var map = this.skeleton.map;
 	var isDestroy = false;
 
+	if (filling) {
+		var titanBone = titan.boneMap[filling.id];
+		var shot = new filling.type(this.field, titanBone.x, titanBone.y);
+
+		shot.dir = titanBone.radian;
+		list.push(shot);
+	}
 	Object.keys(this.boneMap).forEach(function(key) {
 		var bone = map[key];
 		var x = bone.cx * titan.scale + titan.x;
@@ -103,9 +112,17 @@ Titan.prototype.drawNormal = function(ctx) {
 	if (this.skeleton) {
 		ctx.scale(this.scale, this.scale);
 		// skeleton
-		ctx.strokeStyle = 'rgba(0, 0, 255, 0.05)';
+		ctx.strokeStyle = 'rgba(0, 0, 64, 0.1)';
 		this.skeleton.draw(ctx);
 	}
+	ctx.restore();
+	//
+	ctx.save();
+	var motion = this.motionRoutine.current;
+
+	ctx.translate(this.x, this.y);
+	ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+	ctx.strokeText('ix:' + motion.ix, 0, 0);
 	ctx.restore();
 };
 
@@ -123,6 +140,7 @@ function TitanBone(field, x, y) {
 
 	this.margin = Field.WIDTH;
 	this.hitPoint = Number.MAX_SAFE_INTEGER;
+	this.filling = null;
 }
 TitanBone.prototype = Object.create(Enemy.prototype);
 

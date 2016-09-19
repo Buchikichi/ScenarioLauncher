@@ -73,7 +73,7 @@ Titan.prototype.move = function(target) {
 			list.push(titan.boneMap[key]);
 		});
 		this.appears = true;
-		return list;
+		return list.reverse();
 	}
 	var map = this.skeleton.map;
 	var isDestroy = false;
@@ -112,14 +112,13 @@ Titan.prototype.drawNormal = function(ctx) {
 	if (this.skeleton) {
 		ctx.scale(this.scale, this.scale);
 		// skeleton
-		ctx.strokeStyle = 'rgba(0, 0, 64, 0.1)';
+		ctx.strokeStyle = 'rgba(203, 152, 135, 0.2)';
 		this.skeleton.draw(ctx);
 	}
 	ctx.restore();
 	//
 	ctx.save();
 	var motion = this.motionRoutine.current;
-
 	ctx.translate(this.x, this.y);
 	ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
 	ctx.strokeText('ix:' + motion.ix, 0, 0);

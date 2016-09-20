@@ -165,6 +165,9 @@ Field.prototype.draw = function() {
 
 	ctx.clearRect(0, 0, this.width, this.height);
 	this.landform.drawBg(ctx);
+	this.actorList.sort(function(a, b) {
+		return a.z - b.z;
+	});
 	this.actorList.forEach(function(actor) {
 		if (actor.isGone) {
 			return;

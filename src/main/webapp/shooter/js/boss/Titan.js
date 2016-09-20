@@ -9,13 +9,15 @@ function Titan(field, x, y) {
 	this.hitPoint = Number.MAX_SAFE_INTEGER;
 	//
 	this.motionRoutine = new MotionRoutine([
-		new Motion(Motion.TYPE.ONLY_ONE, '111_7.amc', 10/*3*/, Math.PI / 4).offsetX(4).offsetY(-13),
+		new Motion(Motion.TYPE.ONLY_ONE, '111_7.amc', 3, Math.PI / 4).offsetX(4).offsetY(-14),
 		new Motion(Motion.TYPE.NORMAL, '79_96.amc', 3, -Math.PI * .4)
-			.shot('lhand', TitanShot, 200), // shot
-		new Motion(Motion.TYPE.NORMAL, '79_91.amc', 3, -Math.PI * .4), // throw
+			.shot(TitanShot, ['lradius', 'lwrist', 'lhand', 'lthumb', 'lfingers'], 200), // shot
 		new Motion(Motion.TYPE.REWIND, '133_01.amc', 3, Math.PI).offsetX(-19)
-			.shot('upperneck', TitanBullet, {min:400, max:600}), // crawl
-		new Motion(Motion.TYPE.NORMAL, '86_01b.amc', 3, Math.PI).offsetX(34), // jump
+			.shot(TitanBullet, ['thorax', 'upperneck'], {min:200, max:550}), // crawl
+		new Motion(Motion.TYPE.NORMAL, '79_91.amc', 1, -Math.PI * .4)
+			.shot(TitanBall, ['rhumerus', 'rradius', 'rwrist', 'rhand'], {min:175, max:200}), // throw
+		new Motion(Motion.TYPE.NORMAL, '86_01b.amc', 3, Math.PI).offsetX(33)
+			.shot(Bullet, ['lfingers', 'rfingers'], {min:0, max:1000}), // jump
 	]);
 	if (asf) {
 		this.skeleton = new Skeleton(asf);
@@ -23,7 +25,7 @@ function Titan(field, x, y) {
 	}
 }
 Titan.prototype = Object.create(Enemy.prototype);
-Titan.HIT_POINT = 100;
+Titan.HIT_POINT = 292;
 
 Titan.prototype.setupBone = function(field) {
 	var map = this.skeleton.map;
@@ -79,11 +81,13 @@ Titan.prototype.move = function(target) {
 	var isDestroy = false;
 
 	if (filling) {
-		var titanBone = titan.boneMap[filling.id];
-		var shot = new filling.type(this.field, titanBone.x, titanBone.y);
+		filling.id.forEach(function(id) {
+			var titanBone = titan.boneMap[id];
+			var shot = new filling.type(titan.field, titanBone.x, titanBone.y);
 
-		shot.dir = titanBone.radian;
-		list.push(shot);
+			shot.dir = titanBone.radian;
+			list.push(shot);
+		});
 	}
 	Object.keys(this.boneMap).forEach(function(key) {
 		var bone = map[key];
@@ -93,7 +97,9 @@ Titan.prototype.move = function(target) {
 
 		titanBone.x = x;
 		titanBone.y = y;
+		titanBone.z = bone.cz;
 		titanBone.radian = bone.radian;
+		titanBone.constraint = true;
 		if (titanBone.hitPoint == 0) {
 			isDestroy = true;
 		}
@@ -102,6 +108,18 @@ Titan.prototype.move = function(target) {
 		this.eject();
 	}
 	return list;
+};
+
+Titan.prototype.drawInfo = function(ctx) {
+	var motion = this.motionRoutine.current;
+	var lowerback = this.boneMap['lowerback'];
+
+	ctx.save();
+	ctx.translate(this.x, this.y);
+	ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+	ctx.strokeText('ix:' + motion.ix, 0, 0);
+	ctx.strokeText('hp:' + lowerback.hitPoint, 0, 10);
+	ctx.restore();
 };
 
 Titan.prototype.drawNormal = function(ctx) {
@@ -116,13 +134,7 @@ Titan.prototype.drawNormal = function(ctx) {
 		this.skeleton.draw(ctx);
 	}
 	ctx.restore();
-	//
-	ctx.save();
-	var motion = this.motionRoutine.current;
-	ctx.translate(this.x, this.y);
-	ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-	ctx.strokeText('ix:' + motion.ix, 0, 0);
-	ctx.restore();
+	this.drawInfo(ctx);
 };
 
 Titan.prototype.isHit = function(target) {
@@ -142,6 +154,7 @@ function TitanBone(field, x, y) {
 	this.filling = null;
 }
 TitanBone.prototype = Object.create(Enemy.prototype);
+TitanBone.prototype.trigger = NOP;
 
 //TitanBone.prototype._drawNormal = Enemy.prototype.drawNormal;
 //TitanBone.prototype.drawNormal = function(ctx) {

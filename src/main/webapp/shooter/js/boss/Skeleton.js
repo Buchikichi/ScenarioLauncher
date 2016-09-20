@@ -136,6 +136,7 @@ Bone.prototype.drawLine = function(ctx) {
 
 	this.cx = prevX + dx / 2;
 	this.cy = prevY + dy / 2;
+	this.cz = nextPt.z;
 	this.radian = Math.atan2(dy, dx);
 	ctx.beginPath();
 	ctx.moveTo(prevX, prevY);

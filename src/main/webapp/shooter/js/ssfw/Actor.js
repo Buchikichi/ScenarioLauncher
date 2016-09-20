@@ -7,6 +7,7 @@ function Actor(field, x, y) {
 	this.field = field;
 	this.x = x;
 	this.y = y;
+	this.z = 0;
 	this.dx = 0;
 	this.dy = 0;
 	this.dir = null;

@@ -28,6 +28,7 @@ function Motion(type, key, speed, h) {
 	this.triggerMax = Number.NaN;
 	this.reserve = null;
 	this.filling = null;
+	this.batter = 0;
 }
 Motion.TYPE = {
 	NORMAL: 0,
@@ -50,8 +51,8 @@ Motion.prototype.offsetY = function(y) {
 	return this;
 };
 
-Motion.prototype.shot = function(id, type, trigger) {
-	this.reserve = {id: id, type: type};
+Motion.prototype.shot = function(type, id, trigger) {
+	this.reserve = {type: type, id: id};
 	if (isFinite(trigger)) {
 		this.triggerMin = trigger;
 		this.triggerMax = trigger + this.speed;
@@ -84,12 +85,22 @@ Motion.prototype.next = function() {
 	if (this.ix < 0) {
 		return null;
 	}
-	if (!this.filling) {
-		if (this.triggerMin <= this.ix && this.ix <= this.triggerMax) {
-			this.filling = this.reserve;
-		}
-	}
+	this.checkTrigger();
 	return this.mot[this.ix];
+};
+
+Motion.prototype.checkTrigger = function() {
+	if (this.filling) {
+		return;
+	}
+	if (0 < this.batter) {
+		this.batter = 0;
+		return;
+	}
+	if (this.triggerMin <= this.ix && this.ix <= this.triggerMax) {
+		this.filling = this.reserve;
+		this.batter = 1;
+	}
 };
 
 Motion.prototype.fire = function() {

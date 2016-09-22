@@ -7,6 +7,7 @@ function Stage(scroll, map, view) {
 	this.fg = null;
 	this.bgm = null;
 	this.boss = null;
+	this.checkPoint = 0;
 	view.forEach(function(ground) {
 		ground.stage = stage;
 	});
@@ -19,6 +20,7 @@ Stage.SCROLL = {
 	LOOP: 2
 };
 Stage.LIST = [];
+Stage.CHECK_POINT = [660, 1440];
 
 Stage.prototype.setBgm = function(bgm) {
 	var len = arguments.length;
@@ -50,10 +52,17 @@ Stage.prototype.getFg = function() {
 };
 
 Stage.prototype.reset = function() {
+	this.checkPoint = 0;
+	this.retry();
+};
+
+Stage.prototype.retry = function() {
+	var stage = this;
+
 	this.effectH = 0;
 	this.effectV = 0;
 	this.view.forEach(function(ground) {
-		ground.reset();
+		ground.reset(stage.checkPoint);
 	});
 };
 
@@ -84,6 +93,14 @@ Stage.prototype.scrollV = function(target) {
 Stage.prototype.forward = function(landform) {
 	this.view.forEach(function(ground) {
 		ground.forward(landform);
+	});
+	var stage = this;
+	var fgX = this.getFg().x;
+
+	Stage.CHECK_POINT.forEach(function(cp) {
+		if (cp <= fgX && stage.checkPoint < fgX) {
+			stage.checkPoint = cp;
+		}
 	});
 };
 
@@ -132,8 +149,8 @@ function StageView(img) {
 	this.reset();
 }
 
-StageView.prototype.reset = function() {
-	this.x = 0;
+StageView.prototype.reset = function(checkPoint) {
+	this.x = checkPoint % this.width;
 	this.y = 0;
 	this.effectH = 0;
 	this.effectV = 0;
@@ -194,9 +211,11 @@ function StageFg() {
 StageFg.prototype = Object.create(StageView.prototype);
 
 StageFg.prototype._reset = StageView.prototype.reset;
-StageFg.prototype.reset = function() {
-	this._reset();
-	this.x = -Field.WIDTH;
+StageFg.prototype.reset = function(checkPoint) {
+	this._reset(checkPoint);
+	if (checkPoint == 0) {
+		this.x = -Field.WIDTH;
+	}
 };
 
 /**

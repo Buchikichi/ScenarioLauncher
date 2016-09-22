@@ -16,6 +16,9 @@ Enemy.LIST = [
 	{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
 ];
 Stage.LIST = [
+//	new Stage(Stage.SCROLL.OFF, 'g1.4.map.png', [
+//			new StageBg('stage01bg0.png', 1), new StageBg('stage01bg1.png', .9), new StageFg('g1.4.png'),
+//		]).setBgm('g1.4', 'bgm-edo-omega-zero'),
 //	new Stage(Stage.SCROLL.OFF, 'stage-map.png', [
 //			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage-bg.png'),
 //		]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
@@ -44,5 +47,6 @@ Stage.LIST = [
 AudioMixer.INSTANCE.reserve([
 	'sfx-fire', 'sfx-explosion', 'sfx-absorb',
 	'bgm-edo-beth', 'bgm-MadNightDance', 'bgm-pierrot-cards', 'bgm-edo-omega-zero'
+,'g1.4'
 ]);
 MotionManager.INSTANCE.reserve(['asf', '79_91.amc', '79_96.amc', '86_01b.amc', '111_7.amc', '133_01.amc']);

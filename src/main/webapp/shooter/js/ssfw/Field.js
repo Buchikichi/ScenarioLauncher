@@ -55,9 +55,8 @@ Field.prototype.nextStage = function() {
 	this.stage.playBgm();
 };
 
-Field.prototype.reset = function() {
+Field.prototype._reset = function() {
 	this.phase = Field.PHASE.NORMAL;
-	this.landform.reset();
 	this.ship.x = 100;
 	this.ship.y = 100;
 	this.ship.trigger = false;
@@ -66,6 +65,16 @@ Field.prototype.reset = function() {
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
 	this.stage.playBgm();
+};
+
+Field.prototype.reset = function() {
+	this.landform.reset();
+	this._reset();
+};
+
+Field.prototype.retry = function() {
+	this.landform.retry();
+	this._reset();
 };
 
 Field.prototype.startGame = function() {
@@ -214,7 +223,7 @@ Field.prototype.draw = function() {
 			return;
 		}
 		if (0 < --this.shipRemain) {
-			this.reset();
+			this.retry();
 		} else {
 			this.endGame();
 		}

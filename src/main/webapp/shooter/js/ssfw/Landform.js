@@ -93,6 +93,13 @@ Landform.prototype.reset = function() {
 	}
 };
 
+Landform.prototype.retry = function() {
+	this.next = Landform.NEXT.NONE;
+	if (this.stage) {
+		this.stage.retry();
+	}
+};
+
 Landform.prototype.effect = function(target) {
 	var maxX = Math.max(target.field.width + target.width, target.maxX);
 

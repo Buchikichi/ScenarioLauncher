@@ -106,15 +106,13 @@ Actor.prototype.move = function(target) {
 		this.y += Math.sin(this.dir) * this.speed;
 	}
 	if (this.gravity != 0) {
-		// floating
 		var y = this.field.landform.scanFloor(this) - this.hH;
 
 		if (this.y < y) {
 			this.dy += this.gravity;
 		} else if (y < this.y) {
 			this.y = y;
-			this.dy *= -this.reaction;
-			this.radian = this.field.landform.getHorizontalAngle(this);
+			this.react();
 		}
 	}
 	this.x += this.dx * this.speed;
@@ -122,6 +120,11 @@ Actor.prototype.move = function(target) {
 	if (this.anim) {
 		this.anim.next(this.dir);
 	}
+};
+
+Actor.prototype.react = function() {
+	this.dy *= -this.reaction;
+	this.radian = this.field.landform.getHorizontalAngle(this);
 };
 
 /**

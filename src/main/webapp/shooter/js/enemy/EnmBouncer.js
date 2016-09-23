@@ -23,7 +23,7 @@ EnmBouncer.prototype.move = function(target) {
 		this.dx = -this.dx;
 		this.shuttle--;
 	}
-	if (this.isHitWall) {
+	if (this.walled) {
 		this.x = this.svX;
 		this.y = this.svY;
 	}

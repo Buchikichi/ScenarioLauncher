@@ -15,7 +15,7 @@ function Landform(canvas) {
 	this.target = null;
 	this.tx = 0;
 	this.ty = 0;
-	this.selection = 0;
+	this.selection = 'b0';
 	this.which = null;
 	this.brick = null;
 	this.brickVal = null;
@@ -38,6 +38,10 @@ function Landform(canvas) {
 }
 Landform.BRICK_WIDTH = 8;
 Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
+Landform.BRICK_TYPE = {
+	WALL: 255,
+	BRITTLE: 254,
+};
 Landform.COL_MAX = 512;
 Landform.NEXT = {
 	NONE: 0,
@@ -97,6 +101,7 @@ Landform.prototype.retry = function() {
 	this.next = Landform.NEXT.NONE;
 	if (this.stage) {
 		this.stage.retry();
+		this.loadMapData('./img/' + this.stage.map);
 	}
 };
 
@@ -222,8 +227,15 @@ Landform.prototype.hitTest = function(target) {
 	if (!this.brick) {
 		return;
 	}
-	target.isHitWall = this.getBrick(target, 2);
+	target.walled = this.getBrick(target, 2);
 	this.target = target;
+};
+
+Landform.prototype.smashWall = function(target) {
+	var fg = this.stage.getFg();
+
+	fg.smashWall(target);
+	this.putBrick(target, 2, 0);
 };
 
 Landform.prototype.scanFloor = function(target) {
@@ -397,8 +409,9 @@ Landform.prototype.touchDown = function(tx, ty) {
 	} else {
 		var brick = this.getBrick(this.target, 2);
 
+		selection = this.selection.substr(1);
 		if (this.brickVal == null) {
-			this.brickVal = 0 < brick ? 0 : 255;
+			this.brickVal = 0 < brick ? 0 : 255 - selection;
 		}
 		this.putBrick(this.target, 2, this.brickVal);
 	}
@@ -427,7 +440,8 @@ Landform.prototype.drawBrick = function() {
 
 	ctx.save();
 	ctx.translate(-gx, -gy);
-	ctx.fillStyle = 'rgba(' + red + ', ' + green + ', 255, .4)';
+	ctx.strokeStyle = 'rgba(' + red + ', ' + green + ', 255, .4)';
+	ctx.fillStyle = ctx.strokeStyle;
 	for (var y = 0; y < this.bh; y++) {
 		var iy = startY + y;
 		var ry = iy * Landform.BRICK_WIDTH;
@@ -441,8 +455,17 @@ Landform.prototype.drawBrick = function() {
 			if (enemyNum) {
 				this.drawEnemy(enemyNum, rx, ry);
 			}
-			if (bd[ix + 2] == 255) {
+			var brickNum = bd[ix + 2];
+			if (brickNum == 255) {
 				ctx.fillRect(rx, ry, brickWidth, brickWidth);
+			} else if (brickNum == 254) {
+				var ax = rx + Landform.BRICK_HALF - 1;
+				var ay = ry + Landform.BRICK_HALF - 1;
+
+				ctx.beginPath();
+				ctx.arc(ax, ay, brickWidth / 2, 0, Math.PI2, false);
+				ctx.stroke();
+				ctx.strokeRect(rx, ry, brickWidth, brickWidth);
 			}
 		}
 	}
@@ -532,7 +555,7 @@ Landform.prototype.generateBrick = function(ctx) {
 	var bh = this.height / Landform.BRICK_WIDTH;
 	var brick = this.getBrickData(ctx);
 	var dst = brick.data;
-	var sx = 0;
+	var sx = this.width * Landform.BRICK_HALF + Landform.BRICK_HALF * 4;
 	var ix = 0;
 
 console.log(this.width + ' x ' + this.height + ' | ' + (this.width * this.height * 4));

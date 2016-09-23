@@ -17,7 +17,9 @@ Gizmo.DEST = {
 	TO_Y: 2,
 	ROTATE: 3,
 	ROTATE_L: 4,
-	ROTATE_R: 5
+	ROTATE_R: 5,
+	LEFT: 6,
+	RIGHT: 7
 };
 
 Gizmo.prototype.tick = function(src, target) {
@@ -32,6 +34,10 @@ Gizmo.prototype.tick = function(src, target) {
 			src.dir -= src.step;
 		} else if (this.destination == Gizmo.DEST.ROTATE_R) {
 			src.dir += src.step;
+		} else if (this.destination == Gizmo.DEST.LEFT) {
+			src.dir = Math.PI;
+		} else if (this.destination == Gizmo.DEST.RIGHT) {
+			src.dir = 0;
 		}
 		return;
 	}
@@ -61,7 +67,10 @@ Gizmo.prototype.tick = function(src, target) {
 			var dist = src.calcDistance(target);
 
 			if (src.speed < dist) {
-				src.radian = Math.atan2(dy, dx);
+				var step = Math.PI / 30;
+
+				src.radian = Math.close(src.radian, Math.atan2(dy, dx), step);
+				src.radian = Math.trim(src.radian);
 			}
 		}
 		return;

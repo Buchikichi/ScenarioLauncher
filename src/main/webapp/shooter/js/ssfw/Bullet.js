@@ -11,7 +11,7 @@ function Bullet(field, x, y) {
 Bullet.prototype = Object.create(Actor.prototype);
 
 Bullet.prototype.draw = function(ctx) {
-	if (this.isHitWall) {
+	if (this.walled) {
 		this.eject();
 		return;
 	}

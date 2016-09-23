@@ -61,7 +61,7 @@ Ship.prototype.move = function() {
 	if (this.isGone) {
 		return;
 	}
-	if (this.isHitWall) {
+	if (this.walled) {
 		this.fate();
 		return;
 	}

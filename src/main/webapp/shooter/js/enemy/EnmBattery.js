@@ -18,13 +18,26 @@ function EnmBattery() {
 		var src = {x:this.x, y:this.y + Landform.BRICK_WIDTH};
 
 		landform.hitTest(src);
-		this.isInverse = !src.isHitWall;
+		this.isInverse = !src.walled;
 	}
 }
 EnmBattery.prototype = Object.create(Enemy.prototype);
 
 EnmBattery.prototype._drawNormal = Enemy.prototype.drawNormal;
 EnmBattery.prototype.drawNormal = function(ctx) {
+	if (this.isInverse) {
+		if (this.radian < -Math.SQ) {
+			this.radian = Math.PI;
+		} else if (this.radian < 0) {
+			this.radian = 0
+		}
+	} else {
+		if (Math.SQ < this.radian) {
+			this.radian = Math.PI;
+		} else if (0 < this.radian) {
+			this.radian = 0
+		}
+	}
 	this._drawNormal(ctx);
 	ctx.save();
 	ctx.translate(this.x, this.y);

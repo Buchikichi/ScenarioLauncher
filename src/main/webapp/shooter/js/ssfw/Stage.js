@@ -183,9 +183,9 @@ StageView.prototype.forward = function() {
 	}
 };
 
-StageView.prototype.getPattern = function(ctx) {
+StageView.prototype.getPattern = function(ctx, img) {
 	if (!this.pattern && this.ready) {
-		this.pattern = ctx.createPattern(this.img, 'repeat');
+		this.pattern = ctx.createPattern(img, 'repeat');
 	}
 	return this.pattern;
 };
@@ -195,7 +195,7 @@ StageView.prototype.draw = function(ctx) {
 	ctx.globalAlpha = this.alpha;
 	ctx.translate(-this.x, -this.y);
 	ctx.beginPath();
-	ctx.fillStyle = this.getPattern(ctx);
+	ctx.fillStyle = this.getPattern(ctx, this.img);
 	ctx.rect(0, 0, this.w2, this.h2);
 	ctx.fill();
 	ctx.restore();
@@ -207,15 +207,44 @@ StageView.prototype.draw = function(ctx) {
 function StageFg() {
 	StageView.apply(this, arguments);
 	this.repeatX = 1;
+	this.bmp = this.img;
 }
 StageFg.prototype = Object.create(StageView.prototype);
 
+StageFg.prototype.createCanvas = function() {
+	var canvas = document.createElement('canvas');
+	var ctx = canvas.getContext('2d');
+
+	canvas.width = this.width;
+	canvas.height = this.height;
+	ctx.clearRect(0, 0, this.width, this.height);
+	ctx.drawImage(this.img, 0, 0);
+	return canvas;
+};
+
 StageFg.prototype._reset = StageView.prototype.reset;
 StageFg.prototype.reset = function(checkPoint) {
+	var fg = this;
+
 	this._reset(checkPoint);
 	if (checkPoint == 0) {
 		this.x = -Field.WIDTH;
 	}
+	if (this.ready) {
+		this.canvas = this.createCanvas();
+
+		this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
+	}
+};
+
+StageFg.prototype.smashWall = function(target) {
+	var tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	var ctx = this.canvas.getContext('2d');
+
+	ty %= this.height;
+	ctx.clearRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH);
+	this.pattern = ctx.createPattern(this.canvas, 'repeat');
 };
 
 /**

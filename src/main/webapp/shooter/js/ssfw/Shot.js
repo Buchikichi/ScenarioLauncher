@@ -27,7 +27,10 @@ Shot.prototype.draw = function(ctx) {
 	ctx.fillStyle = 'rgba(255, 255, 0, 0.7)';
 	ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
 	ctx.fill();
-	if (this.isHitWall) {
+	if (this.walled) {
+		if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
+			this.field.landform.smashWall(this);
+		}
 		this.fate();
 	}
 };

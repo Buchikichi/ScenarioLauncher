@@ -74,19 +74,27 @@ Motion.prototype.reset = function() {
 };
 
 Motion.prototype.next = function() {
-	this.ix += this.speed * this.dir;
-	if (this.max <= this.ix) {
+	var next = this.ix + this.speed * this.dir;
+
+	if (this.max <= next) {
 		if (this.type != Motion.TYPE.REWIND) {
 			return null;
 		}
 		this.ix = this.max;
 		this.dir *= -1;
+		return [this.mot[this.ix]];
 	}
-	if (this.ix < 0) {
+	if (next < 0) {
 		return null;
 	}
+	var list = [];
+
+	while (this.ix != next) {
+		this.ix += this.dir;
+		list.push(this.mot[this.ix]);
+	}
 	this.checkTrigger();
-	return this.mot[this.ix];
+	return list;
 };
 
 Motion.prototype.checkTrigger = function() {
@@ -126,6 +134,7 @@ function MotionRoutine(routine) {
 }
 
 MotionRoutine.prototype.next = function(skeleton) {
+	var prev = this.current.ix;
 	var motion = this.current.next();
 
 	if (motion == null) {
@@ -140,7 +149,11 @@ MotionRoutine.prototype.next = function(skeleton) {
 			this.current = this.routine[this.ix].reset();
 		}
 		motion = this.current.next();
+
+//var root = skeleton.data.root;
+//console.log('root:' + root.pt.x + '/' + root.pt.y);
 	}
+	var direction = this.current.ix < prev ? -1 : 1;
 	var filling = this.current.fire();
 
 	skeleton.rotationH = this.current.h;
@@ -148,6 +161,9 @@ MotionRoutine.prototype.next = function(skeleton) {
 	skeleton.offsetX = this.current.x;
 	skeleton.offsetY = this.current.y;
 	skeleton.calcRotationMatrix();
-	skeleton.shift(motion);
+	motion.forEach(function(m) {
+		skeleton.shift(m, direction);
+		skeleton.calculate();
+	});
 	return filling;
 };

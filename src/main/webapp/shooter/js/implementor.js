@@ -16,12 +16,13 @@ Enemy.LIST = [
 	{name:'Rewinder', type:Rewinder, img:'material/cascade.icon.png'}
 ];
 Stage.LIST = [
-	new Stage(Stage.SCROLL.LOOP, 'g1.2.map.png', [
+/*	new Stage(Stage.SCROLL.LOOP, 'g1.2.map.png', [
 			new StageBg('stage01bg0.png', 1), new StageBg('stage01bg1.png', .9), new StageFg('g1.2.png'),
 		]).setBgm('g1.2', 'bgm-edo-omega-zero'),
-//	new Stage(Stage.SCROLL.OFF, 'g1.4.map.png', [
-//			new StageBg('stage01bg0.png', 1), new StageBg('stage01bg1.png', .9), new StageFg('g1.4.png'),
-//		]).setBgm('g1.4', 'bgm-edo-omega-zero'),
+	new Stage(Stage.SCROLL.OFF, 'g1.4.map.png', [
+			new StageBg('stage01bg0.png', 1), new StageBg('stage01bg1.png', .9), new StageFg('g1.4.png'),
+		]).setBgm('g1.4', 'bgm-edo-omega-zero'),
+//*/
 //	new Stage(Stage.SCROLL.OFF, 'stage-map.png', [
 //			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage-bg.png'),
 //		]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
@@ -34,15 +35,15 @@ Stage.LIST = [
 //	new Stage(Stage.SCROLL.OFF, 'stage3.map.png', [
 //			new StageBg('stage01bg1.png', .7), new StageFg('stage3.1.1.png', 1, 0, .02), new StageFg('stage3.1.0.png'),
 //		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
-//	new Stage(Stage.SCROLL.OFF, 'stage00map.png', [
-//			new StageBg('stage01bg0.png', .7), new StageBg('stage01bg1.png', .9, 0, .02), new StageFg('stage00bg.png'),
-//		]).setBgm('bgm-edo-beth'),
+	new Stage(Stage.SCROLL.OFF, 'stage00map.png', [
+			new StageBg('stage01bg0.png', .7), new StageBg('stage01bg1.png', .9, 0, .02), new StageFg('stage00bg.png'),
+		]).setBgm('bgm-edo-beth'),
 	new Stage(Stage.SCROLL.OFF, 'stage01map.png', [
 			new StageBg('stage01bg1.png', .7, 0, .02), new StageBg('stage01bg0.png', .6), new StageFg('stage01bg.png', 1.3),
 		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
-//	new Stage(Stage.SCROLL.LOOP, 'stage00map.png', [
-//			new StageBg('stage01bg0.png', .7), new StageBg('stage01bg1.png', .9, 0, .02), new StageFg('stage00bg.png'),
-//		]).setBgm('bgm-edo-beth'),
+	new Stage(Stage.SCROLL.LOOP, 'stage00map.png', [
+			new StageBg('stage01bg0.png', .7), new StageBg('stage01bg1.png', .9, 0, .02), new StageFg('stage00bg.png'),
+		]).setBgm('bgm-edo-beth'),
 	new Stage(Stage.SCROLL.ON, 'stage02map.png', [
 			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage02bg.png'),
 		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),

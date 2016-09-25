@@ -59,9 +59,9 @@ Gizmo.prototype.tick = function(src, target) {
 			}
 		} else if (this.destination == Gizmo.DEST.TO_Y) {
 			if (dx < 0) {
-				src.radian = Math.SQ;
-			} else {
 				src.radian = -Math.SQ;
+			} else {
+				src.radian = Math.SQ;
 			}
 		} else if (this.destination == Gizmo.DEST.ROTATE) {
 			var dist = src.calcDistance(target);

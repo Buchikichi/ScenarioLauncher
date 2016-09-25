@@ -5,6 +5,8 @@
 function Skeleton(data) {
 	this.data = data;
 	this.map = {};
+	this.offsetX = 0;
+	this.offsetY = 0;
 	this.rotationH = Math.PI / 4;
 	this.rotationV = Math.PI / 8;
 	this.rotationMatrix = new Matrix(Matrix.NO_EFFECT);
@@ -54,7 +56,7 @@ Skeleton.prototype.rotateV = function(diff) {
 	this.calcRotationMatrix();
 };
 
-Skeleton.prototype.shift = function(motionList) {
+Skeleton.prototype.shift = function(motionList, direction) {
 	var skeleton = this;
 
 	motionList.forEach(function(motion) {
@@ -66,11 +68,20 @@ Skeleton.prototype.shift = function(motionList) {
 
 		bone.motionMatrix = rz.multiply(ry).multiply(rx);
 		if (motion.p) {
+			// root
 			var p = motion.p;
+			var prev = bone.pt;
+			var x = skeleton.offsetX + prev.x + p.x * direction;
+			var y = skeleton.offsetY + prev.y + p.y * direction;
+			var z = prev.z + p.z * direction;
 
-			bone.translateMatrix = new Matrix([[1,0,0,p.x],[0,1,0,p.y],[0,0,1,p.z],[0,0,0,1]]);
+			bone.translateMatrix = new Matrix([[1,0,0,x],[0,1,0,y],[0,0,1,z],[0,0,0,1]]);
 		}
 	});
+};
+
+Skeleton.prototype.calculate = function() {
+	this.data.root.calculate();
 };
 
 Skeleton.prototype.draw = function(ctx) {
@@ -108,12 +119,19 @@ Bone.prototype.prepare = function() {
 };
 
 Bone.prototype.getAccum = function() {
-	var mat = this.axisMatrix.multiply(this.motionMatrix).multiply(this.translateMatrix);
-
 	if (this.parent) {
+		var mat = this.axisMatrix.multiply(this.motionMatrix).multiply(this.translateMatrix);
+
 		return this.parent.getAccum().multiply(mat);
 	}
 	return this.translateMatrix.multiply(this.motionMatrix);
+};
+
+Bone.prototype.calculate = function() {
+	this.pt = this.getAccum().affine(0, 0, 0);
+	this.joint.forEach(function(child) {
+		child.calculate();
+	});
 };
 
 Bone.prototype.drawLine = function(ctx) {
@@ -127,7 +145,13 @@ Bone.prototype.drawLine = function(ctx) {
 	var nextY = -nextPt.y;
 	var prevX = prevPt.x;
 	var prevY = -prevPt.y;
+	var dx = nextX - prevX;
+	var dy = nextY - prevY;
 
+	this.cx = prevX + dx / 2;
+	this.cy = prevY + dy / 2;
+	this.cz = nextPt.z;
+	this.radian = Math.atan2(dy, dx);
 	ctx.beginPath();
 	ctx.moveTo(prevX, prevY);
 	ctx.lineTo(nextX, nextY);
@@ -135,7 +159,7 @@ Bone.prototype.drawLine = function(ctx) {
 };
 
 Bone.prototype.draw = function(ctx) {
-	this.pt = this.getAccum().affine(0, 0, 0);
+	this.calculate();
 	if (this.parent) {
 		this.drawLine(ctx);
 	}

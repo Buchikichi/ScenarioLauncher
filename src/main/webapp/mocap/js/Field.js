@@ -49,8 +49,18 @@ Field.prototype.loadMotion = function(name) {
 };
 
 Field.prototype.shiftMotion = function(motionNo) {
-	this.skeleton.shift(this.motion[motionNo]);
-	this.motionNo = motionNo;
+	if (this.motionNo == motionNo) {
+		return;
+	}
+	var direction = motionNo < this.motionNo ? -1 : 1;
+	var num = this.motionNo;
+
+
+	while (this.motionNo != motionNo) {
+		this.motionNo += direction;
+		this.skeleton.shift(this.motion[this.motionNo], direction);
+		this.skeleton.calculate();
+	}
 };
 
 Field.prototype.nextMotion = function(motionNo) {
@@ -97,6 +107,7 @@ Field.prototype.draw = function() {
 //ctx.fillStyle = 'rgba(120, 200, 255, 0.7)';
 //ctx.arc(0, 0, 3, 0, Math.PI * 2, false);
 //ctx.fill();
+	ctx.lineCap = 'round';
 	this.skeleton.draw(ctx);
 	ctx.restore();
 };

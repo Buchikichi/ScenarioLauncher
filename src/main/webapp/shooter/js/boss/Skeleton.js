@@ -80,8 +80,8 @@ Skeleton.prototype.shift = function(motionList, direction) {
 	});
 };
 
-Skeleton.prototype.calculate = function() {
-	this.data.root.calculate();
+Skeleton.prototype.calculate = function(isSimple) {
+	this.data.root.calculate(isSimple);
 };
 
 Skeleton.prototype.draw = function(ctx) {
@@ -128,10 +128,13 @@ Bone.prototype.getAccum = function() {
 	return this.translateMatrix.multiply(this.motionMatrix);
 };
 
-Bone.prototype.calculate = function() {
+Bone.prototype.calculate = function(isSimple) {
 	this.pt = this.getAccum().affine(0, 0, 0);
+	if (isSimple) {
+		return;
+	}
 	this.joint.forEach(function(child) {
-		child.calculate();
+		child.calculate(false);
 	});
 };
 

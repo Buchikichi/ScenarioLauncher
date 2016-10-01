@@ -37,29 +37,32 @@ Field.prototype.loadMotion = function(name) {
 	var field = this;
 	var slider = $('#slider');
 
+	field.shiftMotion(0);
+	slider.val(0).slider('refresh');
 	return $.ajax('dat/' + name, {
 		'dataType': 'json',
 		'success': function(data) {
 			field.motion = data;
-			field.shiftMotion(0);
+			field.resetMotion();
 			slider.prop('max', field.motion.length - 1);
-			slider.val(0).slider('refresh');
+			slider.slider('refresh');
 		}
 	});
 };
 
-Field.prototype.shiftMotion = function(motionNo) {
-	if (this.motionNo == motionNo) {
-		return;
-	}
-	var direction = motionNo < this.motionNo ? -1 : 1;
-	var num = this.motionNo;
+Field.prototype.resetMotion = function() {
+	this.skeleton.shift(this.motion[this.motionNo], 1);
+	this.skeleton.calculate();
+	this.draw();
+};
 
+Field.prototype.shiftMotion = function(motionNo) {
+	var direction = motionNo < this.motionNo ? -1 : 1;
 
 	while (this.motionNo != motionNo) {
 		this.motionNo += direction;
 		this.skeleton.shift(this.motion[this.motionNo], direction);
-		this.skeleton.calculate();
+		this.skeleton.calculate(this.motionNo != motionNo);
 	}
 };
 

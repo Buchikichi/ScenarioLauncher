@@ -4,12 +4,14 @@
  */
 function Skeleton(data) {
 	this.data = data;
+	this.calcOrder = this.data.calcOrder == 'RotateTranslate' ? 0 : 1;
+	this.list = [];
 	this.map = {};
 	this.offsetX = 0;
 	this.offsetY = 0;
 	this.rotationH = Math.PI / 4;
 	this.rotationV = Math.PI / 8;
-	this.rotationMatrix = new Matrix(Matrix.NO_EFFECT);
+	this.rotationMatrix = Matrix.NO_EFFECT;
 	this.init();
 }
 
@@ -25,6 +27,7 @@ Skeleton.prototype.prepare = function(node) {
 	var skeleton = this;
 	var children = [];
 
+	this.list.push(node);
 	node.prepare();
 	node.joint.forEach(function(child) {
 		child.parent = node;
@@ -44,36 +47,19 @@ Skeleton.prototype.calcRotationMatrix = function() {
 	this.rotationMatrix = Matrix.rotateX(this.rotationV).multiply(mh);
 };
 
-Skeleton.prototype.rotateH = function(diff) {
-	this.rotationH += (Math.PI / 720) * diff;
-	this.rotationH = Math.trim(this.rotationH);
-	this.calcRotationMatrix();
-};
-
-Skeleton.prototype.rotateV = function(diff) {
-	this.rotationV += (Math.PI / 720) * diff;
-	this.rotationV = Math.trim(this.rotationV);
-	this.calcRotationMatrix();
-};
-
 Skeleton.prototype.shift = function(motionList, direction) {
 	var skeleton = this;
 
-	motionList.forEach(function(motion) {
-		var r = motion.r;
-		var bone = skeleton.map[motion.name];
-		var rx = Matrix.rotateX(r.x);
-		var ry = Matrix.rotateY(r.y);
-		var rz = Matrix.rotateZ(r.z);
+	motionList.forEach(function(motion, ix) {
+		var bone = skeleton.list[ix];
 
-		bone.motionMatrix = rz.multiply(ry).multiply(rx);
-		if (motion.p) {
+		bone.motionMatrix = motion.rotate;
+		if (motion.tx) {
 			// root
-			var p = motion.p;
 			var prev = bone.pt;
-			var x = skeleton.offsetX + prev.x + p.x * direction;
-			var y = skeleton.offsetY + prev.y + p.y * direction;
-			var z = prev.z + p.z * direction;
+			var x = skeleton.offsetX + prev.x + motion.tx * direction;
+			var y = skeleton.offsetY + prev.y + motion.ty * direction;
+			var z = prev.z + motion.tz * direction;
 
 			bone.translateMatrix = new Matrix([[1,0,0,x],[0,1,0,y],[0,0,1,z],[0,0,0,1]]);
 		}
@@ -116,13 +102,20 @@ Bone.prototype.prepare = function() {
 	} else {
 		this.axisMatrix = am;
 	}
-	this.motionMatrix = new Matrix(Matrix.NO_EFFECT);
+	this.motionMatrix = Matrix.NO_EFFECT;
 };
 
 Bone.prototype.getAccum = function() {
-	if (this.parent) {
-		var mat = this.axisMatrix.multiply(this.motionMatrix).multiply(this.translateMatrix);
+	var order = this.skeleton.calcOrder;
 
+	if (this.parent) {
+		var mat;
+
+		if (order == 0) {
+			mat = this.axisMatrix.multiply(this.motionMatrix).multiply(this.translateMatrix);
+		} else {
+			mat = this.axisMatrix.multiply(this.translateMatrix).multiply(this.motionMatrix);
+		}
 		return this.parent.getAccum().multiply(mat);
 	}
 	return this.translateMatrix.multiply(this.motionMatrix);

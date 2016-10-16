@@ -5,7 +5,7 @@
 function Matrix(mat) {
 	this.mat = mat;
 }
-Matrix.NO_EFFECT = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+Matrix.NO_EFFECT = new Matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]);
 
 Matrix.rotateX = function(r) {
 	return new Matrix([[1,0,0,0],[0,Math.cos(r),-Math.sin(r),0],[0,Math.sin(r),Math.cos(r),0],[0,0,0,1]]);

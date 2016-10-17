@@ -19,11 +19,12 @@ Field.prototype.init = function() {
 	this.ctx = canvas.getContext('2d');
 };
 
-Field.prototype.resetCanvas = function(width) {
+Field.prototype.resetCanvas = function(width, height) {
 	this.width = width;
-	this.height = width;
+	this.height = height;
 	this.hW = this.width / 2;
 	this.hH = this.height / 2;
+	this.scale = width / Field.WIDTH;
 	$('#canvas').attr('width', this.width).attr('height', this.height);
 };
 
@@ -84,6 +85,9 @@ Field.prototype.rotateH = function(diff) {
 	this.animaList.forEach(function(anima) {
 		anima.rotateH(field.rotationH);
 	});
+	var panValue = Math.abs(this.rotationH / Math.PI);
+
+	AudioMixer.INSTANCE.panNode.pan.value = panValue;
 };
 
 Field.prototype.rotateV = function(diff) {
@@ -107,7 +111,7 @@ Field.prototype.draw = function() {
 	ctx.strokeText('V:' + Math.floor(this.rotationV * 180 / Math.PI), 2, 30);
 	ctx.strokeText('m:' + this.motionNo, 2, 40);
 	ctx.translate(this.hW, this.hH);
-	ctx.scale(1, 1);
+	ctx.scale(this.scale, this.scale);
 //ctx.beginPath();
 //ctx.fillStyle = 'rgba(120, 200, 255, 0.7)';
 //ctx.arc(0, 0, 3, 0, Math.PI * 2, false);

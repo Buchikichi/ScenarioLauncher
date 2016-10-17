@@ -52,7 +52,10 @@ Anima.prototype.rotateV = function(value) {
 };
 
 Anima.prototype.shift = function(motionNo, direction) {
-	this.skeleton.shift(this.motion[motionNo], direction);
+	var ix = motionNo % this.motion.length;
+
+//console.log('ix:' + ix);
+	this.skeleton.shift(this.motion[ix], direction);
 };
 
 Anima.prototype.calculate = function(isSimple) {

@@ -9,6 +9,9 @@
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <script type="text/javascript" src="js/mocap-min.js"></script>
 <style>
+#view {
+	text-align: center;
+}
 #canvas {
 	background-color: black;
 }
@@ -25,6 +28,9 @@
   <div id="view"><canvas id="canvas"></canvas></div>
   <div id="footer">
     <input id="slider" type="range" value="0" min="0" max="0" step="1" data-highlight="true"/>
+    <fieldset data-role="controlgroup" data-type="horizontal">
+    <button id="playButton" data-icon="carat-r">Play</button>
+    </fieldset>
   </div>
   <div id="searchPanel" data-role="panel" data-position="right" data-display="overlay" data-position-fixed="true">
     <input id="search" data-mini="true" type="search"/>

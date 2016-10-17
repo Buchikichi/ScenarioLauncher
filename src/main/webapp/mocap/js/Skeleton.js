@@ -71,6 +71,15 @@ Skeleton.prototype.calculate = function(isSimple) {
 };
 
 Skeleton.prototype.draw = function(ctx) {
+/*	var pt = this.data.root.pt;
+	var mx = this.rotationMatrix;
+	var nt = mx.affine(pt.x, pt.y, pt.z);
+
+	ctx.save();
+	ctx.strokeStyle = 'rgba(255, 255, 255, .5)';
+	ctx.strokeText(this.data.name + ':' + nt.z, nt.x, -nt.y);
+	ctx.restore();
+	//*/
 	this.data.root.draw(ctx);
 };
 
@@ -131,13 +140,18 @@ Bone.prototype.calculate = function(isSimple) {
 	});
 };
 
-Bone.prototype.drawLine = function(ctx) {
-	var prevPt = this.parent.pt;
-	var nextPt = this.pt;
-	var mx = this.skeleton.rotationMatrix;
+Bone.prototype.conv = function(pt) {
+	pt = this.skeleton.rotationMatrix.affine(pt.x, pt.y, pt.z);
+	var pz = (pt.z + 2000) / 2000;
+	var pmx = new Matrix([[pz,0,0,0],[0,pz,0,0],[0,0,pz,0],[0,0,0,1]]);
 
-	prevPt = mx.affine(prevPt.x, prevPt.y, prevPt.z);
-	nextPt = mx.affine(nextPt.x, nextPt.y, nextPt.z);
+	return pmx.affine(pt.x, pt.y, pt.z);
+};
+
+
+Bone.prototype.drawLine = function(ctx) {
+	var prevPt = this.conv(this.parent.pt);
+	var nextPt = this.conv(this.pt);
 	var nextX = nextPt.x;
 	var nextY = -nextPt.y;
 	var prevX = prevPt.x;

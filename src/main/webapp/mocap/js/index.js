@@ -12,10 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		var body = $('body');
 		var header = $('#header');
 		var footer = $('#footer');
-		var height = body.height() - header.outerHeight(true) - footer.outerHeight(true) - 20;
-		var width = Math.min(body.width(), height);
+		var width = body.width();
+		var height = body.height() - header.outerHeight(true) - footer.outerHeight(true) - 16;
 
-		field.resetCanvas(width);
+		if (height / 9 < width / 16) {
+			width = parseInt(height / 9 * 16);
+		} else {
+			height = parseInt(width / 16 * 9);
+		}
+		field.resetCanvas(width, height);
 //		console.log('header:' + header.outerHeight());
 //		console.log('footer:' + footer.outerHeight());
 //		console.log('body:' + body.height());
@@ -64,7 +69,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		which = 0;
 	};
 	var activate = function() {
-		//field.nextMotion();
+		var time = AudioMixer.INSTANCE.getCurrentTime();
+
+		if (time) {
+			var frame = parseInt(time / 0.025);
+//console.log('f:' + frame);
+			field.shiftMotion(frame);
+			slider.val(frame);
+			slider.slider('refresh');
+		}
 		field.draw();
 		setTimeout(activate, 33);
 	};
@@ -78,11 +91,28 @@ document.addEventListener('DOMContentLoaded', function() {
 	view.bind('touchmove', touch);
 	view.bind('touchend', end);
 	slider.change(function() {
-		field.shiftMotion($(this).val());
+		var frame = $(this).val();
+		var time = frame * 0.025;
+
+		field.shiftMotion(frame);
+		AudioMixer.INSTANCE.setCurrentTime(time);
 	});
 	$(window).resize(onResize);
 	activate();
 	$(window).resize();
+	//
+	$('#playButton').click(function() {
+		var time = AudioMixer.INSTANCE.getCurrentTime();
+
+		if (time) {
+			AudioMixer.INSTANCE.fade();
+			return;
+		}
+		AudioMixer.INSTANCE.play('Perfume_globalsite_sound', 1, true);
+	});
+	AudioMixer.INSTANCE.reserve([
+		'Perfume_globalsite_sound',
+	]);
 });
 
 function setupFileList(field) {

@@ -9,6 +9,7 @@ function Skeleton(data) {
 	this.map = {};
 	this.offsetX = 0;
 	this.offsetY = 0;
+	this.scale = data.scale;
 	this.rotationH = Math.PI / 4;
 	this.rotationV = Math.PI / 8;
 	this.rotationMatrix = Matrix.NO_EFFECT;
@@ -148,14 +149,14 @@ Bone.prototype.conv = function(pt) {
 	return pmx.affine(pt.x, pt.y, pt.z);
 };
 
-
 Bone.prototype.drawLine = function(ctx) {
 	var prevPt = this.conv(this.parent.pt);
 	var nextPt = this.conv(this.pt);
-	var nextX = nextPt.x;
-	var nextY = -nextPt.y;
-	var prevX = prevPt.x;
-	var prevY = -prevPt.y;
+	var scale = this.skeleton.scale;
+	var nextX = nextPt.x * scale;
+	var nextY = -nextPt.y * scale;
+	var prevX = prevPt.x * scale;
+	var prevY = -prevPt.y * scale;
 	var dx = nextX - prevX;
 	var dy = nextY - prevY;
 

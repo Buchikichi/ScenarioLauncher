@@ -24,7 +24,7 @@ Field.prototype.resetCanvas = function(width, height) {
 	this.height = height;
 	this.hW = this.width / 2;
 	this.hH = this.height / 2;
-	this.scale = width / Field.WIDTH;
+	this.scale = width / Field.WIDTH / 2;
 	$('#canvas').attr('width', this.width).attr('height', this.height);
 };
 

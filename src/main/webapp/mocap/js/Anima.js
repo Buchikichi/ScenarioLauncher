@@ -12,25 +12,28 @@ function Anima(json) {
 
 		frame.forEach(function(boneMotion, ix) {
 			var mx = Matrix.NO_EFFECT;
-			var rx = Matrix.rotateX(boneMotion[0]);
-			var ry = Matrix.rotateY(boneMotion[1]);
-			var rz = Matrix.rotateZ(boneMotion[2]);
-			var node = anima.skeleton.list[ix];
-			var order = node.order.split('');
 
-			order.forEach(function(o) {
-				if (o == 'x') {
-					mx = mx.multiply(rx);
-				} else if (o == 'y') {
-					mx = mx.multiply(ry);
-				} else if (o == 'z') {
-					mx = mx.multiply(rz);
-				}
-			});
+			if (boneMotion != null) {
+				var rx = Matrix.rotateX(boneMotion[0]);
+				var ry = Matrix.rotateY(boneMotion[1]);
+				var rz = Matrix.rotateZ(boneMotion[2]);
+				var node = anima.skeleton.list[ix];
+				var order = node.order.split('');
+
+				order.forEach(function(o) {
+					if (o == 'x') {
+						mx = mx.multiply(rx);
+					} else if (o == 'y') {
+						mx = mx.multiply(ry);
+					} else if (o == 'z') {
+						mx = mx.multiply(rz);
+					}
+				});
+			}
 			var aMotion = {
 				rotate : mx
 			};
-			if (3 < boneMotion.length) {
+			if (boneMotion != null && 3 < boneMotion.length) {
 				aMotion.tx = boneMotion[3];
 				aMotion.ty = boneMotion[4];
 				aMotion.tz = boneMotion[5];

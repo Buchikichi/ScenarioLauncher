@@ -119,7 +119,7 @@ function setupFileList(field) {
 	var ul = $('#searchPanel ul');
 	var list = [
 		'aachan.bvh', 'kashiyuka.bvh', 'nocchi.bvh',
-		'07_05.amc', '09_06.amc', '79_96.amc', '111_7.amc', '131_04.amc', '135_06.amc',
+		'01_01.amc', '07_05.amc', '09_06.amc', '79_96.amc', '111_7.amc', '131_04.amc', '135_06.amc',
 	];
 
 	list.forEach(function(name) {

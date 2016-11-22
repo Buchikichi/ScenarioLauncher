@@ -19,6 +19,7 @@ AudioMixer.prototype.makeName = function(key) {
 };
 
 AudioMixer.prototype.onload = function(key, name, data) {
+	var mixer = this;
 	var ctx = this.ctx;
 	var dic = this.dic;
 
@@ -27,10 +28,12 @@ AudioMixer.prototype.onload = function(key, name, data) {
 
 		audio.src = name;
 		dic[key] = audio;
+		this.done();
 		return;
 	}
 	ctx.decodeAudioData(data, function(buff) {
 		dic[key] = buff;
+		mixer.done();
 	});
 };
 

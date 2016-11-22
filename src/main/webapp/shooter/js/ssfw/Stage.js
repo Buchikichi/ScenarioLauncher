@@ -27,6 +27,7 @@ Stage.prototype.setBgm = function(bgm) {
 
 	this.bgm = bgm;
 	this.boss = 1 < len ? arguments[1] : null;
+	AudioMixer.INSTANCE.reserve([this.bgm, this.boss]);
 	return this;
 };
 

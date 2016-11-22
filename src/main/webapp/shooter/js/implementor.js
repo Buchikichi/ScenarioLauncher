@@ -65,7 +65,6 @@ Stage.LIST = [
 ];
 AudioMixer.INSTANCE.reserve([
 	'sfx-fire', 'sfx-explosion', 'sfx-absorb',
-	'bgm-edo-beth', 'bgm-MadNightDance', 'bgm-pierrot-cards', 'bgm-edo-omega-zero'
-,'g1.2','g1.4'
+//,'g1.2','g1.4'
 ]);
 MotionManager.INSTANCE.reserve(['asf', '79_91.amc', '79_96.amc', '86_01b.amc', '111_7.amc', '133_01.amc']);

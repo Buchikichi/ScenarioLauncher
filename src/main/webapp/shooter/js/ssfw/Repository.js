@@ -18,6 +18,9 @@ Repository.prototype.reserve = function(list) {
 	var repository = this;
 
 	list.forEach(function(key) {
+		if (key == null) {
+			return;
+		}
 		repository.load(key);
 	});
 };
@@ -39,12 +42,15 @@ Repository.prototype.load = function(key) {
 
 		repository.dic[key] = data;
 		repository.onload(key, name, data);
-		repository.loaded++;
 //		console.log('load:' + key);
 	});
 	request.send();
 };
 
 Repository.prototype.onload = function(key, name, data) {
-	// サブクラスが実装する
+	this.done();
+};
+
+Repository.prototype.done = function() {
+	this.loaded++;
 };

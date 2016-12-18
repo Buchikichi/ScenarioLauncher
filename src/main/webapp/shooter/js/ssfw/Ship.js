@@ -6,6 +6,7 @@ function Ship(field, x, y) {
 	this.speed = 4;
 	this.effectH = false;
 	this.shotList = [];
+	this.chamberList = [new Chamber(Shot, 2, Ship.MAX_SHOTS), new Chamber(Missile, 8, 2, {gravity:.1}), new Chamber(Missile, 8, 2, {gravity:-.1})];
 	this.trigger = false;
 	this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 }
@@ -58,6 +59,9 @@ Ship.prototype.sieveShots = function() {
 Ship.prototype._move = Actor.prototype.move;
 Ship.prototype.move = function() {
 	this._move();
+	this.chamberList.forEach(function(chamber) {
+		chamber.probe();
+	});
 	if (this.isGone) {
 		return;
 	}
@@ -71,18 +75,22 @@ Ship.prototype.move = function() {
 	if (this.y < this.hH || this.bottom < this.y) {
 		this.y = this.svY;
 	}
+	var ship = this;
+
 	// shot & missile
 	this.sieveShots();
 	if (this.trigger) {
 		var result = [];
-		this.trigger = false;
-		if (this.shotList.length < Ship.MAX_SHOTS) {
-			var shot = new Shot(this.field, this.x + this.hW, this.y);
 
-			this.shotList.push(shot);
-			result.push(shot);
-//			result.push(new Missile(this.field, this.x + this.hW, this.y));
-		}
+		this.trigger = false;
+		this.chamberList.forEach(function(chamber) {
+			var shot = chamber.fire(ship);
+
+			if (shot) {
+				ship.shotList.push(shot);
+				result.push(shot);
+			}
+		});
 		return result;
 	}
 };

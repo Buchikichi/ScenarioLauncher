@@ -38,18 +38,6 @@ Stage.LIST = [
 			new StageBg('stage01bg0.png', 1), new StageBg('stage01bg1.png', .9), new StageFg('g1.4.png'),
 		]).setBgm('g1.4', 'bgm-edo-omega-zero'),
 //*/
-//	new Stage(Stage.SCROLL.OFF, 'stage-map.png', [
-//			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage-bg.png'),
-//		]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
-//	new Stage(Stage.SCROLL.OFF, 'stage1.map.png', [
-//			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage1.1.0.png', 1.3),
-//		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
-//	new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
-//			new StageBg('stage2.1.1.png', .7), new StageBg('stage01bg1.png', 2, -Math.SQ / 2), new StageFg('stage2.1.0.png'),
-//		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
-//	new Stage(Stage.SCROLL.OFF, 'stage3.map.png', [
-//			new StageBg('stage01bg1.png', .7), new StageFg('stage3.1.1.png', 1, 0, .02), new StageFg('stage3.1.0.png'),
-//		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.OFF, 'stage00map.png', [
 			new StageBg('stage01bg0.png', .7), new StageBg('stage01bg1.png', .9, 0, .02), new StageFg('stage00bg.png'),
 		]).setBgm('bgm-edo-beth'),
@@ -61,6 +49,23 @@ Stage.LIST = [
 		]).setBgm('bgm-edo-beth'),
 	new Stage(Stage.SCROLL.ON, 'stage02map.png', [
 			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage02bg.png'),
+		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
+	//*/
+
+//	new Stage(Stage.SCROLL.OFF, 'stage-map.png', [
+//			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage-bg.png'),
+//		]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
+	new Stage(Stage.SCROLL.OFF, 'stage1.map.png', [
+			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage1.1.0.png', 1.3),
+		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
+	new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
+			new StageBg('stage2.1.1.png', .7), new StageBg('stage01bg1.png', 2, -Math.SQ / 2), new StageFg('stage2.1.0.png'),
+		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
+	new Stage(Stage.SCROLL.OFF, 'stage3.map.png', [
+			new StageBg('stage01bg1.png', .7), new StageFg('stage3.1.1.png', 1, 0, .02), new StageFg('stage3.1.0.png'),
+		]).setBgm('bgm-YourDream-R', 'bgm-edo-omega-zero'),
+	new Stage(Stage.SCROLL.LOOP, 'stage4.map.png', [
+			new StageBg('stage01bg1.png', .7), new StageFg('stage01bg0.png', 1, 0, .02), new StageFg('stage4.1.0.png'),
 		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
 ];
 AudioMixer.INSTANCE.reserve([

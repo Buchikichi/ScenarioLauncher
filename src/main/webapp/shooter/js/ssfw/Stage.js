@@ -123,6 +123,15 @@ Stage.prototype.drawFg = function(ctx) {
 	});
 };
 
+Stage.prototype.toBossMode = function() {
+	if (this.boss) {
+		AudioMixer.INSTANCE.play(this.boss, .7, true);
+	}
+	if (this.scroll == Stage.SCROLL.LOOP) {
+		this.scroll = Stage.SCROLL.ON;
+	}
+};
+
 /**
  * Foreground and Background.
  */

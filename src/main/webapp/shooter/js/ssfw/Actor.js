@@ -106,13 +106,24 @@ Actor.prototype.move = function(target) {
 		this.y += Math.sin(this.dir) * this.speed;
 	}
 	if (this.gravity != 0) {
-		var y = this.field.landform.scanFloor(this) - this.hH;
+		var y = this.field.landform.scanFloor(this);
 
-		if (this.y < y) {
-			this.dy += this.gravity;
-		} else if (y < this.y) {
-			this.y = y;
-			this.react();
+		if (this.gravity < 0) {
+			y += this.hH;
+			if (y < this.y) {
+				this.dy += this.gravity;
+			} else if (this.y < y) {
+				this.y = y;
+				this.react();
+			}
+		} else {
+			y -= this.hH;
+			if (this.y < y) {
+				this.dy += this.gravity;
+			} else if (y < this.y) {
+				this.y = y;
+				this.react();
+			}
 		}
 	}
 	this.x += this.dx * this.speed;

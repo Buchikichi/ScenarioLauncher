@@ -27,7 +27,7 @@ Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
 Field.MAX_LOOSING_RATE = 200;
-Field.MAX_SHIP = 3;
+Field.MAX_SHIP = 5;
 Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
 Field.PHASE = {
 	NORMAL: 0,
@@ -141,6 +141,8 @@ Field.prototype.scroll = function() {
 			enemy = new EnmFormation(field, obj.x, obj.y).setup(obj.type, 8);
 		} else {
 			enemy = new obj.type(field, obj.x, obj.y);
+console.log('assign:' + obj.x + '/' + obj.y);
+console.log(enemy);
 		}
 		field.actorList.push(enemy);
 	});
@@ -151,9 +153,9 @@ Field.prototype.scroll = function() {
 	}
 	if (next == Landform.NEXT.NOTICE) {
 		AudioMixer.INSTANCE.fade();
-	} else if (next == Landform.NEXT.ARRIV && this.stage.boss) {
+	} else if (next == Landform.NEXT.ARRIV) {
 		this.phase = Field.PHASE.BOSS;
-		AudioMixer.INSTANCE.play(this.stage.boss, .7, true);
+		this.stage.toBossMode();
 	} else if (next == Landform.NEXT.PAST) {
 		this.nextStage();
 	}

@@ -244,26 +244,42 @@ Landform.prototype.scanFloor = function(target) {
 	}
 	var y = target.y;
 	var brick = this.getBrick(target, 2);
+	var sign = target.gravity < 0 ? -1 : 1;
 
 	if (0 < brick) {
 		y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 		while (0 < brick) {
-			y -= Landform.BRICK_WIDTH;
+			y -= Landform.BRICK_WIDTH * sign;
 			var temp = {x:target.x, y:y};
 			brick = this.getBrick(temp, 2);
 		}
-		y += Landform.BRICK_WIDTH;
+		y += Landform.BRICK_WIDTH * sign;
 	} else {
 		y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-		while (y < this.height && !brick) {
-			y += Landform.BRICK_WIDTH;
-			var temp = {x:target.x, y:y};
+		if (sign < 0) {
+			// top
+			while (0 < y && !brick) {
+				y -= Landform.BRICK_WIDTH;
+				var temp = {x:target.x, y:y};
 
-			brick = this.getBrick(temp, 2);
-		}
-		if (!brick) {
-			// abyss
-			y = this.height + target.height + Landform.BRICK_WIDTH;
+				brick = this.getBrick(temp, 2);
+			}
+			if (!brick) {
+				// abyss
+				y = -target.height - Landform.BRICK_WIDTH;
+			}
+		} else {
+			// bottom
+			while (y < this.height && !brick) {
+				y += Landform.BRICK_WIDTH;
+				var temp = {x:target.x, y:y};
+
+				brick = this.getBrick(temp, 2);
+			}
+			if (!brick) {
+				// abyss
+				y = this.height + target.height + Landform.BRICK_WIDTH;
+			}
 		}
 	}
 	return y;

@@ -111,7 +111,7 @@ Landform.prototype.effect = function(target) {
 	if (target.effectH) {
 		target.x -= this.effectH;
 	}
-	if (target.effectV) {
+	if (target.effectV && this.next == Landform.NEXT.NONE) {
 		target.y += this.stage.effectV;
 	}
 	if (target.x < target.minX || maxX < target.x) {
@@ -128,6 +128,16 @@ Landform.prototype.effect = function(target) {
 			target.eject();
 		}
 		return;
+	}
+	// Stage.SCROLL.LOOP
+	if (target.gravity) {
+		var dy = Math.abs(target.dy * target.speed);
+
+		if (Landform.BRICK_WIDTH + Landform.BRICK_HALF < dy) {
+//console.log('dy:' + dy);
+			target.eject();
+			return;
+		}
 	}
 	if (target.y < 0) {
 		target.y += this.height;

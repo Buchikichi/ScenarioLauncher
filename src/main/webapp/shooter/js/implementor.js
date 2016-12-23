@@ -57,7 +57,7 @@ Stage.LIST = [
 //		]).setBgm('bgm-edo-beth', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.OFF, 'stage1.map.png', [
 			new StageBg('stage01bg1.png', .7), new StageBg('stage01bg0.png', .9), new StageFg('stage1.1.0.png', 1.3),
-		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
+		]).setBgm('bgm-ThroughTheDark', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
 			new StageBg('stage2.1.1.png', .7), new StageBg('stage01bg1.png', 2, -Math.SQ / 2), new StageFg('stage2.1.0.png'),
 		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),

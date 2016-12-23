@@ -6,7 +6,11 @@ function Ship(field, x, y) {
 	this.speed = 4;
 	this.effectH = false;
 	this.shotList = [];
-	this.chamberList = [new Chamber(Shot, 2, Ship.MAX_SHOTS), new Chamber(Missile, 8, 2, {gravity:.1}), new Chamber(Missile, 8, 2, {gravity:-.1})];
+	this.chamberList = [
+		new Chamber(Shot, 2, Ship.MAX_SHOTS),
+		new Chamber(Missile, 8, 2, {gravity:.1, dir:0}), new Chamber(Missile, 8, 2, {gravity:-.1, dir:0}),
+		new Chamber(Missile, 8, 2, {gravity:.1, dir:Math.PI}), new Chamber(Missile, 8, 2, {gravity:-.1, dir:Math.PI}),
+	];
 	this.trigger = false;
 	this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 }

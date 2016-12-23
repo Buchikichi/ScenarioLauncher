@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	var field = new Field();
 	var keys = {};
 
+	window.addEventListener('resize', function(event) {
+		field.resize();
+	});
 	window.addEventListener('keydown', function(event) {
 		keys[event.key] = true;
 //console.log('key[' + event.key + ']');

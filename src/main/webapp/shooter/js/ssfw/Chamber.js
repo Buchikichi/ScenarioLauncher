@@ -29,7 +29,6 @@ Chamber.prototype.fire = function(actor) {
 	}
 	if (this.opt) {
 //		this.opt.dir = actor.dir ? actor.dir : 0;
-		this.opt.dir = 0;
 	}
 	var field = actor.field;
 	var x = actor.x;

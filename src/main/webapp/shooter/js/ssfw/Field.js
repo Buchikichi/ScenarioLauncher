@@ -41,6 +41,18 @@ Field.prototype.setup = function() {
 	canvas.height = this.height;
 	this.ctx = canvas.getContext('2d');
 	this.landform = new Landform(canvas);
+	this.resize();
+};
+
+Field.prototype.resize = function() {
+	var scaleW = document.body.clientWidth / Field.WIDTH;
+	var scaleH = window.innerHeight / Field.HEIGHT;
+	var view = document.getElementById('view');
+	var scale = scaleH < scaleW ? scaleH : scaleW;
+
+//console.log('scale:' + scale);
+	// transform: scale(2);
+	view.setAttribute('style', 'transform: scale(' + scale + ');');
 };
 
 Field.prototype.nextStage = function() {

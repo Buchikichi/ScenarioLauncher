@@ -37,5 +37,8 @@ Hatch.prototype.move = function(target) {
 	if (Hatch.CHILDREN <= this.children++) {
 		return;
 	}
+	if (0 < this.explosion) {
+		return;
+	}
 	return [new Charger(this.field, this.x, this.y)];
 };

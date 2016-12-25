@@ -4,8 +4,8 @@ function Winding(field, x, y) {
 	this.dir = -Math.PI;
 	this.step = Math.SQ / 100;
 	this.radius = Winding.RADIUS;
-	this.speed = 2.2;
-	this.hitPoint = 300;
+	this.speed = 1.8;
+	this.hitPoint = 150;
 	this.margin = Field.HALF_WIDTH;
 	this.ratio = Winding.RATIO_MAX;
 	this.delta = -1;

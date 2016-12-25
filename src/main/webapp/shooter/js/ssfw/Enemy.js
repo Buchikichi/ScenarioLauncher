@@ -3,6 +3,7 @@
  */
 function Enemy() {
 	Actor.apply(this, arguments);
+	this.radian = Math.PI;
 	this.routine = null;
 	this.routineIx = 0;
 	this.routineCnt = 0;

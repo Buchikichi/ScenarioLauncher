@@ -6,9 +6,13 @@ function Chamber(type, cycle, max, opt) {
 	this.cycle = cycle;
 	this.max = max;
 	this.opt = opt;
+	this.reset();
+}
+
+Chamber.prototype.reset = function() {
 	this.tick = 0;
 	this.hands = [];
-}
+};
 
 Chamber.prototype.probe = function() {
 	var validList = [];
@@ -20,7 +24,7 @@ Chamber.prototype.probe = function() {
 	});
 	this.hands = validList;
 	this.tick++;
-}
+};
 
 Chamber.prototype.fire = function(actor) {
 	//var shot = new Shot(this.field, this.x + this.hW, this.y);

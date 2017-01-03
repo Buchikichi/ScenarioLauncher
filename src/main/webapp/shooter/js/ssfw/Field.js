@@ -69,10 +69,9 @@ Field.prototype.nextStage = function() {
 
 Field.prototype._reset = function() {
 	this.phase = Field.PHASE.NORMAL;
+	this.ship.reset();
 	this.ship.x = 100;
 	this.ship.y = 100;
-	this.ship.trigger = false;
-	this.ship.shotList = [];
 	this.ship.enter();
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
@@ -238,6 +237,7 @@ Field.prototype.draw = function() {
 		}
 		if (0 < --this.shipRemain) {
 			this.retry();
+++this.shipRemain;
 		} else {
 			this.endGame();
 		}

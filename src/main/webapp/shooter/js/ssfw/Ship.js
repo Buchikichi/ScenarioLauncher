@@ -11,8 +11,8 @@ function Ship(field, x, y) {
 		new Chamber(Missile, 8, 2, {gravity:.1, dir:0}), new Chamber(Missile, 8, 2, {gravity:-.1, dir:0}),
 		new Chamber(Missile, 8, 2, {gravity:.1, dir:Math.PI}), new Chamber(Missile, 8, 2, {gravity:-.1, dir:Math.PI}),
 	];
-	this.trigger = false;
 	this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
+	this.reset();
 }
 Ship.MAX_SHOTS = 7;
 Ship.PATTERNS = 2;
@@ -23,6 +23,14 @@ Ship.prototype.recalculation = function() {
 	this.right = this.field.width - this.width * 3;
 	this.bottom = this.field.height - this.hH;
 	this._recalculation();
+};
+
+Ship.prototype.reset = function() {
+	this.trigger = false;
+	this.chamberList.forEach(function(chamber) {
+		chamber.reset();
+	});
+	this.shotList = [];
 };
 
 Ship.prototype.inkey = function(keys) {

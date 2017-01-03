@@ -107,20 +107,29 @@ Actor.prototype.move = function(target) {
 	}
 	if (this.gravity != 0) {
 		var y = this.field.landform.scanFloor(this);
+		var lift = false;
 
 		if (this.gravity < 0) {
 			y += this.hH;
 			if (y < this.y) {
 				this.dy += this.gravity;
 			} else if (this.y < y) {
-				this.y = y;
-				this.react();
+				lift = true;
 			}
 		} else {
 			y -= this.hH;
 			if (this.y < y) {
 				this.dy += this.gravity;
 			} else if (y < this.y) {
+				lift = true;
+			}
+		}
+		if (lift) {
+			var diff = Math.abs(this.y - y);
+
+			if (Landform.BRICK_WIDTH * 2 < diff) {
+				this.dir = Math.trim(this.dir + Math.PI);
+			} else {
 				this.y = y;
 				this.react();
 			}

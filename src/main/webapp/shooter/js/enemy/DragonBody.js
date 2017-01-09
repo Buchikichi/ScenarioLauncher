@@ -1,7 +1,7 @@
 /**
- * EnmDragonBody.
+ * DragonBody.
  */
-function EnmDragonBody() {
+function DragonBody() {
 	Enemy.apply(this, arguments);
 	this.effectH = false;
 	this.effectV = false;
@@ -10,10 +10,10 @@ function EnmDragonBody() {
 	this.anim = new Animator(this, 'enemy/dragonBody.png', Animator.TYPE.NONE);
 }
 
-EnmDragonBody.prototype = Object.create(Enemy.prototype);
+DragonBody.prototype = Object.create(Enemy.prototype);
 
-EnmDragonBody.prototype._recalculation = Actor.prototype.recalculation;
-EnmDragonBody.prototype.recalculation = function() {
+DragonBody.prototype._recalculation = Actor.prototype.recalculation;
+DragonBody.prototype.recalculation = function() {
 	this._recalculation();
 	this.minX = -this.field.width;
 	this.minY = -this.field.height;
@@ -21,4 +21,4 @@ EnmDragonBody.prototype.recalculation = function() {
 	this.maxY = this.field.height * 2;
 };
 
-EnmDragonBody.prototype.trigger = NOP;
+DragonBody.prototype.trigger = NOP;

@@ -1,6 +1,4 @@
 function Stage(scroll, map, view) {
-	var stage = this;
-
 	this.scroll = scroll;
 	this.map = map;
 	this.view = view;
@@ -8,8 +6,8 @@ function Stage(scroll, map, view) {
 	this.bgm = null;
 	this.boss = null;
 	this.checkPoint = 0;
-	view.forEach(function(ground) {
-		ground.stage = stage;
+	this.view.forEach(ground => {
+		ground.stage = this;
 	});
 	this.effectH = 0;
 	this.effectV = 0;
@@ -43,7 +41,7 @@ Stage.prototype.getFg = function() {
 	}
 	var fg;
 
-	this.view.forEach(function(ground) {
+	this.view.forEach(ground => {
 		if (ground instanceof StageFg) {
 			fg = ground;
 		}
@@ -58,12 +56,10 @@ Stage.prototype.reset = function() {
 };
 
 Stage.prototype.retry = function() {
-	var stage = this;
-
 	this.effectH = 0;
 	this.effectV = 0;
-	this.view.forEach(function(ground) {
-		ground.reset(stage.checkPoint);
+	this.view.forEach(ground => {
+		ground.reset(this.checkPoint);
 	});
 };
 
@@ -92,21 +88,20 @@ Stage.prototype.scrollV = function(target) {
 };
 
 Stage.prototype.forward = function(landform) {
-	this.view.forEach(function(ground) {
+	this.view.forEach(ground => {
 		ground.forward(landform);
 	});
-	var stage = this;
 	var fgX = this.getFg().x;
 
-	Stage.CHECK_POINT.forEach(function(cp) {
-		if (cp <= fgX && stage.checkPoint < fgX) {
-			stage.checkPoint = cp;
+	Stage.CHECK_POINT.forEach(cp => {
+		if (cp <= fgX && this.checkPoint < fgX) {
+			this.checkPoint = cp;
 		}
 	});
 };
 
 Stage.prototype.drawBg = function(ctx) {
-	this.view.forEach(function(ground) {
+	this.view.forEach(ground => {
 		if (ground instanceof StageFg) {
 			return;
 		}
@@ -115,7 +110,7 @@ Stage.prototype.drawBg = function(ctx) {
 };
 
 Stage.prototype.drawFg = function(ctx) {
-	this.view.forEach(function(ground) {
+	this.view.forEach(ground => {
 		if (ground instanceof StageBg) {
 			return;
 		}

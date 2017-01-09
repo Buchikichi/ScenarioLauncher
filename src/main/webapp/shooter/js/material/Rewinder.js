@@ -63,6 +63,7 @@ Rewinder.prototype.fate = NOP;
 function RewinderChild(field, x, y) {
 	Chain.apply(this, arguments);
 
+	this.radian = 0;
 	this.margin = Field.HALF_WIDTH;
 	this.effectH = false;
 	this.effectV = false;

@@ -12,14 +12,22 @@ document.addEventListener('DOMContentLoaded', function() {
 		field.resize();
 	});
 	window.addEventListener('keydown', function(event) {
-		keys[event.key] = true;
+		if (event.key) {
 //console.log('key[' + event.key + ']');
+			keys[event.key] = true;
+		} else {
+			keys['k' + event.keyCode] = true;
+		}
 		if (!view.classList.contains('addicting')) {
 			view.classList.add('addicting');
 		}
 	});
 	window.addEventListener('keyup', function(event) {
-		delete keys[event.key];
+		if (event.key) {
+			delete keys[event.key];
+		} else {
+			delete keys['k' + event.keyCode];
+		}
 	});
 	var which = 0;
 	var start = function(e) {

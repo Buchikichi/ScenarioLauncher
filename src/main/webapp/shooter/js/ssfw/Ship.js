@@ -37,17 +37,17 @@ Ship.prototype.inkey = function(keys) {
 	var hit = false;
 	var dir = 0;
 
-	if (keys['ArrowLeft'] || keys['Left']) {
+	if (keys['ArrowLeft'] || keys['Left'] || keys['k37']) {
 		dir = 1;
 		hit = true;
-	} else if (keys['ArrowRight'] || keys['Right']) {
+	} else if (keys['ArrowRight'] || keys['Right'] || keys['k39']) {
 		dir = -1;
 		hit = true;
 	}
-	if (keys['ArrowUp'] || keys['Up']) {
+	if (keys['ArrowUp'] || keys['Up'] || keys['k38']) {
 		dir = 2 - dir * .5;
 		hit = true;
-	} else if (keys['ArrowDown'] || keys['Down']) {
+	} else if (keys['ArrowDown'] || keys['Down'] || keys['k40']) {
 		dir *= .5;
 		hit = true;
 	}

@@ -24,10 +24,10 @@ Missile.prototype.draw = function(ctx) {
 	ctx.arc(this.x, this.y, this.width / 3, 0, Math.PI * 2, false);
 	ctx.fill();
 	ctx.restore();
-	if (this.walled) {
+//	if (this.walled) {
 //		if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
 //			this.field.landform.smashWall(this);
 //		}
 //		this.fate();
-	}
+//	}
 };

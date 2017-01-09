@@ -75,7 +75,6 @@ Field.prototype._reset = function() {
 	this.ship.enter();
 	this.actorList = [this.ship];
 	this.hibernate = Field.MAX_HIBERNATE;
-	this.stage.playBgm();
 };
 
 Field.prototype.reset = function() {
@@ -86,6 +85,7 @@ Field.prototype.reset = function() {
 Field.prototype.retry = function() {
 	this.landform.retry();
 	this._reset();
+	this.stage.playBgm();
 };
 
 Field.prototype.startGame = function() {
@@ -115,13 +115,13 @@ Field.prototype.isGameOver = function() {
 Field.prototype.inkey = function(keys) {
 	this.ship.dir = null;
 	if (this.isGameOver()) {
-		if (keys[' ']) {
+		if (keys[' '] || keys['k32']) {
 			this.startGame();
 		}
 		return;
 	}
 	if (!this.ship.explosion) {
-		if (keys['Control'] || keys['Shift']) {
+		if (keys['Control'] || keys['Shift'] || keys['k16'] || keys['k17']) {
 			this.ship.trigger = true;
 		}
 		this.ship.aim(this.shipTarget);
@@ -152,8 +152,6 @@ Field.prototype.scroll = function() {
 			enemy = new EnmFormation(field, obj.x, obj.y).setup(obj.type, 8);
 		} else {
 			enemy = new obj.type(field, obj.x, obj.y);
-console.log('assign:' + obj.x + '/' + obj.y);
-console.log(enemy);
 		}
 		field.actorList.push(enemy);
 	});

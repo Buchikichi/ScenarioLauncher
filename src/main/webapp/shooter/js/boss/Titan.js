@@ -3,7 +3,7 @@
  */
 function Titan(field, x, y) {
 	Enemy.apply(this, arguments);
-	var asf = MotionManager.INSTANCE.dic['asf'];
+	var asf = Object.assign({}, MotionManager.INSTANCE.dic['asf']);
 
 	this.scale = 7;
 	this.hitPoint = Number.MAX_SAFE_INTEGER;

@@ -27,13 +27,12 @@ Chamber.prototype.probe = function() {
 };
 
 Chamber.prototype.fire = function(actor) {
-	//var shot = new Shot(this.field, this.x + this.hW, this.y);
 	if (this.tick < this.cycle || this.max <= this.hands.length) {
 		return null;
 	}
-	if (this.opt) {
+//	if (this.opt) {
 //		this.opt.dir = actor.dir ? actor.dir : 0;
-	}
+//	}
 	var field = actor.field;
 	var x = actor.x;
 	var y = actor.y;

@@ -21,7 +21,7 @@ Enemy.LIST = [
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
 
 	{name:'Tentacle', type:EnmTentacle, img:'enemy/tentacle.png'},
-	{name:'Dragon', type:EnmDragonHead, img:'enemy/dragonHead.png'},
+	{name:'Dragon', type:DragonHead, img:'enemy/dragonHead.png'},
 	{name:'Waver(formation)', type:EnmWaver, img:'enemy/waver.png', h:16, formation: true},
 
 	{name:'Molten', type:Molten, img:'boss/molten.png'},
@@ -60,7 +60,7 @@ Stage.LIST = [
 		]).setBgm('bgm-ThroughTheDark', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
 			new StageBg('stage2.1.1.png', .7), new StageBg('stage01bg1.png', 2, -Math.SQ / 2), new StageFg('stage2.1.0.png'),
-		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
+		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.OFF, 'stage3.map.png', [
 			new StageBg('stage01bg1.png', .7), new StageFg('stage3.1.1.png', 1, 0, .02), new StageFg('stage3.1.0.png'),
 		]).setBgm('bgm-YourDream-R', 'bgm-edo-omega-zero'),
@@ -70,6 +70,5 @@ Stage.LIST = [
 ];
 AudioMixer.INSTANCE.reserve([
 	'sfx-fire', 'sfx-explosion', 'sfx-absorb',
-//,'g1.2','g1.4'
 ]);
 MotionManager.INSTANCE.reserve(['asf', '79_91.amc', '79_96.amc', '86_01b.amc', '111_7.amc', '133_01.amc']);

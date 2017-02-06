@@ -27,7 +27,7 @@ Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
 Field.MAX_LOOSING_RATE = 200;
-Field.MAX_SHIP = 5;
+Field.MAX_SHIP = 7;
 Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
 Field.PHASE = {
 	NORMAL: 0,
@@ -64,7 +64,6 @@ Field.prototype.nextStage = function() {
 	if (Stage.LIST.length <= this.stageNum) {
 		this.stageNum = 0;
 	}
-	this.stage.playBgm();
 };
 
 Field.prototype._reset = function() {
@@ -85,7 +84,6 @@ Field.prototype.reset = function() {
 Field.prototype.retry = function() {
 	this.landform.retry();
 	this._reset();
-	this.stage.playBgm();
 };
 
 Field.prototype.startGame = function() {
@@ -97,7 +95,7 @@ Field.prototype.startGame = function() {
 	this.shipRemain = Field.MAX_SHIP;
 	this.stageNum = 0;
 	this.nextStage();
-	this.reset();
+	this._reset();
 };
 
 Field.prototype.endGame = function() {
@@ -235,7 +233,7 @@ Field.prototype.draw = function() {
 		}
 		if (0 < --this.shipRemain) {
 			this.retry();
-++this.shipRemain;
+//++this.shipRemain;
 		} else {
 			this.endGame();
 		}

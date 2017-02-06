@@ -26,7 +26,11 @@ Gizmo.prototype.tick = function(src, target) {
 	var landform = src.field.landform;
 
 	if (this.type == Gizmo.TYPE.FIXED) {
-		src.dir = null;
+		if (this.destination == Gizmo.DEST.ROTATE) {
+			src.radian = src.dir;
+		} else {
+			src.dir = null;
+		}
 		return;
 	}
 	if (this.type == Gizmo.TYPE.OWN) {

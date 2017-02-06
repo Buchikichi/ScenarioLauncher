@@ -3,7 +3,7 @@
  */
 function TitanBall(field, x, y) {
 	Enemy.apply(this, arguments);
-	this.margin = Field.HALF_WIDTH;
+	this.margin = Field.HALF_WIDTH / 4;
 	this.speed = 3 + Math.random() * 8;
 	this.gravity = .04;
 	this.hitPoint = 4;

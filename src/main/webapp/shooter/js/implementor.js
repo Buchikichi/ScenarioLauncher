@@ -8,7 +8,7 @@ Enemy.LIST = [
 	{name:'Crab', type:EnmCrab, img:'enemy/crab.png'},
 	{name:'Hatch', type:Hatch, img:'enemy/hatch.png', h:16},
 	{name:'Charger', type:Charger, img:'enemy/charger.png', h:16},
-	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
+	{name:'Twister', type:Twister, img:'enemy/twister.png', h:16},
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},

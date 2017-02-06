@@ -54,6 +54,7 @@ Enemy.prototype.move = function(target) {
 
 		mov.tick(this, target);
 	}
+//console.log('enemy[' + this.x + ',' + this.y + ']');
 	this.actor_move(target);
 	if (this.trigger() && Enemy.TRIGGER_ALLOWANCE < this.calcDistance(target)) {
 		if (this.constraint) {

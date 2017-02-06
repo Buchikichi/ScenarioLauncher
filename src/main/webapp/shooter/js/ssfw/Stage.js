@@ -31,6 +31,7 @@ Stage.prototype.setBgm = function(bgm) {
 
 Stage.prototype.playBgm = function() {
 	if (this.bgm) {
+//console.log('playBgm:');
 		AudioMixer.INSTANCE.play(this.bgm, .7, true);
 	}
 };
@@ -61,6 +62,7 @@ Stage.prototype.retry = function() {
 	this.view.forEach(ground => {
 		ground.reset(this.checkPoint);
 	});
+	this.playBgm();
 };
 
 Stage.prototype.scrollV = function(target) {

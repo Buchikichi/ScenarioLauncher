@@ -9,7 +9,7 @@ Enemy.LIST = [
 	{name:'Hatch', type:Hatch, img:'enemy/hatch.png', h:16},
 	{name:'Charger', type:Charger, img:'enemy/charger.png', h:16},
 	{name:'Twister', type:Twister, img:'enemy/twister.png', h:16},
-	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
+	{name:'Slur', type:Slur, img:'enemy/slur.png', h:16},
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
@@ -60,13 +60,13 @@ Stage.LIST = [
 		]).setBgm('bgm-ThroughTheDark', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.ON, 'stage2.map.png', [
 			new StageBg('stage2.1.1.png', .7), new StageBg('stage01bg1.png', 2, -Math.SQ / 2), new StageFg('stage2.1.0.png'),
-		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
+		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.OFF, 'stage3.map.png', [
 			new StageBg('stage01bg1.png', .7), new StageFg('stage3.1.1.png', 1, 0, .02), new StageFg('stage3.1.0.png'),
 		]).setBgm('bgm-YourDream-R', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.LOOP, 'stage4.map.png', [
-			new StageBg('stage01bg1.png', .7), new StageFg('stage01bg0.png', 1, 0, .02), new StageFg('stage4.1.0.png'),
-		]).setBgm('bgm-pierrot-cards', 'bgm-edo-omega-zero'),
+			new StageBg('stage01bg1.png', .7), new StageFg('stage01bg0.png', 1, 0, .02), new StageFg('stage4.1.0.png', .9),
+		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
 ];
 AudioMixer.INSTANCE.reserve([
 	'sfx-fire', 'sfx-explosion', 'sfx-absorb',

@@ -6,7 +6,6 @@ function Landform(canvas) {
 
 	this.canvas = canvas;
 	this.ctx = canvas.getContext('2d');
-	this.scroll = Stage.SCROLL.OFF;
 	this.effectH = 0;
 	this.next = Landform.NEXT.NONE;
 	this.col = 0;

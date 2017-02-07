@@ -1,5 +1,6 @@
 function Stage(scroll, map, view) {
 	this.scroll = scroll;
+	this.scrollSv = scroll;
 	this.map = map;
 	this.view = view;
 	this.fg = null;
@@ -15,7 +16,9 @@ function Stage(scroll, map, view) {
 Stage.SCROLL = {
 	OFF: 0,
 	ON: 1,
-	LOOP: 2
+	LOOP: 2,
+	TOP: 4,
+	BOTTOM: 8
 };
 Stage.LIST = [];
 Stage.CHECK_POINT = [660, 1440];
@@ -57,6 +60,7 @@ Stage.prototype.reset = function() {
 };
 
 Stage.prototype.retry = function() {
+	this.scroll = this.scrollSv;
 	this.effectH = 0;
 	this.effectV = 0;
 	this.view.forEach(ground => {
@@ -74,15 +78,30 @@ Stage.prototype.scrollV = function(target) {
 	var diff = field.hH - target.y;
 	var fg = this.getFg();
 
-	if (Math.abs(diff) < fg.speed) {
+	if (this.scroll == Stage.SCROLL.TOP) {
+		diff = fg.speed * 5;
+	} else if (this.scroll == Stage.SCROLL.BOTTOM) {
+		diff = -fg.speed * 5;
+	} else if (Math.abs(diff) < fg.speed) {
 		return;
 	}
 	var dy = diff / 3;
+	var nextY = fg.y - dy;
 
 	if (this.scroll == Stage.SCROLL.ON) {
-		var nextY = fg.y - dy;
-
 		if (nextY < 0 || fg.viewY < nextY) {
+			return;
+		}
+	}
+//console.log('Y:' + fg.y);
+	if (this.scroll == Stage.SCROLL.TOP && nextY < 0) {
+		this.scroll = Stage.SCROLL.OFF;
+		return;
+	}
+	if (this.scroll == Stage.SCROLL.BOTTOM) {
+		console.log('nextY:' + nextY + '/' + fg.height);
+		if (fg.viewY < nextY) {
+			this.scroll = Stage.SCROLL.OFF;
 			return;
 		}
 	}
@@ -120,13 +139,26 @@ Stage.prototype.drawFg = function(ctx) {
 	});
 };
 
+Stage.prototype.notice = function() {
+	if (this.scroll != Stage.SCROLL.ON && this.scroll != Stage.SCROLL.LOOP) {
+		return;
+	}
+	var fg = this.getFg();
+
+	if (fg.y < fg.height / 2) {
+		this.scroll = Stage.SCROLL.TOP;
+	} else {
+		this.scroll = Stage.SCROLL.BOTTOM;
+	}
+};
+
 Stage.prototype.toBossMode = function() {
 	if (this.boss) {
 		AudioMixer.INSTANCE.play(this.boss, .7, true);
 	}
-	if (this.scroll == Stage.SCROLL.LOOP) {
-		this.scroll = Stage.SCROLL.ON;
-	}
+//	if (this.scroll == Stage.SCROLL.LOOP) {
+//		this.scroll = Stage.SCROLL.ON;
+//	}
 };
 
 /**

@@ -160,6 +160,7 @@ Field.prototype.scroll = function() {
 	}
 	if (next == Landform.NEXT.NOTICE) {
 		AudioMixer.INSTANCE.fade();
+		this.stage.notice();
 	} else if (next == Landform.NEXT.ARRIV) {
 		this.phase = Field.PHASE.BOSS;
 		this.stage.toBossMode();

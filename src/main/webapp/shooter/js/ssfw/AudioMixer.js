@@ -16,7 +16,7 @@ AudioMixer.prototype = Object.create(Repository.prototype);
 AudioMixer.INSTANCE = new AudioMixer();
 
 AudioMixer.prototype.makeName = function(key) {
-	return 'audio/' + key + '.mp3';
+	return 'audio/' + key + '.webm';
 };
 
 AudioMixer.prototype.onload = function(key, name, data) {

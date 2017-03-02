@@ -7,6 +7,7 @@ function Repository() {
 	this.max = 0;
 	this.loaded = 0;
 	this.dic = {};
+	this.reserved = {};
 	this.type = 'json';
 }
 
@@ -21,6 +22,11 @@ Repository.prototype.reserve = function(list) {
 		if (key == null) {
 			return;
 		}
+		if (key in repository.reserved) {
+//console.log('Already exist:' + key);
+			return;
+		}
+		repository.reserved[key] = true;
 		repository.load(key);
 	});
 };
@@ -37,7 +43,7 @@ Repository.prototype.load = function(key) {
 	this.max++;
 	request.open('GET', name, true);
 	request.responseType = this.type;
-	request.addEventListener('load', function() {
+	request.addEventListener('loadend', function() {
 		var data = request.response;
 
 		repository.dic[key] = data;

@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 <script type="text/javascript">
 <!--
 $(document).ready(function() {
@@ -38,6 +38,7 @@ function scroll() {
 	height: 240px;
 	background-image: url("img/map100bg.png");
 }
+.linenums li {list-style-type: decimal;}
 -->
 </style>
 </head>
@@ -58,7 +59,7 @@ function scroll() {
   <div class="ui-corner-all custom-corners">
     <div class="ui-bar ui-bar-a"><h3>プログラムソース(JavaScript, スタイルシート)</h3></div>
     <div class="ui-body ui-body-a">
-      <pre class="prettyprint">$(document).ready(function() {
+      <pre class="prettyprint linenums">$(document).ready(function() {
 	var div = $('#map');
 
 	div.prop('mX', 0);
@@ -78,7 +79,7 @@ function scroll() {
 	div.prop('mY', mY);
 	setTimeout(scroll, 100);
 }</pre>
-      <pre class="prettyprint">#map {
+      <pre class="prettyprint linenums">#map {
 	width: 320px;
 	height: 240px;
 	background-image: url("img/map100bg.png");

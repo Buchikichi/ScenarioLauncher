@@ -4,6 +4,7 @@
 function AudioMixer() {
 	Repository.apply(this, arguments);
 	this.type = 'arraybuffer';
+	this.ctx = null;
 	if (window.AudioContext || window.webkitAudioContext) {
 		this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 	}
@@ -16,22 +17,27 @@ AudioMixer.prototype = Object.create(Repository.prototype);
 AudioMixer.INSTANCE = new AudioMixer();
 
 AudioMixer.prototype.makeName = function(key) {
+	var ua = navigator.userAgent.toLowerCase();
+
+	if (ua.indexOf('edge') !== -1) {
+		return 'audio/' + key + '.mp3';
+	}
 	return 'audio/' + key + '.webm';
 };
 
 AudioMixer.prototype.onload = function(key, name, data) {
-	var mixer = this;
-	var ctx = this.ctx;
-	var dic = this.dic;
-
-	ctx.decodeAudioData(data, function(buff) {
-		dic[key] = buff;
-		mixer.done();
+	if (this.ctx === null) {
+		this.done();
+		return;
+	}
+	this.ctx.decodeAudioData(data, (buff)=> {
+		this.dic[key] = buff;
+		this.done();
 	});
 };
 
 AudioMixer.prototype.play = function(key) {
-	if (!this.dic[key]) {
+	if (this.ctx === null || !this.dic[key]) {
 		return;
 	}
 	var mixer = this;

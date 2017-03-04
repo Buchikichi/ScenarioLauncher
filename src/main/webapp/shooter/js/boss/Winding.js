@@ -56,7 +56,7 @@ class Winding extends Chain {
 	}
 
 	fate(target) {
-		this._fate(target);
+		super.fate(target);
 		this.uncoil = true;
 	}
 

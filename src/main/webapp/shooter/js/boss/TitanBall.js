@@ -1,19 +1,20 @@
 /**
  * TitanBall.
  */
-function TitanBall(field, x, y) {
-	Enemy.apply(this, arguments);
-	this.margin = Field.HALF_WIDTH / 4;
-	this.speed = 3 + Math.random() * 8;
-	this.gravity = .04;
-	this.hitPoint = 4;
-	this.anim = new Animator(this, 'boss/titan/titan.ball.png', Animator.TYPE.NONE);
-}
-TitanBall.prototype = Object.create(Enemy.prototype);
-TitanBall.prototype.trigger = NOP;
+class TitanBall extends Enemy {
+	constructor(field, x, y) {
+		super(field, x, y);
+		this.margin = Field.HALF_WIDTH / 4;
+		this.speed = 3 + Math.random() * 8;
+		this.gravity = .04;
+		this.hitPoint = 4;
+		this.anim = new Animator(this, 'boss/titan/titan.ball.png', Animator.TYPE.NONE);
+	}
 
-TitanBall.prototype._react = Enemy.prototype.react;
-TitanBall.prototype.react = function() {
-	this._react();
-	this.fate(this);
-};
+	trigger() {}
+
+	react() {
+		super.react();
+		this.fate(this);
+	}
+}

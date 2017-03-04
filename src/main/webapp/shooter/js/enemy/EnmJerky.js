@@ -1,15 +1,16 @@
 /**
  * EnmJerky.
  */
-function EnmJerky() {
-	Enemy.apply(this, arguments);
-	this.speed = 2;
-	this.hitPoint = 1;
-	this.score = 10;
-	this.anim = new Animator(this, 'enemy/jerky.png', Animator.TYPE.NONE);
-	this.routine = [
-		new Movement(Movement.COND.X).add(Gizmo.TYPE.AIM, Gizmo.DEST.TO_X).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_X),
-		new Movement(Movement.COND.Y).add(Gizmo.TYPE.AIM, Gizmo.DEST.TO_Y).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_Y)
-	];
+class EnmJerky extends Enemy {
+	constructor(field, x, y) {
+		super(field, x, y);
+		this.speed = 2;
+		this.hitPoint = 1;
+		this.score = 10;
+		this.anim = new Animator(this, 'enemy/jerky.png', Animator.TYPE.NONE);
+		this.routine = [
+			new Movement(Movement.COND.X).add(Gizmo.TYPE.AIM, Gizmo.DEST.TO_X).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_X),
+			new Movement(Movement.COND.Y).add(Gizmo.TYPE.AIM, Gizmo.DEST.TO_Y).add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO_Y)
+		];
+	}
 }
-EnmJerky.prototype = Object.create(Enemy.prototype);

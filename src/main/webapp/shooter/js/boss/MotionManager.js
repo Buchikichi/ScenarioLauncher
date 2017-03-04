@@ -1,7 +1,6 @@
 /**
  * MotionManager.
  */
-'use strict';
 function MotionManager() {
 	Repository.apply(this, arguments);
 }

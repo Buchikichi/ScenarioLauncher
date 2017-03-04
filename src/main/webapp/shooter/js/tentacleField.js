@@ -6,7 +6,7 @@ function Field() {
 	this.actors = [this.ship];
 	this.init();
 
-	var tentacle = new EnmTentacle(this, 250, 60);
+	var tentacle = new Tentacle(this, 250, 60);
 	var joint = tentacle.next;
 
 	while (joint) {

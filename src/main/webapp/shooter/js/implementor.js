@@ -20,7 +20,7 @@ Enemy.LIST = [
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
 	{name:'Waver', type:EnmWaver, img:'enemy/waver.png', h:16},
 
-	{name:'Tentacle', type:EnmTentacle, img:'enemy/tentacle.png'},
+	{name:'Tentacle', type:Tentacle, img:'enemy/tentacle.png'},
 	{name:'Dragon', type:DragonHead, img:'enemy/dragonHead.png'},
 	{name:'Waver(formation)', type:EnmWaver, img:'enemy/waver.png', h:16, formation: true},
 

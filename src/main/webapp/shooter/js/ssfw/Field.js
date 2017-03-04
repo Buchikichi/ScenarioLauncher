@@ -147,7 +147,7 @@ Field.prototype.scroll = function() {
 		var enemy;
 
 		if (obj.formation) {
-			enemy = new EnmFormation(field, obj.x, obj.y).setup(obj.type, 8);
+			enemy = new Formation(field, obj.x, obj.y).setup(obj.type, 8);
 		} else {
 			enemy = new obj.type(field, obj.x, obj.y);
 		}

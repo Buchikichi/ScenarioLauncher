@@ -4,9 +4,9 @@
 class Molten extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.margin = Field.HALF_WIDTH;
+		this.hasBounds = false;
 		this.dir = 0;
-		this.speed = 1;
+		this.speed = .5;
 		this.effectH = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.cycle = 0;
@@ -50,7 +50,7 @@ class Molten extends Enemy {
 		this.rock = validList;
 	}
 }
-Molten.MAX_CYCLE = 500;
+Molten.MAX_CYCLE = 700;
 Molten.PHASE = {
 	OWN: 0,
 	TARGET: 1,
@@ -63,10 +63,10 @@ Molten.PHASE = {
 class MoltenRock extends Enemy {
 	constructor(field, parent, x, y) {
 		super(field, x, y);
-		this.margin = Field.HALF_WIDTH;
+		this.hasBounds = false;
 		this.parent = parent;
 		this.dir = 0;
-		this.speed = 1.3;
+		this.speed = .7;
 		this.hitPoint = 5;
 		this.score = 10;
 		this.anim = new Animator(this, 'boss/moltenRock.png', Animator.TYPE.NONE);

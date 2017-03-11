@@ -4,10 +4,10 @@
 class Twister extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.margin = Field.HALF_WIDTH / 4;
+		this.hasBounds = false;
 		this.dir = this.x <= 0 ? 0 : Math.PI;
-		this.step = Math.PI / 10;
-		this.speed = 7;
+		this.step = Math.PI / 23;
+		this.speed = 3;
 		this.score = 100;
 		this.anim = new Animator(this, 'enemy/twister.png', Animator.TYPE.NONE);
 		this.routine = [
@@ -18,4 +18,4 @@ class Twister extends Enemy {
 		];
 	}
 }
-Twister.RANGE = 7;
+Twister.RANGE = 13;

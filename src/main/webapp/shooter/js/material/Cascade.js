@@ -6,7 +6,7 @@ class Cascade extends Chain {
 		this.radius = Cascade.RADIUS;
 		this.appears = false;
 		for (var cnt = 0; cnt < Cascade.MAX_JOINT; cnt++) {
-			var weight = (Cascade.MAX_JOINT - cnt) * 6;
+			var weight = (Cascade.MAX_JOINT - cnt) * 3;
 
 			this.push(new CascadeChild(field, x, y, weight));
 		}
@@ -59,7 +59,7 @@ class CascadeChild extends Chain {
 
 	move(target) {
 		var prev = this.prev;
-		var diff = Math.trim(Math.SQ - this.radian) / (200 + this.weight);
+		var diff = Math.trim(Math.SQ - this.radian) / (300 + this.weight * 10);
 		this.step += diff;
 		if (parseInt(diff * 1000) == 0) {
 			this.step *= .98;
@@ -86,7 +86,7 @@ class CascadeChild extends Chain {
 	}
 
 	fate(target) {
-		var radian = Math.PI / 400;
+		var radian = Math.PI / 200;
 
 		this.step -= radian;
 		var joint = this.next;

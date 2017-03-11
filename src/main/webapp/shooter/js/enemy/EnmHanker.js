@@ -4,7 +4,7 @@
 class EnmHanker extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.speed = 1.5;
+		this.speed = .7;
 		this.hitPoint = 2;
 		this.score = 50;
 		this.anim = new Animator(this, 'enemy/hanker.png', Animator.TYPE.NONE);

@@ -4,7 +4,7 @@
 class EnmJerky extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.speed = 2;
+		this.speed = 1;
 		this.hitPoint = 1;
 		this.score = 10;
 		this.anim = new Animator(this, 'enemy/jerky.png', Animator.TYPE.NONE);

@@ -111,7 +111,9 @@ Landform.prototype.effect = function(target) {
 		target.x -= this.effectH;
 	}
 	if (target.effectV && this.next == Landform.NEXT.NONE) {
-		target.y += this.stage.effectV;
+		let speed = this.stage.getFg().speed;
+
+		target.y += this.stage.effectV * speed;
 	}
 	if (target.x < target.minX || maxX < target.x) {
 		target.eject();

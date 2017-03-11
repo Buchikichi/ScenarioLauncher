@@ -4,7 +4,7 @@
 class Tentacle extends Chain {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.speed = 1.2;
+		this.speed = .6;
 		this.hitPoint = 16;
 		this.appears = false;
 		this.anim = new Animator(this, 'enemy/tentacle.png', Animator.TYPE.NONE);
@@ -62,6 +62,7 @@ Tentacle.DEG_STEP = Math.PI / 2000;
 class TentacleJoint extends Chain {
 	constructor(field, speed) {
 		super(field, 0, 0);
+		this.hasBounds = false;
 		this.radius = 4;
 		this.radian = 0;
 		this.speed = speed;

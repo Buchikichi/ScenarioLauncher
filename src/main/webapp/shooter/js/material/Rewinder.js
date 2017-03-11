@@ -3,9 +3,9 @@ class Rewinder extends Chain {
 		super(field, x, y);
 		this.step = Math.SQ / 100;
 		this.radius = Rewinder.RADIUS;
-		this.speed = 2.2;
+		this.speed = 1.1;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
-		this.margin = Field.HALF_WIDTH;
+		this.hasBounds = false;
 		this.ratio = Rewinder.RATIO_MAX;
 		this.delta = -.8;
 		this.anim = new Animator(this, 'material/cascade.png', Animator.TYPE.NONE);
@@ -63,7 +63,7 @@ class RewinderChild extends Chain {
 	constructor(field, x, y) {
 		super(field, x, y);
 		this.radian = 0;
-		this.margin = Field.HALF_WIDTH;
+		this.hasBounds = false;
 		this.effectH = false;
 		this.effectV = false;
 		this.radius = RewinderChild.RADIUS;

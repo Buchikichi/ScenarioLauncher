@@ -49,7 +49,7 @@ class Enemy extends Actor {
 		return [];
 	}
 }
-Enemy.TRIGGER_CYCLE = 30;
+Enemy.TRIGGER_CYCLE = 50;
 Enemy.TRIGGER_ALLOWANCE = 100;
 Enemy.MAX_TYPE = 0x7f;
 Enemy.LIST = [];

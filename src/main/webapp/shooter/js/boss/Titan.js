@@ -10,14 +10,14 @@ class Titan extends Enemy {
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		//
 		this.motionRoutine = new MotionRoutine([
-			new Motion(Motion.TYPE.ONLY_ONE, '111_7.amc', 3, Math.PI / 4).offsetX(0).offsetY(0),
-			new Motion(Motion.TYPE.NORMAL, '79_96.amc', 3, -Math.PI * .4)
+			new Motion(Motion.TYPE.ONLY_ONE, '111_7.amc', 2, Math.PI / 4).offsetX(0).offsetY(0),
+			new Motion(Motion.TYPE.NORMAL, '79_96.amc', 1, -Math.PI * .4)
 				.shot(TitanShot, ['lradius', 'lwrist', 'lhand', 'lthumb', 'lfingers'], 200), // shot
-			new Motion(Motion.TYPE.REWIND, '133_01.amc', 3, Math.PI)
+			new Motion(Motion.TYPE.REWIND, '133_01.amc', 2, Math.PI)
 				.shot(TitanBullet, ['thorax', 'upperneck'], {min:200, max:550}), // crawl
 			new Motion(Motion.TYPE.NORMAL, '79_91.amc', 1, -Math.PI * .4)
 				.shot(TitanBall, ['rhumerus', 'rradius', 'rwrist', 'rhand'], {min:175, max:200}), // throw
-			new Motion(Motion.TYPE.NORMAL, '86_01b.amc', 3, Math.PI)
+			new Motion(Motion.TYPE.NORMAL, '86_01b.amc', 2, Math.PI)
 				.shot(Bullet, ['lfingers', 'rfingers'], {min:0, max:1000}), // jump
 		]);
 		if (asf) {
@@ -144,7 +144,7 @@ Titan.HIT_POINT = 292;
 class TitanBone extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.margin = Field.WIDTH;
+		this.hasBounds = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.filling = null;
 	}

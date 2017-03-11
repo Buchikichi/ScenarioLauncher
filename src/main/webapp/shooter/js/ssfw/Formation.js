@@ -13,15 +13,15 @@ class Formation extends Actor {
 	}
 
 	setup(type, num) {
-		for (var ix = 0; ix < num; ix++) {
+		for (let ix = 0; ix < num; ix++) {
 			this.enemies.push(new type(this.field, this.x, this.y));
 		}
 		return this;
 	}
 
 	checkDestroy() {
-		var formation = this;
-		var enemies = [];
+		let formation = this;
+		let enemies = [];
 
 		this.enemies.forEach(function(enemy) {
 			if (enemy.hitPoint == 0) {
@@ -55,4 +55,4 @@ class Formation extends Actor {
 		ctx.fillText(this.bonus, this.x, this.y);
 	}
 }
-Formation.STEP = 5;
+Formation.STEP = 10;

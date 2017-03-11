@@ -5,7 +5,7 @@ class EnmBouncer extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
 		this.dir = this.x <= 0 ? 0 : Math.PI;
-		this.speed = 2.5;
+		this.speed = 2;
 		this.gravity = .1;
 		this.reaction = .95;
 		this.hitPoint = 3;

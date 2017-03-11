@@ -32,7 +32,7 @@ class Actor extends Matter {
 		this.radian = 0;
 		this.width = 16;
 		this.height = 16;
-		this.margin = 0;
+		this.hasBounds = true;
 		this.gravity = 0;
 		this.reaction = 0;
 		this.speed = 1;
@@ -55,12 +55,14 @@ class Actor extends Matter {
 	}
 
 	recalculation() {
+		let margin = this.hasBounds ? 0 : Field.HALF_WIDTH;
+
 		this.hW = this.width / 2;
 		this.hH = this.height / 2;
-		this.minX = -this.width - this.margin;
-		this.minY = -this.height - this.margin;
-		this.maxX = this.field.width + this.width + this.margin;
-		this.maxY = this.field.height + this.height + this.margin;
+		this.minX = -this.width - margin;
+		this.minY = -this.height - margin;
+		this.maxX = this.field.width + this.width + margin;
+		this.maxY = this.field.height + this.height + margin;
 	}
 
 	enter() {

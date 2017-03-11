@@ -2,11 +2,11 @@
  * Shooterメイン処理.
  */
 document.addEventListener('DOMContentLoaded', function() {
-	var loading = document.getElementById('loading');
-	var view = document.getElementById('view');
-	var repositories = [AudioMixer.INSTANCE, MotionManager.INSTANCE];
-	var field = new Field();
-	var keys = {};
+	let loading = document.getElementById('loading');
+	let view = document.getElementById('view');
+	let repositories = [AudioMixer.INSTANCE, MotionManager.INSTANCE];
+	let field = new Field();
+	let keys = {};
 
 	window.addEventListener('resize', function(event) {
 		field.resize();
@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			delete keys['k' + event.keyCode];
 		}
 	});
-	var which = 0;
-	var start = function(e) {
-		var isMouse = e.type.match(/^mouse/);
-		var tx;
-		var ty;
+	let which = 0;
+	let start = function(e) {
+		let isMouse = e.type.match(/^mouse/);
+		let tx;
+		let ty;
 
 		if (field.isGameOver() && !document.getElementById('loading')) {
 			field.startGame();
@@ -43,17 +43,17 @@ document.addEventListener('DOMContentLoaded', function() {
 			tx = e.offsetX;
 			ty = e.offsetY;
 		} else if (e.originalEvent.touches) {
-			var touches = e.originalEvent.touches[0];
+			let touches = e.originalEvent.touches[0];
 			tx = touches.pageX;
 			ty = touches.pageY;
 		}
 		field.moveShipTo({x:tx, y:ty});
 		which = e.which;
 	};
-	var touch = function(e) {
-		var isMouse = e.type.match(/^mouse/);
-		var tx;
-		var ty;
+	let touch = function(e) {
+		let isMouse = e.type.match(/^mouse/);
+		let tx;
+		let ty;
 
 		view.classList.remove('addicting');
 		if (isMouse) {
@@ -63,13 +63,13 @@ document.addEventListener('DOMContentLoaded', function() {
 			tx = e.offsetX;
 			ty = e.offsetY;
 		} else if (e.originalEvent.touches) {
-			var touches = e.originalEvent.touches[0];
+			let touches = e.originalEvent.touches[0];
 			tx = touches.pageX;
 			ty = touches.pageY;
 		}
 		field.moveShipTo({x:tx, y:ty});
 	};
-	var end = function(e) {
+	let end = function(e) {
 		field.moveShipTo(null);
 		which = 0;
 	};
@@ -81,23 +81,25 @@ document.addEventListener('DOMContentLoaded', function() {
 	view.addEventListener('touchmove', touch);
 	view.addEventListener('touchend', end);
 
-	var activate = function() {
+	let activate = function() {
+		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
 		field.inkey(keys);
 		field.scroll();
 		field.draw();
-		setTimeout(activate, 33);
+		requestAnimationFrame(activate);
 	};
-	var checkLoading = function() {
-		var loaded = 0;
-		var max = 0;
-		var isComplete = true;
+	let checkLoading = function() {
+		let loaded = 0;
+		let max = 0;
+		let isComplete = true;
 
 		repositories.forEach(function(repo) {
 			loaded += repo.loaded;
 			max += repo.max;
 			isComplete &= repo.isComplete();
 		});
-		var msg = loaded + '/' + max;
+		let msg = loaded + '/' + max;
 
 		loading.innerHTML = msg;
 		if (isComplete) {

@@ -9,7 +9,7 @@ class DragonHead extends Enemy {
 		} else {
 			this.x -= 50;
 		}
-		this.speed = 1.8;
+		this.speed = .9;
 		this.effectH = false;
 		this.hitPoint = 200;
 		this.score = 1000;
@@ -86,4 +86,4 @@ class DragonHead extends Enemy {
 	}
 }
 DragonHead.CNT_OF_BODY = 10;
-DragonHead.STP_OF_BODY = 16;
+DragonHead.STP_OF_BODY = 32;

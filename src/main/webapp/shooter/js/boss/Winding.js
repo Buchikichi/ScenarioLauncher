@@ -4,9 +4,9 @@ class Winding extends Chain {
 		this.dir = -Math.PI;
 		this.step = Math.SQ / 100;
 		this.radius = Winding.RADIUS;
-		this.speed = 1.8;
+		this.speed = .9;
 		this.hitPoint = 150;
-		this.margin = Field.HALF_WIDTH;
+		this.hasBounds = false;
 		this.ratio = Winding.RATIO_MAX;
 		this.delta = -1;
 		this.uncoil = false;
@@ -73,7 +73,7 @@ Winding.MAX_JOINT = 20;
 class WindingChild extends Chain {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.margin = Field.HALF_WIDTH;
+		this.hasBounds = false;
 		this.effectH = false;
 		this.radius = WindingChild.RADIUS;
 		this.anim = new Animator(this, 'boss/winding.joint.png', Animator.TYPE.NONE);

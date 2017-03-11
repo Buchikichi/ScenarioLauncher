@@ -5,7 +5,7 @@ class EnmJuno extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
 		this.dir = Math.PI;
-		this.speed = 3;
+		this.speed = 1.5;
 		this.hitPoint = 16; // 2016-7-5
 		this.score = 750;
 		this.anim = new Animator(this, 'enemy/juno.png', Animator.TYPE.NONE);

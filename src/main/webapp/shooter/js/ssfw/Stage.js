@@ -1,17 +1,155 @@
-function Stage(scroll, map, view) {
-	this.scroll = scroll;
-	this.scrollSv = scroll;
-	this.map = map;
-	this.view = view;
-	this.fg = null;
-	this.bgm = null;
-	this.boss = null;
-	this.checkPoint = 0;
-	this.view.forEach(ground => {
-		ground.stage = this;
-	});
-	this.effectH = 0;
-	this.effectV = 0;
+class Stage {
+	constructor(scroll, map, view) {
+		this.scroll = scroll;
+		this.scrollSv = scroll;
+		this.map = map;
+		this.view = view;
+		this.fg = null;
+		this.bgm = null;
+		this.boss = null;
+		this.checkPoint = 0;
+		this.view.forEach(ground => {
+			ground.stage = this;
+		});
+		this.effectH = 0;
+		this.effectV = 0;
+	}
+
+	setBgm(bgm, boss = null) {
+		this.bgm = bgm;
+		this.boss = boss;
+		AudioMixer.INSTANCE.reserve([this.bgm, this.boss]);
+		return this;
+	}
+
+	playBgm() {
+		if (this.bgm) {
+	//console.log('playBgm:');
+			AudioMixer.INSTANCE.play(this.bgm, .7, true);
+		}
+	}
+
+	getFg() {
+		if (this.fg) {
+			return this.fg;
+		}
+		let fg;
+
+		this.view.forEach(ground => {
+			if (ground instanceof StageFg) {
+				fg = ground;
+			}
+		});
+		this.fg = fg;
+		return fg;
+	}
+
+	reset() {
+		this.checkPoint = 0;
+		this.retry();
+	}
+
+	retry() {
+		this.scroll = this.scrollSv;
+		this.effectH = 0;
+		this.effectV = 0;
+		this.view.forEach(ground => {
+			ground.reset(this.checkPoint);
+		});
+		this.playBgm();
+	}
+
+	scrollV(target) {
+		this.effectV = 0;
+		if (this.scroll == Stage.SCROLL.OFF) {
+			return;
+		}
+		let field = target.field;
+		let diff = field.hH - target.y;
+		let fg = this.getFg();
+
+		if (this.scroll == Stage.SCROLL.TOP) {
+			diff = fg.speed * 5;
+		} else if (this.scroll == Stage.SCROLL.BOTTOM) {
+			diff = -fg.speed * 5;
+		} else if (Math.abs(diff) < fg.speed) {
+			return;
+		}
+		let dy = diff / 3;
+		let nextY = fg.y - dy;
+
+		if (this.scroll == Stage.SCROLL.ON) {
+			if (nextY < 0 || fg.viewY < nextY) {
+				return;
+			}
+		}
+	//console.log('Y:' + fg.y);
+		if (this.scroll == Stage.SCROLL.TOP && nextY < 0) {
+			this.scroll = Stage.SCROLL.OFF;
+			return;
+		}
+		if (this.scroll == Stage.SCROLL.BOTTOM) {
+			console.log('nextY:' + nextY + '/' + fg.height);
+			if (fg.viewY < nextY) {
+				this.scroll = Stage.SCROLL.OFF;
+				return;
+			}
+		}
+		this.effectV = dy;
+	}
+
+	forward(landform) {
+		this.view.forEach(ground => {
+			ground.forward(landform);
+		});
+		let fgX = this.getFg().x;
+
+		Stage.CHECK_POINT.forEach(cp => {
+			if (cp <= fgX && this.checkPoint < fgX) {
+				this.checkPoint = cp;
+			}
+		});
+	}
+
+	drawBg(ctx) {
+		this.view.forEach(ground => {
+			if (ground instanceof StageFg) {
+				return;
+			}
+			ground.draw(ctx);
+		});
+	}
+
+	drawFg(ctx) {
+		this.view.forEach(ground => {
+			if (ground instanceof StageBg) {
+				return;
+			}
+			ground.draw(ctx);
+		});
+	}
+
+	notice() {
+		if (this.scroll != Stage.SCROLL.ON && this.scroll != Stage.SCROLL.LOOP) {
+			return;
+		}
+		let fg = this.getFg();
+
+		if (fg.y < fg.height / 2) {
+			this.scroll = Stage.SCROLL.TOP;
+		} else {
+			this.scroll = Stage.SCROLL.BOTTOM;
+		}
+	}
+
+	toBossMode() {
+		if (this.boss) {
+			AudioMixer.INSTANCE.play(this.boss, .7, true);
+		}
+//		if (this.scroll == Stage.SCROLL.LOOP) {
+//			this.scroll = Stage.SCROLL.ON;
+//		}
+	}
 }
 Stage.SCROLL = {
 	OFF: 0,
@@ -23,273 +161,137 @@ Stage.SCROLL = {
 Stage.LIST = [];
 Stage.CHECK_POINT = [660, 1440];
 
-Stage.prototype.setBgm = function(bgm) {
-	var len = arguments.length;
-
-	this.bgm = bgm;
-	this.boss = 1 < len ? arguments[1] : null;
-	AudioMixer.INSTANCE.reserve([this.bgm, this.boss]);
-	return this;
-};
-
-Stage.prototype.playBgm = function() {
-	if (this.bgm) {
-//console.log('playBgm:');
-		AudioMixer.INSTANCE.play(this.bgm, .7, true);
-	}
-};
-
-Stage.prototype.getFg = function() {
-	if (this.fg) {
-		return this.fg;
-	}
-	var fg;
-
-	this.view.forEach(ground => {
-		if (ground instanceof StageFg) {
-			fg = ground;
-		}
-	});
-	this.fg = fg;
-	return fg;
-};
-
-Stage.prototype.reset = function() {
-	this.checkPoint = 0;
-	this.retry();
-};
-
-Stage.prototype.retry = function() {
-	this.scroll = this.scrollSv;
-	this.effectH = 0;
-	this.effectV = 0;
-	this.view.forEach(ground => {
-		ground.reset(this.checkPoint);
-	});
-	this.playBgm();
-};
-
-Stage.prototype.scrollV = function(target) {
-	this.effectV = 0;
-	if (this.scroll == Stage.SCROLL.OFF) {
-		return;
-	}
-	var field = target.field;
-	var diff = field.hH - target.y;
-	var fg = this.getFg();
-
-	if (this.scroll == Stage.SCROLL.TOP) {
-		diff = fg.speed * 5;
-	} else if (this.scroll == Stage.SCROLL.BOTTOM) {
-		diff = -fg.speed * 5;
-	} else if (Math.abs(diff) < fg.speed) {
-		return;
-	}
-	var dy = diff / 3;
-	var nextY = fg.y - dy;
-
-	if (this.scroll == Stage.SCROLL.ON) {
-		if (nextY < 0 || fg.viewY < nextY) {
-			return;
-		}
-	}
-//console.log('Y:' + fg.y);
-	if (this.scroll == Stage.SCROLL.TOP && nextY < 0) {
-		this.scroll = Stage.SCROLL.OFF;
-		return;
-	}
-	if (this.scroll == Stage.SCROLL.BOTTOM) {
-		console.log('nextY:' + nextY + '/' + fg.height);
-		if (fg.viewY < nextY) {
-			this.scroll = Stage.SCROLL.OFF;
-			return;
-		}
-	}
-	this.effectV = dy;
-};
-
-Stage.prototype.forward = function(landform) {
-	this.view.forEach(ground => {
-		ground.forward(landform);
-	});
-	var fgX = this.getFg().x;
-
-	Stage.CHECK_POINT.forEach(cp => {
-		if (cp <= fgX && this.checkPoint < fgX) {
-			this.checkPoint = cp;
-		}
-	});
-};
-
-Stage.prototype.drawBg = function(ctx) {
-	this.view.forEach(ground => {
-		if (ground instanceof StageFg) {
-			return;
-		}
-		ground.draw(ctx);
-	});
-};
-
-Stage.prototype.drawFg = function(ctx) {
-	this.view.forEach(ground => {
-		if (ground instanceof StageBg) {
-			return;
-		}
-		ground.draw(ctx);
-	});
-};
-
-Stage.prototype.notice = function() {
-	if (this.scroll != Stage.SCROLL.ON && this.scroll != Stage.SCROLL.LOOP) {
-		return;
-	}
-	var fg = this.getFg();
-
-	if (fg.y < fg.height / 2) {
-		this.scroll = Stage.SCROLL.TOP;
-	} else {
-		this.scroll = Stage.SCROLL.BOTTOM;
-	}
-};
-
-Stage.prototype.toBossMode = function() {
-	if (this.boss) {
-		AudioMixer.INSTANCE.play(this.boss, .7, true);
-	}
-//	if (this.scroll == Stage.SCROLL.LOOP) {
-//		this.scroll = Stage.SCROLL.ON;
-//	}
-};
-
 /**
  * Foreground and Background.
  */
-function StageView(img) {
-	var stageView = this;
-	var len = arguments.length;
+class StageView {
+	constructor(img, speed, dir, blink) {
+		let stageView = this;
 
-	this.ready = false;
-	this.pattern = null;
-	this.repeatX = 2;
-	this.img = new Image();
-	this.img.src = './img/' + img;
-	this.img.onload = function() {
-		stageView.width = this.width;
-		stageView.height = this.height;
-		stageView.w2 = this.width * stageView.repeatX;
-		stageView.h2 = this.height * 2;
-		stageView.viewX = this.width - Field.HALF_WIDTH;
-		stageView.viewY = this.height - Field.HEIGHT;
-		stageView.ready = true;
-	};
-	this.speed = 1 < len ? arguments[1] : 1;
-	this.dir = 2 < len ? arguments[2] : 0;
-	this.blink = 3 < len ? arguments[3] : 0;
-	this.reset();
-}
-
-StageView.prototype.reset = function(checkPoint) {
-	this.x = checkPoint % this.width;
-	this.y = 0;
-	this.effectH = 0;
-	this.effectV = 0;
-	this.alpha = 1;
-	this.blinkDir = -1;
-};
-
-StageView.prototype.forward = function() {
-	var effectV = this.stage.effectV;
-
-	this.effectH = Math.cos(this.dir) * this.speed;
-	this.effectV = Math.sin(this.dir) * this.speed;
-	this.x += this.effectH;
-	this.y += this.effectV;
-	this.y -= effectV * this.speed;
-	if (this.width < this.x) {
-		this.x -= this.width;
+		this.ready = false;
+		this.pattern = null;
+		this.repeatX = 2;
+		this.img = new Image();
+		this.img.src = './img/' + img;
+		this.img.onload = function() {
+			stageView.width = this.width;
+			stageView.height = this.height;
+			stageView.w2 = this.width * stageView.repeatX;
+			stageView.h2 = this.height * 2;
+			stageView.viewX = this.width - Field.HALF_WIDTH;
+			stageView.viewY = this.height - Field.HEIGHT;
+			stageView.ready = true;
+		};
+		this.speed = speed;
+		this.dir = dir;
+		this.blink = blink;
+		this.reset();
 	}
-	if (this.y < 0) {
-		this.y += this.height;
+
+	reset(checkPoint) {
+		this.x = checkPoint % this.width;
+		this.y = 0;
+		this.effectH = 0;
+		this.effectV = 0;
+		this.alpha = 1;
+		this.blinkDir = -1;
 	}
-	if (this.height < this.y) {
-		this.y -= this.height;
-	}
-	if (this.blink) {
-		this.alpha += this.blinkDir * this.blink;
-		if (this.alpha <= 0.3 || 1.0 <= this.alpha) {
-			this.blinkDir *= -1;
+
+	forward() {
+		let effectV = this.stage.effectV;
+
+		this.effectH = Math.cos(this.dir) * this.speed;
+		this.effectV = Math.sin(this.dir) * this.speed;
+		this.x += this.effectH;
+		this.y += this.effectV;
+		this.y -= effectV * this.speed;
+		if (this.width < this.x) {
+			this.x -= this.width;
+		}
+		if (this.y < 0) {
+			this.y += this.height;
+		}
+		if (this.height < this.y) {
+			this.y -= this.height;
+		}
+		if (this.blink) {
+			this.alpha += this.blinkDir * this.blink;
+			if (this.alpha <= 0.3 || 1.0 <= this.alpha) {
+				this.blinkDir *= -1;
+			}
 		}
 	}
-};
 
-StageView.prototype.getPattern = function(ctx, img) {
-	if (!this.pattern && this.ready) {
-		this.pattern = ctx.createPattern(img, 'repeat');
+	getPattern(ctx, img) {
+		if (!this.pattern && this.ready) {
+			this.pattern = ctx.createPattern(img, 'repeat');
+		}
+		return this.pattern;
 	}
-	return this.pattern;
-};
 
-StageView.prototype.draw = function(ctx) {
-	ctx.save();
-	ctx.globalAlpha = this.alpha;
-	ctx.translate(-this.x, -this.y);
-	ctx.beginPath();
-	ctx.fillStyle = this.getPattern(ctx, this.img);
-	ctx.rect(0, 0, this.w2, this.h2);
-	ctx.fill();
-	ctx.restore();
-};
+	draw(ctx) {
+		ctx.save();
+		ctx.globalAlpha = this.alpha;
+		ctx.translate(-this.x, -this.y);
+		ctx.beginPath();
+		ctx.fillStyle = this.getPattern(ctx, this.img);
+		ctx.rect(0, 0, this.w2, this.h2);
+		ctx.fill();
+		ctx.restore();
+	}
+}
 
 /**
  * Foreground information.
  */
-function StageFg() {
-	StageView.apply(this, arguments);
-	this.repeatX = 1;
-	this.bmp = this.img;
+class StageFg extends StageView {
+	constructor(img, speed = .5, dir = 0, blink = 0) {
+		super(img, speed, dir, blink);
+		this.repeatX = 1;
+		this.bmp = this.img;
+	}
+
+	createCanvas() {
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
+
+		canvas.width = this.width;
+		canvas.height = this.height;
+		ctx.clearRect(0, 0, this.width, this.height);
+		ctx.drawImage(this.img, 0, 0);
+		return canvas;
+	}
+
+	reset(checkPoint) {
+		let fg = this;
+
+		super.reset(checkPoint);
+		if (checkPoint == 0) {
+			this.x = -Field.WIDTH;
+		}
+		if (this.ready) {
+			this.canvas = this.createCanvas();
+
+			this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
+		}
+	}
+
+	smashWall(target) {
+		let tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+		let ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+		let ctx = this.canvas.getContext('2d');
+
+		ty %= this.height;
+		ctx.clearRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH);
+		this.pattern = ctx.createPattern(this.canvas, 'repeat');
+	}
 }
-StageFg.prototype = Object.create(StageView.prototype);
-
-StageFg.prototype.createCanvas = function() {
-	var canvas = document.createElement('canvas');
-	var ctx = canvas.getContext('2d');
-
-	canvas.width = this.width;
-	canvas.height = this.height;
-	ctx.clearRect(0, 0, this.width, this.height);
-	ctx.drawImage(this.img, 0, 0);
-	return canvas;
-};
-
-StageFg.prototype._reset = StageView.prototype.reset;
-StageFg.prototype.reset = function(checkPoint) {
-	var fg = this;
-
-	this._reset(checkPoint);
-	if (checkPoint == 0) {
-		this.x = -Field.WIDTH;
-	}
-	if (this.ready) {
-		this.canvas = this.createCanvas();
-
-		this.pattern = canvas.getContext('2d').createPattern(this.canvas, 'repeat');
-	}
-};
-
-StageFg.prototype.smashWall = function(target) {
-	var tx = Math.round((this.x + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	var ty = Math.round((this.y + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	var ctx = this.canvas.getContext('2d');
-
-	ty %= this.height;
-	ctx.clearRect(tx, ty, Landform.BRICK_WIDTH, Landform.BRICK_WIDTH);
-	this.pattern = ctx.createPattern(this.canvas, 'repeat');
-};
 
 /**
  * Background information.
  */
-function StageBg() {
-	StageView.apply(this, arguments);
+class StageBg extends StageView {
+	constructor(img, speed = .5, dir = 0, blink = 0) {
+		super(img, speed, dir, blink);
+	}
 }
-StageBg.prototype = Object.create(StageView.prototype);

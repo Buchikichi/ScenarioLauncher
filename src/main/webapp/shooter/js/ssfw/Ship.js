@@ -4,13 +4,13 @@
 class Ship extends Actor {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.speed = 4;
+		this.speed = 2.5;
 		this.effectH = false;
 		this.shotList = [];
 		this.chamberList = [
-			new Chamber(Shot, 2, Ship.MAX_SHOTS),
-			new Chamber(Missile, 8, 2, {gravity:.1, dir:0}), new Chamber(Missile, 8, 2, {gravity:-.1, dir:0}),
-			new Chamber(Missile, 8, 2, {gravity:.1, dir:Math.PI}), new Chamber(Missile, 8, 2, {gravity:-.1, dir:Math.PI}),
+			new Chamber(Shot, 4, Ship.MAX_SHOTS),
+			new Chamber(Missile, 16, 2, {gravity:.05, dir:0}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:0}),
+			new Chamber(Missile, 16, 2, {gravity:.05, dir:Math.PI}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:Math.PI}),
 		];
 		this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 		this.reset();

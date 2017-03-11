@@ -8,7 +8,7 @@ class Shot extends Actor {
 		this.width = 16;
 		this.height = 8;
 		this.recalculation();
-		this.speed = 12;
+		this.speed = 6;
 		this.effectH = false;
 		this.size = 2;
 		this.maxX = this.field.width;

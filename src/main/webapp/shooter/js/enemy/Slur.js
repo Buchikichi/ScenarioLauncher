@@ -4,10 +4,10 @@
 class Slur extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.margin = Field.HALF_WIDTH / 2;
+		this.hasBounds = false;
 		this.dir = this.x <= 0 ? 0 : Math.PI;
 		this.step = Math.PI / 8;
-		this.speed = 4;
+		this.speed = 2;
 		this.hitPoint = 3;
 		this.score = 300;
 		this.anim = new Animator(this, 'enemy/slur.png', Animator.TYPE.NONE);

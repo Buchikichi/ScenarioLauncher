@@ -4,7 +4,7 @@
 class Charger extends Enemy {
 	constructor(field, x, y) {
 		super(field, x, y);
-		this.speed = 5;
+		this.speed = 2.5;
 		this.hitPoint = 1;
 		this.score = 10;
 		this.anim = new Animator(this, 'enemy/charger.png', Animator.TYPE.NONE);

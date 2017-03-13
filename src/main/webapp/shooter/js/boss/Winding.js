@@ -1,6 +1,6 @@
 class Winding extends Chain {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.dir = -Math.PI;
 		this.step = Math.SQ / 100;
 		this.radius = Winding.RADIUS;
@@ -17,7 +17,7 @@ class Winding extends Chain {
 		];
 		this.appears = false;
 		for (var cnt = 0; cnt < Winding.MAX_JOINT; cnt++) {
-			this.push(new WindingChild(field, x, y));
+			this.push(new WindingChild(x, y));
 		}
 	}
 
@@ -71,8 +71,8 @@ Winding.MAX_JOINT = 20;
  * WindingChild.
  */
 class WindingChild extends Chain {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.hasBounds = false;
 		this.effectH = false;
 		this.radius = WindingChild.RADIUS;

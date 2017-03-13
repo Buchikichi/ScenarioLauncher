@@ -34,10 +34,9 @@ class Chamber {
 //		if (this.opt) {
 //			this.opt.dir = actor.dir ? actor.dir : 0;
 //		}
-		let field = actor.field;
 		let x = actor.x;
 		let y = actor.y;
-		let elem = new this.type(field, x, y, this.opt);
+		let elem = new this.type(x, y, this.opt);
 
 		this.tick = 0;
 		this.hands.push(elem);

@@ -2,8 +2,8 @@
  * Waver.
  */
 class Waver extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.dir = this.x <= 0 ? 0 : Math.PI;
 		this.step = Math.PI / 60;
 		this.speed = 2;

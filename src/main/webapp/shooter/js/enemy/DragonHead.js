@@ -2,8 +2,8 @@
  * DragonHead.
  */
 class DragonHead extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		if (0 < this.x) {
 			this.x += 50;
 		} else {
@@ -19,10 +19,10 @@ class DragonHead extends Enemy {
 
 		this.locus = [];
 		this.body = [];
-		for (var cnt = 0; cnt < DragonHead.CNT_OF_BODY * DragonHead.STP_OF_BODY; cnt++) {
+		for (let cnt = 0; cnt < DragonHead.CNT_OF_BODY * DragonHead.STP_OF_BODY; cnt++) {
 			this.locus.push({x:this.x, y:this.y, radian:this.radian});
 			if (cnt % DragonHead.STP_OF_BODY == 0) {
-				var body = new DragonBody(this.field, this.x, this.y);
+				let body = new DragonBody(this.x, this.y);
 				this.body.push(body);
 			}
 		}
@@ -30,11 +30,13 @@ class DragonHead extends Enemy {
 	}
 
 	recalculation() {
+		let field = Field.Instance;
+
 		super.recalculation();
-		this.minX = -this.field.width;
-		this.minY = -this.field.height;
-		this.maxX = this.field.width * 2;
-		this.maxY = this.field.height * 2;
+		this.minX = -field.width;
+		this.minY = -field.height;
+		this.maxX = field.width * 2;
+		this.maxY = field.height * 2;
 	}
 
 	eject() {
@@ -46,8 +48,8 @@ class DragonHead extends Enemy {
 	}
 
 	move(target) {
-		var head = this;
-		var rad = Math.trim(this.radian + this.closeGap(target) * 1.8);
+		let head = this;
+		let rad = Math.trim(this.radian + this.closeGap(target) * 1.8);
 
 		this.dir = rad;
 		this.radian = rad;
@@ -56,10 +58,10 @@ class DragonHead extends Enemy {
 			chamber.probe();
 		});
 	//console.log('LEN:' + this.locus.length);
-		for (var cnt = 0; cnt < DragonHead.CNT_OF_BODY; cnt++) {
-			var body = this.body[cnt];
-			var ix = (cnt + 1) * DragonHead.STP_OF_BODY - 1;
-			var locus = this.locus[ix];
+		for (let cnt = 0; cnt < DragonHead.CNT_OF_BODY; cnt++) {
+			let body = this.body[cnt];
+			let ix = (cnt + 1) * DragonHead.STP_OF_BODY - 1;
+			let locus = this.locus[ix];
 
 			body.x = locus.x;
 			body.y = locus.y;
@@ -68,10 +70,10 @@ class DragonHead extends Enemy {
 		this.locus.unshift({x:this.x, y:this.y, radian:this.radian});
 		this.locus.pop();
 		if (this.appears) {
-			var result = [];
+			let result = [];
 
 			this.chamberList.forEach(function(chamber) {
-				var shot = chamber.fire(head);
+				let shot = chamber.fire(head);
 
 				if (shot) {
 					shot.dir = head.dir;

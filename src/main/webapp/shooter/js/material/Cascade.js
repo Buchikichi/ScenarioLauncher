@@ -1,6 +1,6 @@
 class Cascade extends Chain {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.anim = new Animator(this, 'material/cascade.png', Animator.TYPE.NONE);
 		this.radian = Math.SQ;
 		this.radius = Cascade.RADIUS;
@@ -8,7 +8,7 @@ class Cascade extends Chain {
 		for (var cnt = 0; cnt < Cascade.MAX_JOINT; cnt++) {
 			var weight = (Cascade.MAX_JOINT - cnt) * 3;
 
-			this.push(new CascadeChild(field, x, y, weight));
+			this.push(new CascadeChild(x, y, weight));
 		}
 	}
 
@@ -38,9 +38,9 @@ Cascade.MAX_JOINT = 12;
  * CascadeChild.
  */
 class CascadeChild extends Chain {
-	constructor(field, x, y, weight) {
-		super(field, x, y);
-		this.maxX = this.field.width + 100;
+	constructor(x, y, weight) {
+		super(x, y);
+		this.maxX = Field.Instance.width + 100;
 		this.effectH = false;
 		this.effectV = false;
 		this.weight = weight;

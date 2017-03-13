@@ -2,8 +2,8 @@
  * Shot.
  */
 class Shot extends Actor {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.dir = 0;
 		this.width = 16;
 		this.height = 8;
@@ -11,14 +11,14 @@ class Shot extends Actor {
 		this.speed = 6;
 		this.effectH = false;
 		this.size = 2;
-		this.maxX = this.field.width;
+		this.maxX = Field.Instance.width;
 
-		var pan = (this.x - Field.HALF_WIDTH) / Field.HALF_WIDTH;
+		let pan = (this.x - Field.HALF_WIDTH) / Field.HALF_WIDTH;
 		AudioMixer.INSTANCE.play('sfx-fire', .4, false, pan);
 	}
 
 	fate() {
-		this.x = this.field.width + this.width;
+		this.x = Field.Instance.width + this.width;
 		this.isGone = true;
 	}
 
@@ -29,7 +29,7 @@ class Shot extends Actor {
 		ctx.fill();
 		if (this.walled) {
 			if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
-				this.field.landform.smashWall(this);
+				Field.Instance.landform.smashWall(this);
 			}
 			this.fate();
 		}

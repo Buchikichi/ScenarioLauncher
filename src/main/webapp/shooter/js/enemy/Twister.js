@@ -2,8 +2,8 @@
  * Twister.
  */
 class Twister extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.hasBounds = false;
 		this.dir = this.x <= 0 ? 0 : Math.PI;
 		this.step = Math.PI / 23;

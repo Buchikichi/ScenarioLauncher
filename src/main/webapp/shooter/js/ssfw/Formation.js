@@ -2,8 +2,8 @@
  * Formation.
  */
 class Formation extends Actor {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.effectH = false;
 		this.bonus = 800;
 		this.score = this.bonus;
@@ -14,7 +14,7 @@ class Formation extends Actor {
 
 	setup(type, num) {
 		for (let ix = 0; ix < num; ix++) {
-			this.enemies.push(new type(this.field, this.x, this.y));
+			this.enemies.push(new type(this.x, this.y));
 		}
 		return this;
 	}

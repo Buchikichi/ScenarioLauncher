@@ -1,24 +1,26 @@
 /**
  * Field.
  */
-function Field() {
-	this.width = Field.WIDTH;
-	this.height = Field.HEIGHT;
-	this.hW = this.width / 2;
-	this.hH = this.height / 2;
-	this.ship = new Ship(this, -100, 100);
-	this.ship.isGone = true;
-	this.shipTarget = null;
-	this.shipRemain = 0;
-	this.actorList = [];
-	this.score = 0;
-	this.hiscore = 0;
-	this.enemyCycle = 0;
-	this.stage = Stage.LIST[0];
-	this.stageNum = 0;
-	this.setup();
+class Field {
+	constructor(width, height) {
+		this.width = Field.WIDTH;
+		this.height = Field.HEIGHT;
+		this.hW = this.width / 2;
+		this.hH = this.height / 2;
+		this.ship = new Ship(this, -100, 100);
+		this.ship.isGone = true;
+		this.shipTarget = null;
+		this.shipRemain = 0;
+		this.actorList = [];
+		this.score = 0;
+		this.hiscore = 0;
+		this.enemyCycle = 0;
+		this.stage = Stage.LIST[0];
+		this.stageNum = 0;
+		this.setup();
+		Field.Instance = this;
+	}
 }
-
 Field.WIDTH = 512;
 Field.HEIGHT = 224;
 Field.HALF_WIDTH = Field.WIDTH / 2;
@@ -138,20 +140,18 @@ Field.prototype.moveShipTo = function(target) {
 };
 
 Field.prototype.scroll = function() {
-	var field = this;
-
 	if (this.phase == Field.PHASE.BOSS) {
 		return;
 	}
-	this.landform.scanEnemy().forEach(function(obj) {
+	this.landform.scanEnemy().forEach(obj=> {
 		var enemy;
 
 		if (obj.formation) {
-			enemy = new Formation(field, obj.x, obj.y).setup(obj.type, 8);
+			enemy = new Formation(obj.x, obj.y).setup(obj.type, 8);
 		} else {
-			enemy = new obj.type(field, obj.x, obj.y);
+			enemy = new obj.type(obj.x, obj.y);
 		}
-		field.actorList.push(enemy);
+		this.actorList.push(enemy);
 	});
 	var next = this.landform.forward(this.ship);
 

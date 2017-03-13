@@ -64,7 +64,7 @@ class Stage {
 		if (this.scroll == Stage.SCROLL.OFF) {
 			return;
 		}
-		let field = target.field;
+		let field = Field.Instance;
 		let diff = field.hH - target.y;
 		let fg = this.getFg();
 

@@ -2,8 +2,8 @@
  * TitanShot.
  */
 class TitanShot extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.dir = Math.PI;
 		this.radian = this.dir;
 		this.speed = 7;

@@ -2,8 +2,8 @@
  * Molten.
  */
 class Molten extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.hasBounds = false;
 		this.dir = 0;
 		this.speed = .5;
@@ -31,7 +31,7 @@ class Molten extends Enemy {
 			return [];
 		}
 		this.appears = true;
-		let rock = new MoltenRock(this.field, this, this.x, this.y);
+		let rock = new MoltenRock(this, this.x, this.y);
 		this.rock = [rock];
 		return [rock];
 	}
@@ -61,8 +61,8 @@ Molten.PHASE = {
  * MoltenRock.
  */
 class MoltenRock extends Enemy {
-	constructor(field, parent, x, y) {
-		super(field, x, y);
+	constructor(parent, x, y) {
+		super(x, y);
 		this.hasBounds = false;
 		this.parent = parent;
 		this.dir = 0;
@@ -87,7 +87,7 @@ class MoltenRock extends Enemy {
 		if (this.absorbed && this.hitPoint) {
 			let dir = Math.trim(this.dir + Math.SQ);
 			for (let cnt = 0; cnt < 3; cnt++) {
-				let child = new MoltenRock(this.field, parent, this.x, this.y);
+				let child = new MoltenRock(parent, this.x, this.y);
 
 				child.dir = dir;
 				child.speed = this.speed * 1.2;

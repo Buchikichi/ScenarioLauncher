@@ -2,8 +2,8 @@
  * Missile.
  */
 class Missile extends Actor {
-	constructor(field, x, y, opt) {
-		super(field, x, y);
+	constructor(x, y, opt) {
+		super(x, y);
 		this.dir = opt.dir;
 		this.speed = 3;
 		this.width = 8;
@@ -13,7 +13,7 @@ class Missile extends Actor {
 	}
 
 	fate() {
-		this.x = this.field.width + this.width;
+		this.x = Field.Instance.width + this.width;
 		this.isGone = true;
 	}
 
@@ -26,7 +26,7 @@ class Missile extends Actor {
 		ctx.restore();
 //		if (this.walled) {
 //			if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
-//				this.field.landform.smashWall(this);
+//				Field.Instance.landform.smashWall(this);
 //			}
 //			this.fate();
 //		}

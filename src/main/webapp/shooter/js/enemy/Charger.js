@@ -2,8 +2,8 @@
  * Charger.
  */
 class Charger extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.speed = 2.5;
 		this.hitPoint = 1;
 		this.score = 10;

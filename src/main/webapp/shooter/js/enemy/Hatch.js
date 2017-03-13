@@ -2,8 +2,8 @@
  * Hatch.
  */
 class Hatch extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor( x, y) {
+		super( x, y);
 		this.z = 1;
 		this.speed = 0;
 		this.hitPoint = 10;
@@ -12,8 +12,9 @@ class Hatch extends Enemy {
 		this.children = 0;
 		this.anim = new Animator(this, 'enemy/hatch.png', Animator.TYPE.Y, 1, 2);
 		this.isInverse = false;
-		if (this.field && this.field.landform) {
-			var landform = this.field.landform;
+		let field = Field.Instance;
+		if (field && field.landform) {
+			var landform = field.landform;
 			var src = {x:this.x, y:this.y + Landform.BRICK_WIDTH};
 
 			landform.hitTest(src);
@@ -36,7 +37,7 @@ class Hatch extends Enemy {
 		if (0 < this.explosion) {
 			return;
 		}
-		return [new Charger(this.field, this.x, this.y)];
+		return [new Charger(this.x, this.y)];
 	}
 }
 Hatch.IDLE = 30;

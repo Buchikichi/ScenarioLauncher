@@ -2,8 +2,8 @@
  * EnmHanker.
  */
 class EnmHanker extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.speed = .7;
 		this.hitPoint = 2;
 		this.score = 50;

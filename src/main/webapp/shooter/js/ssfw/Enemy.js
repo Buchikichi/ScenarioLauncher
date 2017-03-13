@@ -2,8 +2,8 @@
  * Enemy.
  */
 class Enemy extends Actor {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.radian = Math.PI;
 		this.routine = null;
 		this.routineIx = 0;
@@ -21,9 +21,9 @@ class Enemy extends Actor {
 	}
 
 	fire(target) {
-		let bullet = new Bullet(this.field, this.x, this.y);
+		let bullet = new Bullet(this.x, this.y);
 		let dist = this.calcDistance(target);
-		let fg = this.field.stage.getFg();
+		let fg = Field.Instance.stage.getFg();
 		let estimation = dist / bullet.speed * fg.speed;
 		let dx = target.x - this.x + estimation;
 		let dy = target.y - this.y;
@@ -65,11 +65,12 @@ Enemy.assign = function(ix, x, y) {
  * Chain.
  */
 class Chain extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.prev = null;
 		this.next = null;
 	}
+
 	unshift(element) {
 		element.next = this;
 		element.prev = this.prev;
@@ -78,7 +79,7 @@ class Chain extends Enemy {
 		}
 		this.prev = element;
 		return this;
-	};
+	}
 
 	push(element) {
 		element.prev = this;
@@ -88,11 +89,11 @@ class Chain extends Enemy {
 		}
 		this.next = element;
 		return this;
-	};
+	}
 
 	remove() {
 		this.prev.next = this.next;
 		this.next.prev = this.prev;
 		return this.next;
-	};
+	}
 }

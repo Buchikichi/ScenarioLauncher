@@ -1,6 +1,6 @@
 class Rewinder extends Chain {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.step = Math.SQ / 100;
 		this.radius = Rewinder.RADIUS;
 		this.speed = 1.1;
@@ -14,7 +14,7 @@ class Rewinder extends Chain {
 		];
 		this.appears = false;
 		for (var cnt = 0; cnt < Rewinder.MAX_JOINT; cnt++) {
-			this.push(new RewinderChild(field, x, y));
+			this.push(new RewinderChild(x, y));
 		}
 	}
 
@@ -60,8 +60,8 @@ Rewinder.MAX_JOINT = 16;
  * RewinderChild.
  */
 class RewinderChild extends Chain {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.radian = 0;
 		this.hasBounds = false;
 		this.effectH = false;

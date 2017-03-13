@@ -2,8 +2,8 @@
  * TitanBall.
  */
 class TitanBall extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.hasBounds = false;
 		this.speed = 1.5 + Math.random() * 4;
 		this.gravity = .03;

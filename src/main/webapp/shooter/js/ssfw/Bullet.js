@@ -2,8 +2,8 @@
  * Bullet.
  */
 class Bullet extends Actor {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.speed = 2;
 		this.width = 8;
 		this.height = 8;

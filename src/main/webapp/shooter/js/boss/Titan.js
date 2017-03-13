@@ -2,8 +2,8 @@
  * Titan.
  */
 class Titan extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		let asf = Object.assign({}, MotionManager.INSTANCE.dic['asf']);
 
 		this.scale = 7;
@@ -22,11 +22,11 @@ class Titan extends Enemy {
 		]);
 		if (asf) {
 			this.skeleton = new Skeleton(asf);
-			this.setupBone(field);
+			this.setupBone();
 		}
 	}
 
-	setupBone(field) {
+	setupBone() {
 		let map = this.skeleton.map;
 		let boneMap = {};
 
@@ -34,7 +34,7 @@ class Titan extends Enemy {
 			if (key == 'root') {
 				return;
 			}
-			let titanBone = new TitanBone(field, 0, 0);
+			let titanBone = new TitanBone(0, 0);
 			let img = 'boss/titan/' + key + '.png';
 
 			titanBone.anim = new Animator(titanBone, img, Animator.TYPE.NONE);
@@ -78,7 +78,7 @@ class Titan extends Enemy {
 		if (filling) {
 			filling.id.forEach(function(id) {
 				let titanBone = titan.boneMap[id];
-				let shot = new filling.type(titan.field, titanBone.x, titanBone.y);
+				let shot = new filling.type(titanBone.x, titanBone.y);
 
 				shot.dir = titanBone.radian;
 				list.push(shot);
@@ -142,8 +142,8 @@ Titan.HIT_POINT = 292;
  * TitanBone.
  */
 class TitanBone extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.hasBounds = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.filling = null;

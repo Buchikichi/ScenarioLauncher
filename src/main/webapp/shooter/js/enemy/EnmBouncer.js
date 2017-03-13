@@ -2,8 +2,8 @@
  * EnmBouncer.
  */
 class EnmBouncer extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.dir = this.x <= 0 ? 0 : Math.PI;
 		this.speed = 2;
 		this.gravity = .1;
@@ -15,7 +15,7 @@ class EnmBouncer extends Enemy {
 	}
 
 	move(target) {
-		if (this.shuttle && (this.x < 0 || this.field.width + Landform.BRICK_WIDTH < this.x)) {
+		if (this.shuttle && (this.x < 0 || Field.Instance.width + Landform.BRICK_WIDTH < this.x)) {
 			this.dir = Math.trim(this.dir + Math.PI);
 			this.x = this.svX;
 			this.dx = -this.dx;

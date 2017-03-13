@@ -2,8 +2,8 @@
  * EnmJuno.
  */
 class EnmJuno extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.dir = Math.PI;
 		this.speed = 1.5;
 		this.hitPoint = 16; // 2016-7-5
@@ -16,10 +16,11 @@ class EnmJuno extends Enemy {
 	}
 
 	recalculation() {
+		let field = Field.Instance;
 		super.recalculation();
-		this.minX = -this.field.width;
-		this.minY = -this.field.height;
-		this.maxX = this.field.width * 2;
-		this.maxY = this.field.height * 2;
+		this.minX = -field.width;
+		this.minY = -field.height;
+		this.maxX = field.width * 2;
+		this.maxY = field.height * 2;
 	}
 }

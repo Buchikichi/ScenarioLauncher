@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	let loading = document.getElementById('loading');
 	let view = document.getElementById('view');
 	let repositories = [AudioMixer.INSTANCE, MotionManager.INSTANCE];
-	let field = new Field();
+	let field = new Field(512, 224);
 	let keys = {};
 
 	window.addEventListener('resize', function(event) {

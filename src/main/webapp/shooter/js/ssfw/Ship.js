@@ -2,8 +2,8 @@
  * Ship.
  */
 class Ship extends Actor {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.speed = 2.5;
 		this.effectH = false;
 		this.shotList = [];
@@ -17,9 +17,13 @@ class Ship extends Actor {
 	}
 
 	recalculation() {
-		this.right = this.field.width - this.width * 3;
-		this.bottom = this.field.height - this.hH;
+		let field = Field.Instance;
+
 		super.recalculation();
+		if (field) {
+			this.right = field.width - this.width * 3;
+			this.bottom = field.height - this.hH;
+		}
 	}
 
 	reset() {
@@ -31,8 +35,8 @@ class Ship extends Actor {
 	}
 
 	inkey(keys) {
-		var hit = false;
-		var dir = 0;
+		let hit = false;
+		let dir = 0;
 
 		if (keys['ArrowLeft'] || keys['Left'] || keys['k37']) {
 			dir = 1;
@@ -54,7 +58,7 @@ class Ship extends Actor {
 	}
 
 	sieveShots() {
-		var shotList = [];
+		let shotList = [];
 
 		this.shotList.forEach(function(shot) {
 			if (shot.isGone) {
@@ -83,16 +87,16 @@ class Ship extends Actor {
 		if (this.y < this.hH || this.bottom < this.y) {
 			this.y = this.svY;
 		}
-		var ship = this;
+		let ship = this;
 
 		// shot & missile
 		this.sieveShots();
 		if (this.trigger) {
-			var result = [];
+			let result = [];
 
 			this.trigger = false;
 			this.chamberList.forEach(function(chamber) {
-				var shot = chamber.fire(ship);
+				let shot = chamber.fire(ship);
 
 				if (shot) {
 					ship.shotList.push(shot);

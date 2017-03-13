@@ -105,7 +105,7 @@ Landform.prototype.retry = function() {
 };
 
 Landform.prototype.effect = function(target) {
-	var maxX = Math.max(target.field.width + target.width, target.maxX);
+	var maxX = Math.max(Field.Instance.width + target.width, target.maxX);
 
 	if (target.effectH) {
 		target.x -= this.effectH;

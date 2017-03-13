@@ -2,8 +2,8 @@
  * EnmBattery.
  */
 class EnmBattery extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.speed = 0;
 		this.hitPoint = 1;
 		this.score = 10;
@@ -14,9 +14,10 @@ class EnmBattery extends Enemy {
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)
 		];
 		this.isInverse = false;
-		if (this.field && this.field.landform) {
-			var landform = this.field.landform;
-			var src = {x:this.x, y:this.y + Landform.BRICK_WIDTH};
+		let field = Field.Instance;
+		if (field && field.landform) {
+			let landform = field.landform;
+			let src = {x:this.x, y:this.y + Landform.BRICK_WIDTH};
 
 			landform.hitTest(src);
 			this.isInverse = !src.walled;

@@ -1,8 +1,8 @@
 class Matter {
-	constructor() {
-		this.x = 0;
-		this.y = 0;
-		this.z = 0;
+	constructor(x, y, z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		this.dx = 0;
 		this.dy = 0;
 		this.dir = null;
@@ -18,18 +18,8 @@ class Matter {
  * Actor.
  */
 class Actor extends Matter {
-	constructor(field, x, y) {
-		super();
-		let actor = this;
-
-		this.field = field;
-		this.x = x;
-		this.y = y;
-		this.z = 0;
-		this.dx = 0;
-		this.dy = 0;
-		this.dir = null;
-		this.radian = 0;
+	constructor(x, y, z = 0) {
+		super(x, y, z);
 		this.width = 16;
 		this.height = 16;
 		this.hasBounds = true;
@@ -56,13 +46,16 @@ class Actor extends Matter {
 
 	recalculation() {
 		let margin = this.hasBounds ? 0 : Field.HALF_WIDTH;
+		let field = Field.Instance;
 
 		this.hW = this.width / 2;
 		this.hH = this.height / 2;
 		this.minX = -this.width - margin;
 		this.minY = -this.height - margin;
-		this.maxX = this.field.width + this.width + margin;
-		this.maxY = this.field.height + this.height + margin;
+		if (field) {
+			this.maxX = field.width + this.width + margin;
+			this.maxY = field.height + this.height + margin;
+		}
 	}
 
 	enter() {
@@ -72,7 +65,7 @@ class Actor extends Matter {
 
 	eject() {
 		this.isGone = true;
-		this.x = -this.field.width;
+		this.x = -Field.Instance.width;
 	}
 
 	aim(target) {
@@ -124,7 +117,7 @@ class Actor extends Matter {
 			this.y += Math.sin(this.dir) * this.speed;
 		}
 		if (this.gravity != 0) {
-			let y = this.field.landform.scanFloor(this);
+			let y = Field.Instance.landform.scanFloor(this);
 			let lift = false;
 
 			if (this.gravity < 0) {
@@ -162,7 +155,7 @@ class Actor extends Matter {
 
 	react() {
 		this.dy *= -this.reaction;
-		this.radian = this.field.landform.getHorizontalAngle(this);
+		this.radian = Field.Instance.landform.getHorizontalAngle(this);
 	}
 
 	/**
@@ -252,7 +245,7 @@ class Actor extends Matter {
 	absorb(target) {
 		this.absorbed = true;
 		if (this.sfxAbsorb) {
-			let ctx = this.field.ctx;
+			let ctx = Field.Instance.ctx;
 
 			ctx.fillStyle = 'rgba(255, 200, 0, 0.4)';
 			ctx.save();

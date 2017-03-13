@@ -2,8 +2,8 @@
  * EnmCrab.
  */
 class EnmCrab extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.hasBounds = false;
 		this.gravity = .3;
 		this.reaction = .4;

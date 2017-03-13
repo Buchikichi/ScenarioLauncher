@@ -23,7 +23,7 @@ Gizmo.DEST = {
 };
 
 Gizmo.prototype.tick = function(src, target) {
-	var landform = src.field.landform;
+	let landform = Field.Instance.landform;
 
 	if (this.type == Gizmo.TYPE.FIXED) {
 		if (this.destination == Gizmo.DEST.ROTATE) {
@@ -45,8 +45,8 @@ Gizmo.prototype.tick = function(src, target) {
 		}
 		return;
 	}
-	var dx = target.x - src.x;
-	var dy = target.y - src.y;
+	let dx = target.x - src.x;
+	let dy = target.y - src.y;
 
 	if (Math.abs(dx) <= src.speed) {
 		dx = 0;
@@ -68,10 +68,10 @@ Gizmo.prototype.tick = function(src, target) {
 				src.radian = Math.SQ;
 			}
 		} else if (this.destination == Gizmo.DEST.ROTATE) {
-			var dist = src.calcDistance(target);
+			let dist = src.calcDistance(target);
 
 			if (src.speed < dist) {
-				var step = Math.PI / 30;
+				let step = Math.PI / 30;
 
 				src.radian = Math.close(src.radian, Math.atan2(dy, dx), step);
 				src.radian = Math.trim(src.radian);
@@ -87,7 +87,7 @@ Gizmo.prototype.tick = function(src, target) {
 		} else if (this.destination == Gizmo.DEST.TO_Y && dy) {
 			src.dir = Math.atan2(dy, 0);
 		} else if (this.destination == Gizmo.DEST.ROTATE) {
-			var step = Math.PI / 60;
+			let step = Math.PI / 60;
 
 			src.dir = Math.close(src.dir, Math.atan2(dy, dx), step);
 			src.radian = src.dir;
@@ -99,7 +99,7 @@ Gizmo.prototype.tick = function(src, target) {
  * Movement.
  */
 function Movement(cond) {
-	var count = parseInt(cond);
+	let count = parseInt(cond);
 
 	this.cond = cond;
 	this.count = count == cond ? count : null;
@@ -126,8 +126,8 @@ Movement.prototype.isValid = function(src, target) {
 		src.routineCnt = 0;
 		return false;
 	}
-	var dx = target.x - src.x;
-	var dy = target.y - src.y;
+	let dx = target.x - src.x;
+	let dy = target.y - src.y;
 
 	if (this.cond == Movement.COND.X && Math.abs(dx) <= src.speed) {
 		return false;

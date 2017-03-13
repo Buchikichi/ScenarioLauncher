@@ -2,8 +2,8 @@
  * Tentacle.
  */
 class Tentacle extends Chain {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.speed = .6;
 		this.hitPoint = 16;
 		this.appears = false;
@@ -12,10 +12,10 @@ class Tentacle extends Chain {
 			new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO)
 		];
 		// Joint
-		this.push(new TentacleHead(field, 5 + Tentacle.MAX_JOINT));
+		this.push(new TentacleHead(5 + Tentacle.MAX_JOINT));
 		for (var cnt = 0; cnt < Tentacle.MAX_JOINT; cnt++) {
 			var speed = 5 + Tentacle.MAX_JOINT - cnt;
-			this.push(new TentacleJoint(field, speed));
+			this.push(new TentacleJoint(speed));
 		}
 		this.score = 150;
 	}
@@ -60,8 +60,8 @@ Tentacle.DEG_STEP = Math.PI / 2000;
  * TentacleJoint.
  */
 class TentacleJoint extends Chain {
-	constructor(field, speed) {
-		super(field, 0, 0);
+	constructor(speed) {
+		super(0, 0);
 		this.hasBounds = false;
 		this.radius = 4;
 		this.radian = 0;
@@ -98,8 +98,8 @@ class TentacleJoint extends Chain {
  * TentacleHead.
  */
 class TentacleHead extends TentacleJoint {
-	constructor(field, speed) {
-		super(field, 0, 0);
+	constructor(speed) {
+		super(0, 0);
 		this.anim = new Animator(this, 'enemy/tentacleHead.png', Animator.TYPE.NONE);
 	}
 

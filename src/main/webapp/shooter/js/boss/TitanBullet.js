@@ -2,8 +2,8 @@
  * TitanBullet.
  */
 class TitanBullet extends Enemy {
-	constructor(field, x, y) {
-		super(field, x, y);
+	constructor(x, y) {
+		super(x, y);
 		this.dir = -Math.PI + Math.SQ / 2;
 		this.radian = this.dir;
 		this.speed = 4;

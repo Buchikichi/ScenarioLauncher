@@ -28,9 +28,7 @@ class Ship extends Actor {
 
 	reset() {
 		this.trigger = false;
-		this.chamberList.forEach(function(chamber) {
-			chamber.reset();
-		});
+		this.chamberList.forEach(chamber => chamber.reset());
 		this.shotList = [];
 	}
 
@@ -55,12 +53,15 @@ class Ship extends Actor {
 		if (hit) {
 			this.dir = (dir + 1) * Math.SQ;
 		}
+		if (keys['Control'] || keys['Shift'] || keys['k16'] || keys['k17']) {
+			this.trigger = true;
+		}
 	}
 
 	sieveShots() {
 		let shotList = [];
 
-		this.shotList.forEach(function(shot) {
+		this.shotList.forEach(shot => {
 			if (shot.isGone) {
 				return;
 			}
@@ -70,10 +71,11 @@ class Ship extends Actor {
 	}
 
 	move() {
+		this.dir = null;
+		this.aim(Controller.Instance.point);
+		this.inkey(Controller.Instance.keys);
 		super.move();
-		this.chamberList.forEach(function(chamber) {
-			chamber.probe();
-		});
+		this.chamberList.forEach(chamber => chamber.probe());
 		if (this.isGone) {
 			return;
 		}
@@ -87,19 +89,20 @@ class Ship extends Actor {
 		if (this.y < this.hH || this.bottom < this.y) {
 			this.y = this.svY;
 		}
-		let ship = this;
-
+		if (Controller.Instance.touch) {
+			this.trigger = true;
+		}
 		// shot & missile
 		this.sieveShots();
 		if (this.trigger) {
 			let result = [];
 
 			this.trigger = false;
-			this.chamberList.forEach(function(chamber) {
-				let shot = chamber.fire(ship);
+			this.chamberList.forEach(chamber => {
+				let shot = chamber.fire(this);
 
 				if (shot) {
-					ship.shotList.push(shot);
+					this.shotList.push(shot);
 					result.push(shot);
 				}
 			});

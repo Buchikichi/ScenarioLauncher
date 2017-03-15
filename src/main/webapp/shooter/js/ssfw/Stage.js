@@ -77,9 +77,10 @@ class Stage {
 		}
 		let dy = diff / 3;
 		let nextY = fg.y - dy;
+		let fgViewY = fg.height - field.height;
 
 		if (this.scroll == Stage.SCROLL.ON) {
-			if (nextY < 0 || fg.viewY < nextY) {
+			if (nextY < 0 || fgViewY < nextY) {
 				return;
 			}
 		}
@@ -90,7 +91,7 @@ class Stage {
 		}
 		if (this.scroll == Stage.SCROLL.BOTTOM) {
 			console.log('nextY:' + nextY + '/' + fg.height);
-			if (fg.viewY < nextY) {
+			if (fgViewY < nextY) {
 				this.scroll = Stage.SCROLL.OFF;
 				return;
 			}
@@ -166,22 +167,18 @@ Stage.CHECK_POINT = [660, 1440];
  */
 class StageView {
 	constructor(img, speed, dir, blink) {
-		let stageView = this;
-
 		this.ready = false;
 		this.pattern = null;
 		this.repeatX = 2;
 		this.img = new Image();
-		this.img.src = './img/' + img;
-		this.img.onload = function() {
-			stageView.width = this.width;
-			stageView.height = this.height;
-			stageView.w2 = this.width * stageView.repeatX;
-			stageView.h2 = this.height * 2;
-			stageView.viewX = this.width - Field.HALF_WIDTH;
-			stageView.viewY = this.height - Field.HEIGHT;
-			stageView.ready = true;
+		this.img.onload = ()=> {
+			this.width = this.img.width;
+			this.height = this.img.height;
+			this.w2 = this.img.width * this.repeatX;
+			this.h2 = this.img.height * 2;
+			this.ready = true;
 		};
+		this.img.src = './img/' + img;
 		this.speed = speed;
 		this.dir = dir;
 		this.blink = blink;
@@ -267,7 +264,7 @@ class StageFg extends StageView {
 
 		super.reset(checkPoint);
 		if (checkPoint == 0) {
-			this.x = -Field.WIDTH;
+			this.x = -Field.Instance.width;
 		}
 		if (this.ready) {
 			this.canvas = this.createCanvas();

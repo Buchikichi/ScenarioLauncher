@@ -45,8 +45,8 @@ class Actor extends Matter {
 	}
 
 	recalculation() {
-		let margin = this.hasBounds ? 0 : Field.HALF_WIDTH;
 		let field = Field.Instance;
+		let margin = this.hasBounds ? 0 : field.hW;
 
 		this.hW = this.width / 2;
 		this.hH = this.height / 2;
@@ -238,7 +238,7 @@ class Actor extends Matter {
 			return;
 		}
 		this.explosion = Actor.MAX_EXPLOSION;
-		let pan = (this.x - Field.HALF_WIDTH) / Field.HALF_WIDTH;
+		let pan = Field.Instance.calcPan(this.x);
 		AudioMixer.INSTANCE.play(this.sfx, .2, false, pan);
 	}
 
@@ -254,7 +254,7 @@ class Actor extends Matter {
 			ctx.arc(0, 0, 5, 0, Math.PI2, false);
 			ctx.fill();
 			ctx.restore();
-			let pan = (this.x - Field.HALF_WIDTH) / Field.HALF_WIDTH;
+			let pan = Field.Instance.calcPan(this.x);
 			AudioMixer.INSTANCE.play(this.sfxAbsorb, .3, false, pan);
 		}
 	}

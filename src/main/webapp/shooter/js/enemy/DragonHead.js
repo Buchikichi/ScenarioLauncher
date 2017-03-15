@@ -49,7 +49,7 @@ class DragonHead extends Enemy {
 
 	move(target) {
 		let head = this;
-		let rad = Math.trim(this.radian + this.closeGap(target) * 1.8);
+		let rad = Math.trim(this.radian + this.closeGap(target) * .9);
 
 		this.dir = rad;
 		this.radian = rad;

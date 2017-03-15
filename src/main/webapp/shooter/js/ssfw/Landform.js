@@ -2,8 +2,6 @@
  * Landform.
  */
 function Landform(canvas) {
-	var landform = this;
-
 	this.canvas = canvas;
 	this.ctx = canvas.getContext('2d');
 	this.effectH = 0;
@@ -21,14 +19,16 @@ function Landform(canvas) {
 	this.lastScan = null;
 	this.touch = false;
 	this.img = new Image();
-	this.img.onload = function() {
-		landform.width = this.width;
-		landform.height = this.height;
-		landform.bw = this.width / Landform.BRICK_WIDTH;
-		landform.bh = this.height / Landform.BRICK_WIDTH;
-		landform.viewX = this.width - Field.HALF_WIDTH;
-		landform.arrivX = this.width - Field.WIDTH;
-		landform.noticeX = landform.arrivX - Field.HALF_WIDTH;
+	this.img.onload = ()=> {
+		let field = Field.Instance;
+
+		this.width = this.img.width;
+		this.height = this.img.height;
+		this.bw = this.img.width / Landform.BRICK_WIDTH;
+		this.bh = this.img.height / Landform.BRICK_WIDTH;
+		this.viewX = this.img.width - field.hW;
+		this.arrivX = this.img.width - field.width;
+		this.noticeX = this.arrivX - field.hW;
 	}
 	this.reverse = new Image();
 	this.reverse.src = './img/reverse.png';

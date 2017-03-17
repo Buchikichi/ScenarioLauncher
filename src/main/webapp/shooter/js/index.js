@@ -4,7 +4,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 	let loading = document.getElementById('loading');
 	let view = document.getElementById('view');
-	let repositories = [AudioMixer.INSTANCE, MotionManager.INSTANCE];
+	let repositories = [ImageManager.Instance, AudioMixer.INSTANCE, MotionManager.INSTANCE];
 	let field = new Field(512, 224);
 
 	new Controller();

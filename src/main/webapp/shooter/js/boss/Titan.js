@@ -4,8 +4,6 @@
 class Titan extends Enemy {
 	constructor(x, y) {
 		super(x, y);
-		let asf = Object.assign({}, MotionManager.INSTANCE.dic['asf']);
-
 		this.scale = 7;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		//
@@ -20,6 +18,7 @@ class Titan extends Enemy {
 			new Motion(Motion.TYPE.NORMAL, '86_01b.amc', 2, Math.PI)
 				.shot(Bullet, ['lfingers', 'rfingers'], {min:0, max:1000}), // jump
 		]);
+		let asf = Object.assign({}, MotionManager.INSTANCE.dic['asf']);
 		if (asf) {
 			this.skeleton = new Skeleton(asf);
 			this.setupBone();
@@ -27,21 +26,17 @@ class Titan extends Enemy {
 	}
 
 	setupBone() {
-		let map = this.skeleton.map;
 		let boneMap = {};
 
-		Object.keys(map).forEach(function(key) {
+		Object.keys(this.skeleton.map).forEach(key => {
 			if (key == 'root') {
 				return;
 			}
-			let titanBone = new TitanBone(0, 0);
-			let img = 'boss/titan/' + key + '.png';
+			let titanBone = new TitanBone(key, 0, 0);
 
-			titanBone.anim = new Animator(titanBone, img, Animator.TYPE.NONE);
-			if (key == 'lowerback') {
+			if (key == Titan.CORE) {
 				titanBone.hitPoint = Titan.HIT_POINT;
 			}
-			titanBone.id = key;
 			boneMap[key] = titanBone;
 		});
 		this.boneMap = boneMap;
@@ -50,7 +45,7 @@ class Titan extends Enemy {
 
 	eject() {
 		super.eject();
-		Object.keys(this.boneMap).forEach((key)=> {
+		Object.keys(this.boneMap).forEach(key => {
 			let bone = this.boneMap[key];
 
 			bone.hitPoint = 0;
@@ -60,14 +55,13 @@ class Titan extends Enemy {
 
 	move(target) {
 		let list = [];
-		let titan = this;
 		let skeleton = this.skeleton;
 		let filling = this.motionRoutine.next(skeleton);
 
 		super.move(target);
 		if (!this.appears) {
-			Object.keys(this.boneMap).forEach(function(key) {
-				list.push(titan.boneMap[key]);
+			Object.keys(this.boneMap).forEach(key => {
+				list.push(this.boneMap[key]);
 			});
 			this.appears = true;
 			return list.reverse();
@@ -76,19 +70,19 @@ class Titan extends Enemy {
 		let isDestroy = false;
 
 		if (filling) {
-			filling.id.forEach(function(id) {
-				let titanBone = titan.boneMap[id];
+			filling.id.forEach(id => {
+				let titanBone = this.boneMap[id];
 				let shot = new filling.type(titanBone.x, titanBone.y);
 
 				shot.dir = titanBone.radian;
 				list.push(shot);
 			});
 		}
-		Object.keys(this.boneMap).forEach(function(key) {
+		Object.keys(this.boneMap).forEach(key => {
 			let bone = map[key];
-			let x = bone.cx * titan.scale + titan.x;
-			let y = bone.cy * titan.scale + titan.y;
-			let titanBone = titan.boneMap[key];
+			let x = bone.cx * this.scale + this.x;
+			let y = bone.cy * this.scale + this.y;
+			let titanBone = this.boneMap[key];
 
 			titanBone.x = x;
 			titanBone.y = y;
@@ -107,7 +101,7 @@ class Titan extends Enemy {
 
 	drawInfo(ctx) {
 		let motion = this.motionRoutine.current;
-		let lowerback = this.boneMap['lowerback'];
+		let lowerback = this.boneMap[Titan.CORE];
 
 		ctx.save();
 		ctx.translate(this.x, this.y);
@@ -127,7 +121,7 @@ class Titan extends Enemy {
 			this.skeleton.draw(ctx);
 		}
 		ctx.restore();
-		this.drawInfo(ctx);
+//		this.drawInfo(ctx);
 	}
 
 	isHit(target) {
@@ -135,6 +129,7 @@ class Titan extends Enemy {
 	}
 }
 Titan.HIT_POINT = 292;
+Titan.CORE = 'lowerback';
 
 
 //-----------------------------------------------------------------------------
@@ -142,11 +137,15 @@ Titan.HIT_POINT = 292;
  * TitanBone.
  */
 class TitanBone extends Enemy {
-	constructor(x, y) {
+	constructor(id, x, y) {
+		let img = 'boss/titan/' + id + '.png';
+
 		super(x, y);
+		this.id = id;
 		this.hasBounds = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.filling = null;
+		this.anim = new Animator(this, img, Animator.TYPE.NONE);
 	}
 
 	trigger() {}

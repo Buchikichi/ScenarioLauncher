@@ -1,27 +1,117 @@
-function Animator(actor, src, type) {
-	var anim = this;
-	var len = arguments.length;
+class Animator {
+	constructor(actor, src, type, numX = 1, numY = 1) {
+		this.actor = actor;
+		this.type = type;
+		this.numX = numX;
+		this.numY = numY;
+		this.patNum = 0;
+		this.loadImage(actor, src);
+	}
 
-	this.actor = actor;
-	this.type = type;
-	this.numX = 3 < len ? arguments[3] : 1;
-	this.numY = 4 < len ? arguments[4] : 1;
-	this.patNum = 0;
-	this.img = new Image();
-	this.img.onload = function() {
-		anim.width = this.width / anim.numX;
-		anim.height = this.height / anim.numY;
-		anim.hW = anim.width / 2;
-		anim.hH = anim.height / 2;
-		actor.width = anim.width;
-		actor.height = anim.height;
-		actor.hW = anim.hW;
-		actor.hH = anim.hH;
-		if (actor.recalculation) {
-			actor.recalculation();
+	loadImage(actor, src) {
+		let imgs = ImageManager.Instance;
+
+		this.img = imgs.dic[src];
+		if (this.img) {
+			this.width = this.img.width / this.numX;
+			this.height = this.img.height / this.numY;
+			this.hW = this.width / 2;
+			this.hH = this.height / 2;
+			actor.width = this.width;
+			actor.height = this.height;
+			actor.hW = this.hW;
+			actor.hH = this.hH;
+			if (actor.recalculation) {
+				actor.recalculation();
+			}
+			return;
 		}
-	};
-	this.img.src = 'img/' + src;
+		// TODO 仮実装なので直す
+ImageManager.Instance.reserve([src]);
+		this.img = new Image();
+		this.img.onload = ()=> {
+			this.width = this.img.width / this.numX;
+			this.height = this.img.height / this.numY;
+			this.hW = this.width / 2;
+			this.hH = this.height / 2;
+			actor.width = this.width;
+			actor.height = this.height;
+			actor.hW = this.hW;
+			actor.hH = this.hH;
+			if (actor.recalculation) {
+				actor.recalculation();
+			}
+		};
+		this.img.src = 'img/' + src;
+	}
+
+	next(dir) {
+		if (this.type == Animator.TYPE.V && .1 < Math.abs(this.patNum)) {
+			if (this.patNum < 0) {
+				this.patNum += .1;
+			} else {
+				this.patNum -= .1;
+			}
+		}
+		if (dir != null) {
+			if (this.type == Animator.TYPE.X) {
+				this.patNum += Math.cos(dir) * .5;
+				let num = Math.floor(this.patNum);
+
+				if (num < 0) {
+					this.patNum = this.numX - .1;
+				} else if (this.numX <= num) {
+					this.patNum = 0;
+				}
+			} else if (this.type == Animator.TYPE.Y) {
+				this.patNum += Math.sin(dir) * .5;
+				let num = Math.floor(this.patNum);
+
+				if (num < 0) {
+					this.patNum = this.numY - .1;
+				} else if (this.numY <= num) {
+					this.patNum = 0;
+				}
+			} else if (this.type == Animator.TYPE.V) {
+				let limit = Math.floor(this.numY / 2);
+
+				this.patNum += Math.sin(dir) / 3;
+				if (this.patNum < -limit) {
+					this.patNum = -limit;
+				} else if (limit < this.patNum) {
+					this.patNum = limit;
+				}
+			}
+		}
+		//this.patNum = Math.round(this.patNum, 3);
+		this.patNum *= 1000;
+		this.patNum = Math.round(this.patNum) / 1000;
+//console.log('patNum:' + this.patNum);
+	}
+
+	draw(ctx) {
+		let actor = this.actor;
+		let sw = this.width;
+		let sh = this.height;
+		let sx = 0;
+		let sy = 0;
+
+		if (this.type == Animator.TYPE.X) {
+			sx = sw * Math.floor(this.patNum);
+		} else if (this.type == Animator.TYPE.Y) {
+			sy = sh * Math.floor(this.patNum);
+		} else if (this.type == Animator.TYPE.V) {
+			sy = sh * (parseInt(this.patNum) + (this.numY ? parseInt(this.numY / 2) : 0));
+		}
+		ctx.save();
+		ctx.translate(actor.x, actor.y);
+		ctx.rotate(actor.radian);
+		if (actor.scale) {
+			ctx.scale(actor.scale, actor.scale);
+		}
+		ctx.drawImage(this.img, sx, sy, sw, sh, -this.hW, -this.hH, sw, sh);
+		ctx.restore();
+	}
 }
 Animator.TYPE = {
 	NONE: 0,
@@ -30,72 +120,4 @@ Animator.TYPE = {
 	XY: 3,
 	H: 4,
 	V: 5,
-};
-
-Animator.prototype.next = function(dir) {
-	if (this.type == Animator.TYPE.V && .1 < Math.abs(this.patNum)) {
-		if (this.patNum < 0) {
-			this.patNum += .1;
-		} else {
-			this.patNum -= .1;
-		}
-	}
-	if (dir != null) {
-		if (this.type == Animator.TYPE.X) {
-			this.patNum += Math.cos(dir) * .5;
-			var num = Math.floor(this.patNum);
-
-			if (num < 0) {
-				this.patNum = this.numX - .1;
-			} else if (this.numX <= num) {
-				this.patNum = 0;
-			}
-		} else if (this.type == Animator.TYPE.Y) {
-			this.patNum += Math.sin(dir) * .5;
-			var num = Math.floor(this.patNum);
-
-			if (num < 0) {
-				this.patNum = this.numY - .1;
-			} else if (this.numY <= num) {
-				this.patNum = 0;
-			}
-		} else if (this.type == Animator.TYPE.V) {
-			var limit = Math.floor(this.numY / 2);
-
-			this.patNum += Math.sin(dir) / 3;
-			if (this.patNum < -limit) {
-				this.patNum = -limit;
-			} else if (limit < this.patNum) {
-				this.patNum = limit;
-			}
-		}
-	}
-	//this.patNum = Math.round(this.patNum, 3);
-	this.patNum *= 1000;
-	this.patNum = Math.round(this.patNum) / 1000;
-//console.log('patNum:' + this.patNum);
-};
-
-Animator.prototype.draw = function(ctx) {
-	var actor = this.actor;
-	var sw = this.width;
-	var sh = this.height;
-	var sx = 0;
-	var sy = 0;
-
-	if (this.type == Animator.TYPE.X) {
-		sx = sw * Math.floor(this.patNum);
-	} else if (this.type == Animator.TYPE.Y) {
-		sy = sh * Math.floor(this.patNum);
-	} else if (this.type == Animator.TYPE.V) {
-		sy = sh * (parseInt(this.patNum) + (this.numY ? parseInt(this.numY / 2) : 0));
-	}
-	ctx.save();
-	ctx.translate(actor.x, actor.y);
-	ctx.rotate(actor.radian);
-	if (actor.scale) {
-		ctx.scale(actor.scale, actor.scale);
-	}
-	ctx.drawImage(this.img, sx, sy, sw, sh, -this.hW, -this.hH, sw, sh);
-	ctx.restore();
 };

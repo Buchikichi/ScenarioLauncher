@@ -8,7 +8,7 @@ class Rewinder extends Chain {
 		this.hasBounds = false;
 		this.ratio = Rewinder.RATIO_MAX;
 		this.delta = -.8;
-		this.anim = new Animator(this, 'material/cascade.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'material/cascade.png');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)
 		];
@@ -67,7 +67,7 @@ class RewinderChild extends Chain {
 		this.effectH = false;
 		this.effectV = false;
 		this.radius = RewinderChild.RADIUS;
-		this.anim = new Animator(this, 'boss/winding.joint.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'boss/winding.joint.png');
 	}
 
 	move(target) {

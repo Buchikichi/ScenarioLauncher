@@ -1,7 +1,7 @@
 /**
  * Shooterメイン処理.
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', ()=> {
 	let loading = document.getElementById('loading');
 	let view = document.getElementById('view');
 	let repositories = [ImageManager.Instance, AudioMixer.INSTANCE, MotionManager.INSTANCE];

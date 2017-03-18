@@ -10,7 +10,7 @@ class Winding extends Chain {
 		this.ratio = Winding.RATIO_MAX;
 		this.delta = -1;
 		this.uncoil = false;
-		this.anim = new Animator(this, 'boss/winding.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'boss/winding.png');
 		this.routine = [
 			new Movement(200).add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE),
 			new Movement(20).add(Gizmo.TYPE.OWN, Gizmo.DEST.ROTATE_R),
@@ -76,7 +76,7 @@ class WindingChild extends Chain {
 		this.hasBounds = false;
 		this.effectH = false;
 		this.radius = WindingChild.RADIUS;
-		this.anim = new Animator(this, 'boss/winding.joint.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'boss/winding.joint.png');
 	}
 
 	move(target) {

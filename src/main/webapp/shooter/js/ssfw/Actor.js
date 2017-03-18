@@ -22,10 +22,9 @@ class Actor extends Matter {
 		super(x, y, z);
 		this.width = 16;
 		this.height = 16;
+		this.animList = [];
 		this.hasBounds = true;
-		this.gravity = 0;
 		this.reaction = 0;
-		this.speed = 1;
 		this.effectH = true;
 		this.effectV = true;
 		this.hitPoint = 1;
@@ -42,6 +41,14 @@ class Actor extends Matter {
 		this.sfx = 'sfx-explosion';
 		this.sfxAbsorb = 'sfx-absorb';
 		this.enter();
+	}
+
+	set anim(val) {
+		if (Array.isArray(val)) {
+			this.animList = val;
+		} else {
+			this.animList = [val];
+		}
 	}
 
 	recalculation() {
@@ -148,9 +155,9 @@ class Actor extends Matter {
 		}
 		this.x += this.dx * this.speed;
 		this.y += this.dy * this.speed;
-		if (this.anim) {
-			this.anim.next(this.dir);
-		}
+		this.animList.forEach(anim => {
+			anim.next(this.dir);
+		});
 	}
 
 	react() {
@@ -163,9 +170,9 @@ class Actor extends Matter {
 	 * @param ctx
 	 */
 	drawNormal(ctx) {
-		if (this.anim) {
-			this.anim.draw(ctx);
-		}
+		this.animList.forEach(anim => {
+			anim.draw(ctx);
+		});
 //		ctx.save();
 //		ctx.translate(this.x, this.y);
 //		ctx.fillStyle = 'white';

@@ -1,15 +1,16 @@
 /**
- * EnmBattery.
+ * Battery.
  */
-class EnmBattery extends Enemy {
+class Battery extends Enemy {
 	constructor(x, y) {
 		super(x, y);
 		this.speed = 0;
 		this.hitPoint = 1;
 		this.score = 10;
-		this.anim = new Animator(this, 'enemy/battery.png', Animator.TYPE.NONE);
-		this.base = new Image();
-		this.base.src = 'img/enemy/batteryBase.png';
+		this.anim = [
+			new Animator(this, 'enemy/battery.png'),
+			new Animator(this, 'enemy/batteryBase.png', Animator.TYPE.NONE)
+		];
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.AIM, Gizmo.DEST.ROTATE).add(Gizmo.TYPE.FIXED, Gizmo.DEST.TO)
 		];
@@ -39,12 +40,5 @@ class EnmBattery extends Enemy {
 			}
 		}
 		super.drawNormal(ctx);
-		ctx.save();
-		ctx.translate(this.x, this.y);
-		if (this.isInverse) {
-			ctx.rotate(Math.PI);
-		}
-		ctx.drawImage(this.base, -this.hW, -this.hH);
-		ctx.restore();
 	}
 }

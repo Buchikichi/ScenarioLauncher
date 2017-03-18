@@ -3,8 +3,7 @@
  */
 class Hatch extends Enemy {
 	constructor( x, y) {
-		super( x, y);
-		this.z = 1;
+		super(x, y);
 		this.speed = 0;
 		this.hitPoint = 10;
 		this.score = 200;
@@ -40,6 +39,6 @@ class Hatch extends Enemy {
 		return [new Charger(this.x, this.y)];
 	}
 }
-Hatch.IDLE = 30;
-Hatch.INTERVAL = 8;
+Hatch.IDLE = 80;
+Hatch.INTERVAL = 12;
 Hatch.CHILDREN = 20;

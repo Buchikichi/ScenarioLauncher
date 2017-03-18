@@ -1,5 +1,5 @@
 class Animator {
-	constructor(actor, src, type, numX = 1, numY = 1) {
+	constructor(actor, src, type = Animator.TYPE.ROTATION, numX = 1, numY = 1) {
 		this.actor = actor;
 		this.type = type;
 		this.numX = numX;
@@ -46,7 +46,7 @@ ImageManager.Instance.reserve([src]);
 	}
 
 	next(dir) {
-		if (this.type == Animator.TYPE.V && .1 < Math.abs(this.patNum)) {
+		if (this.type & Animator.TYPE.V && .1 < Math.abs(this.patNum)) {
 			if (this.patNum < 0) {
 				this.patNum += .1;
 			} else {
@@ -54,7 +54,7 @@ ImageManager.Instance.reserve([src]);
 			}
 		}
 		if (dir != null) {
-			if (this.type == Animator.TYPE.X) {
+			if (this.type & Animator.TYPE.X) {
 				this.patNum += Math.cos(dir) * .5;
 				let num = Math.floor(this.patNum);
 
@@ -63,7 +63,7 @@ ImageManager.Instance.reserve([src]);
 				} else if (this.numX <= num) {
 					this.patNum = 0;
 				}
-			} else if (this.type == Animator.TYPE.Y) {
+			} else if (this.type & Animator.TYPE.Y) {
 				this.patNum += Math.sin(dir) * .5;
 				let num = Math.floor(this.patNum);
 
@@ -72,7 +72,7 @@ ImageManager.Instance.reserve([src]);
 				} else if (this.numY <= num) {
 					this.patNum = 0;
 				}
-			} else if (this.type == Animator.TYPE.V) {
+			} else if (this.type & Animator.TYPE.V) {
 				let limit = Math.floor(this.numY / 2);
 
 				this.patNum += Math.sin(dir) / 3;
@@ -96,16 +96,21 @@ ImageManager.Instance.reserve([src]);
 		let sx = 0;
 		let sy = 0;
 
-		if (this.type == Animator.TYPE.X) {
+		if (this.type & Animator.TYPE.X) {
 			sx = sw * Math.floor(this.patNum);
-		} else if (this.type == Animator.TYPE.Y) {
+		} else if (this.type & Animator.TYPE.Y) {
 			sy = sh * Math.floor(this.patNum);
-		} else if (this.type == Animator.TYPE.V) {
+		} else if (this.type & Animator.TYPE.V) {
 			sy = sh * (parseInt(this.patNum) + (this.numY ? parseInt(this.numY / 2) : 0));
 		}
 		ctx.save();
 		ctx.translate(actor.x, actor.y);
-		ctx.rotate(actor.radian);
+		if (this.type == Animator.TYPE.NONE && actor.isInverse) {
+			ctx.rotate(Math.PI);
+		}
+		if (this.type & Animator.TYPE.ROTATION) {
+			ctx.rotate(actor.radian);
+		}
 		if (actor.scale) {
 			ctx.scale(actor.scale, actor.scale);
 		}
@@ -115,9 +120,10 @@ ImageManager.Instance.reserve([src]);
 }
 Animator.TYPE = {
 	NONE: 0,
-	X: 1,
-	Y: 2,
-	XY: 3,
-	H: 4,
-	V: 5,
+	ROTATION: 1,
+	X: 2,
+	Y: 4,
+	XY: 6,
+	H: 8,
+	V: 16,
 };

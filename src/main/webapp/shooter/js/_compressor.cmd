@@ -2,7 +2,7 @@
 set CUR=%~dp0
 set YUI=d:\applications\yuicompressor-2.4.8.jar
 set COMP=d:\applications\closure-compiler-v20161201.jar
-set COMP_OPT=--compilation_level SIMPLE --warning_level DEFAULT
+set COMP_OPT=--compilation_level SIMPLE --warning_level DEFAULT --language_out=ES5
 set SSFW=ssfw\*.js
 set IMPL=enemy\*.js boss\*.js material\*.js implementor.js
 

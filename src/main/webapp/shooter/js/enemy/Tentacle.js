@@ -7,7 +7,7 @@ class Tentacle extends Chain {
 		this.speed = .6;
 		this.hitPoint = 16;
 		this.appears = false;
-		this.anim = new Animator(this, 'enemy/tentacle.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'enemy/tentacle.png');
 		this.routine = [
 			new Movement().add(Gizmo.TYPE.CHASE, Gizmo.DEST.TO)
 		];
@@ -66,7 +66,7 @@ class TentacleJoint extends Chain {
 		this.radius = 4;
 		this.radian = 0;
 		this.speed = speed;
-		this.anim = new Animator(this, 'enemy/tentacleJoint.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'enemy/tentacleJoint.png');
 	}
 
 	addRadian(rad) {
@@ -100,8 +100,6 @@ class TentacleJoint extends Chain {
 class TentacleHead extends TentacleJoint {
 	constructor(speed) {
 		super(0, 0);
-		this.anim = new Animator(this, 'enemy/tentacleHead.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'enemy/tentacleHead.png');
 	}
-
-	//TentacleHead.prototype.trigger = Enemy.prototype.trigger;
 }

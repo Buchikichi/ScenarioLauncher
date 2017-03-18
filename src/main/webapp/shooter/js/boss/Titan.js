@@ -145,7 +145,7 @@ class TitanBone extends Enemy {
 		this.hasBounds = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.filling = null;
-		this.anim = new Animator(this, img, Animator.TYPE.NONE);
+		this.anim = new Animator(this, img);
 	}
 
 	trigger() {}
@@ -160,3 +160,37 @@ class TitanBone extends Enemy {
 //		ctx.restore();
 	}
 }
+
+//-----------------------------------------------------------------------------
+ImageManager.Instance.reserve([
+	'boss/titan/head.png',
+	'boss/titan/lclavicle.png',
+	'boss/titan/lfemur.png',
+	'boss/titan/lfingers.png',
+	'boss/titan/lfoot.png',
+	'boss/titan/lhand.png',
+	'boss/titan/lhipjoint.png',
+	'boss/titan/lhumerus.png',
+	'boss/titan/lowerback.png',
+	'boss/titan/lowerneck.png',
+	'boss/titan/lradius.png',
+	'boss/titan/lthumb.png',
+	'boss/titan/ltibia.png',
+	'boss/titan/ltoes.png',
+	'boss/titan/lwrist.png',
+	'boss/titan/rclavicle.png',
+	'boss/titan/rfemur.png',
+	'boss/titan/rfingers.png',
+	'boss/titan/rfoot.png',
+	'boss/titan/rhand.png',
+	'boss/titan/rhipjoint.png',
+	'boss/titan/rhumerus.png',
+	'boss/titan/rradius.png',
+	'boss/titan/rthumb.png',
+	'boss/titan/rtibia.png',
+	'boss/titan/rtoes.png',
+	'boss/titan/rwrist.png',
+	'boss/titan/thorax.png',
+	'boss/titan/upperback.png',
+	'boss/titan/upperneck.png',
+]);

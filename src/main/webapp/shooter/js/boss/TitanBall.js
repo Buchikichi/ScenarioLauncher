@@ -8,7 +8,7 @@ class TitanBall extends Enemy {
 		this.speed = 1.5 + Math.random() * 4;
 		this.gravity = .03;
 		this.hitPoint = 4;
-		this.anim = new Animator(this, 'boss/titan/titan.ball.png', Animator.TYPE.NONE);
+		this.anim = new Animator(this, 'boss/titan/titan.ball.png');
 	}
 
 	trigger() {}

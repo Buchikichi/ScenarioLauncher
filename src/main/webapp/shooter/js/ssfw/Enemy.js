@@ -2,8 +2,8 @@
  * Enemy.
  */
 class Enemy extends Actor {
-	constructor(x, y) {
-		super(x, y);
+	constructor(x, y, z = 0) {
+		super(x, y, z);
 		this.radian = Math.PI;
 		this.routine = null;
 		this.routineIx = 0;

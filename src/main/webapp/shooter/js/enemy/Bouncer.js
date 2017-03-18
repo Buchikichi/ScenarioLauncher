@@ -1,7 +1,7 @@
 /**
- * EnmBouncer.
+ * Bouncer.
  */
-class EnmBouncer extends Enemy {
+class Bouncer extends Enemy {
 	constructor(x, y) {
 		super(x, y);
 		this.dir = this.x <= 0 ? 0 : Math.PI;

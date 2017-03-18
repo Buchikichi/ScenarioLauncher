@@ -4,6 +4,7 @@
 class Molten extends Enemy {
 	constructor(x, y) {
 		super(x, y);
+		this.region = new Region(this, 14);
 		this.hasBounds = false;
 		this.dir = 0;
 		this.speed = .5;

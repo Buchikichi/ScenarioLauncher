@@ -9,7 +9,7 @@ class Bouncer extends Enemy {
 		this.gravity = .1;
 		this.reaction = .95;
 		this.hitPoint = 3;
-		this.score = 50;
+		this.score = 500;
 		this.shuttle = 2;
 		this.img.src = 'img/enemy/bouncer.png';
 	}
@@ -34,9 +34,9 @@ class Bouncer extends Enemy {
 		var ty = this.y / sy;
 
 		ctx.save();
-		ctx.translate(this.x, this.y);
 		ctx.scale(1, sy);
 		ctx.drawImage(this.img, -this.hW, -this.hH);
 		ctx.restore();
+		super.drawNormal(ctx);
 	}
 }

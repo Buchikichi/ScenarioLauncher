@@ -4,6 +4,7 @@
 class DragonBody extends Enemy {
 	constructor(x, y) {
 		super(x, y);
+		this.region = new Region(this, 16);
 		this.effectH = false;
 		this.effectV = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;

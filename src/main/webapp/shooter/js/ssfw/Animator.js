@@ -19,8 +19,6 @@ class Animator {
 			this.hH = this.height / 2;
 			actor.width = this.width;
 			actor.height = this.height;
-			actor.hW = this.hW;
-			actor.hH = this.hH;
 			if (actor.recalculation) {
 				actor.recalculation();
 			}
@@ -36,8 +34,6 @@ ImageManager.Instance.reserve([src]);
 			this.hH = this.height / 2;
 			actor.width = this.width;
 			actor.height = this.height;
-			actor.hW = this.hW;
-			actor.hH = this.hH;
 			if (actor.recalculation) {
 				actor.recalculation();
 			}
@@ -104,7 +100,6 @@ ImageManager.Instance.reserve([src]);
 			sy = sh * (parseInt(this.patNum) + (this.numY ? parseInt(this.numY / 2) : 0));
 		}
 		ctx.save();
-		ctx.translate(actor.x, actor.y);
 		if (this.type == Animator.TYPE.NONE && actor.isInverse) {
 			ctx.rotate(Math.PI);
 		}

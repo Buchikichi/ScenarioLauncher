@@ -4,6 +4,7 @@
 class DragonHead extends Enemy {
 	constructor(x, y) {
 		super(x, y);
+		this.region = new Region(this, 16);
 		if (0 < this.x) {
 			this.x += 50;
 		} else {
@@ -12,7 +13,7 @@ class DragonHead extends Enemy {
 		this.speed = .9;
 		this.effectH = false;
 		this.hitPoint = 200;
-		this.score = 1000;
+		this.score = 10000;
 		this.radian = Math.PI;
 		this.appears = false;
 		this.anim = new Animator(this, 'enemy/dragonHead.png');

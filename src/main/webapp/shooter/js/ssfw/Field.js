@@ -1,12 +1,11 @@
 /**
  * Field.
  */
-class Field {
+class Field extends Matter {
 	constructor(width, height) {
+		super(0, 0);
 		this.width = width;
 		this.height = height;
-		this.hW = this.width / 2;
-		this.hH = this.height / 2;
 		this.ship = new Ship(-100, 100);
 		this.ship.isGone = true;
 		this.shipRemain = 0;

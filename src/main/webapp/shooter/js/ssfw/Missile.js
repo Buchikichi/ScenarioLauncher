@@ -6,29 +6,24 @@ class Missile extends Actor {
 		super(x, y);
 		this.dir = opt.dir;
 		this.speed = 3;
-		this.width = 8;
-		this.height = 8;
+		this.width = 2.5;
 		this.gravity = opt.gravity;
 		this.recalculation();
+		this.fillStyle = 'rgba(200, 200, 255, 0.6)';
 	}
 
-	fate() {
-		this.x = Field.Instance.width + this.width;
-		this.isGone = true;
-	}
-
-	draw(ctx) {
-		ctx.save();
-		ctx.beginPath();
-		ctx.fillStyle = 'rgba(200, 200, 255, 0.6)';
-		ctx.arc(this.x, this.y, this.width / 3, 0, Math.PI * 2, false);
-		ctx.fill();
-		ctx.restore();
+//	move(target) {
+//		super.move(target);
 //		if (this.walled) {
 //			if (this.walled == Landform.BRICK_TYPE.BRITTLE) {
 //				Field.Instance.landform.smashWall(this);
 //			}
 //			this.fate();
 //		}
+//	}
+
+	fate() {
+		this.x = Field.Instance.width + this.width;
+		this.isGone = true;
 	}
 }

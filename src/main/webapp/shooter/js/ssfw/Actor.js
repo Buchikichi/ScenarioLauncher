@@ -1,16 +1,32 @@
 class Matter {
-	constructor(x, y, z) {
+	constructor(x, y, z = 0) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.w = 0;
+		this.h = 0;
 		this.dx = 0;
 		this.dy = 0;
 		this.dir = null;
 		this.radian = 0;
-		this.width = 0;
-		this.height = 0;
 		this.gravity = 0;
 		this.speed = 1;
+	}
+
+	get width() {
+		return this.w;
+	}
+	set width(val) {
+		this.w = val;
+		this.hW = val / 2;
+	}
+
+	get height() {
+		return this.h;
+	}
+	set height(val) {
+		this.h = val;
+		this.hH = val / 2;
 	}
 }
 
@@ -20,6 +36,7 @@ class Matter {
 class Actor extends Matter {
 	constructor(x, y, z = 0) {
 		super(x, y, z);
+		this.region = new Region(this);
 		this.width = 16;
 		this.height = 16;
 		this.animList = [];
@@ -38,6 +55,7 @@ class Actor extends Matter {
 			this.height = this.img.height;
 			this.recalculation();
 		});
+		this.fillStyle = null;
 		this.sfx = 'sfx-explosion';
 		this.sfxAbsorb = 'sfx-absorb';
 		this.enter();
@@ -55,8 +73,6 @@ class Actor extends Matter {
 		let field = Field.Instance;
 		let margin = this.hasBounds ? 0 : field.hW;
 
-		this.hW = this.width / 2;
-		this.hH = this.height / 2;
 		this.minX = -this.width - margin;
 		this.minY = -this.height - margin;
 		if (field) {
@@ -165,42 +181,62 @@ class Actor extends Matter {
 		this.radian = Field.Instance.landform.getHorizontalAngle(this);
 	}
 
-	/**
-	 * Draw.
-	 * @param ctx
-	 */
+	drawCircle(ctx) {
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillStyle = this.fillStyle;
+		ctx.arc(0, 0, this.width, 0, Math.PI * 2, false);
+		ctx.fill();
+		ctx.restore();
+	}
+
+	drawHitPoint(ctx) {
+		if (this.hitPoint < 100000) {
+			ctx.save();
+			ctx.fillStyle = 'white';
+			ctx.fillText(this.hitPoint, 0, 20);
+			ctx.restore();
+		}
+	}
+
 	drawNormal(ctx) {
 		this.animList.forEach(anim => {
 			anim.draw(ctx);
 		});
-//		ctx.save();
-//		ctx.translate(this.x, this.y);
-//		ctx.fillStyle = 'white';
-//		ctx.fillText(this.hitPoint, 0, 20);
-//		ctx.restore();
+		if (this.animList.length == 0 && this.fillStyle) {
+			this.drawCircle(ctx);
+		}
+//		this.drawHitPoint(ctx);
+//		this.region.draw(ctx);
 	}
 
 	drawExplosion(ctx) {
 		let size = this.explosion;
 
-		ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
 		ctx.save();
-		ctx.translate(this.x, this.y);
+		ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
 		ctx.beginPath();
 		ctx.arc(0, 0, size, 0, Math.PI2, false);
 		ctx.fill();
 		ctx.restore();
 	}
 
+	/**
+	 * Draw.
+	 * @param ctx
+	 */
 	draw(ctx) {
 		if (this.isGone) {
 			return;
 		}
+		ctx.save();
+		ctx.translate(this.x, this.y);
 		if (0 < this.explosion) {
 			this.drawExplosion(ctx);
 		} else {
 			this.drawNormal(ctx);
 		}
+		ctx.restore();
 	}
 
 	/**
@@ -212,12 +248,7 @@ class Actor extends Matter {
 		if (this.isGone || 0 < this.explosion || 0 < target.explosion) {
 			return false;
 		}
-		let dist = this.calcDistance(target);
-		let w = this.hW + target.hW;
-		let h = this.hH + target.hH;
-		let len = (w + h) / 3;
-
-		if (dist < len) {
+		if (this.region.isHit(target.region)) {
 			this.fate(target);
 			target.fate(this);
 			return true;

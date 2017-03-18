@@ -5,8 +5,6 @@ class Formation extends Actor {
 	constructor(x, y) {
 		super(x, y);
 		this.effectH = false;
-		this.bonus = 800;
-		this.score = this.bonus;
 		this.steps = 0;
 		this.count = 0;
 		this.enemies = [];
@@ -14,22 +12,27 @@ class Formation extends Actor {
 
 	setup(type, num) {
 		for (let ix = 0; ix < num; ix++) {
-			this.enemies.push(new type(this.x, this.y));
+			let enemy = new type(this.x, this.y);
+
+			if (!this.bonus) {
+				this.score = enemy.score * 10;
+				this.bonus = this.score;
+			}
+			this.enemies.push(enemy);
 		}
 		return this;
 	}
 
 	checkDestroy() {
-		let formation = this;
 		let enemies = [];
 
-		this.enemies.forEach(function(enemy) {
+		this.enemies.forEach(enemy => {
 			if (enemy.hitPoint == 0) {
 				return;
 			}
 			enemies.push(enemy);
-			formation.x = enemy.x;
-			formation.y = enemy.y;
+			this.x = enemy.x;
+			this.y = enemy.y;
 		});
 		this.enemies = enemies;
 		if (enemies.length == 0 && this.explosion == 0) {
@@ -52,7 +55,7 @@ class Formation extends Actor {
 
 	drawExplosion(ctx) {
 		ctx.fillStyle = 'rgba(240, 240, 255, .8)';
-		ctx.fillText(this.bonus, this.x, this.y);
+		ctx.fillText(this.bonus, 0, 0);
 	}
 }
 Formation.STEP = 10;

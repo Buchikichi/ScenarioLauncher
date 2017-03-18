@@ -23,7 +23,7 @@ class Formation extends Actor {
 		return this;
 	}
 
-	checkDestroy() {
+	isDestroyed() {
 		let enemies = [];
 
 		this.enemies.forEach(enemy => {
@@ -37,14 +37,20 @@ class Formation extends Actor {
 		this.enemies = enemies;
 		if (enemies.length == 0 && this.explosion == 0) {
 			this.explosion = Actor.MAX_EXPLOSION * 4;
-			return;
+			return true;
 		}
+		return false;
 	}
 
 	move(target) {
 		super.move(target);
 		if (this.enemies.length <= this.count) {
-			this.checkDestroy();
+			if (this.isDestroyed()) {
+let capsules = [SpeedupCapsule, MissileCapsule];
+let ix = Math.floor(Math.random() * capsules.length);
+let capsule = capsules[ix];
+				return [new capsule(this)];
+			}
 			return;
 		}
 		if (this.steps++ % Formation.STEP != 0) {

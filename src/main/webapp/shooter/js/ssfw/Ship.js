@@ -4,14 +4,7 @@
 class Ship extends Actor {
 	constructor(x, y) {
 		super(x, y);
-		this.speed = 2.5;
 		this.effectH = false;
-		this.shotList = [];
-		this.chamberList = [
-			new Chamber(Shot, 4, Ship.MAX_SHOTS),
-			new Chamber(Missile, 16, 2, {gravity:.05, dir:0}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:0}),
-			new Chamber(Missile, 16, 2, {gravity:.05, dir:Math.PI}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:Math.PI}),
-		];
 		this.anim = new Animator(this, 'ship001.png', Animator.TYPE.V, 1, Ship.PATTERNS * 2 + 1);
 		this.reset();
 	}
@@ -27,9 +20,36 @@ class Ship extends Actor {
 	}
 
 	reset() {
+		this.speed = Ship.MIN_SPEED;
 		this.trigger = false;
-		this.chamberList.forEach(chamber => chamber.reset());
 		this.shotList = [];
+		this.chamberList = [
+			new Chamber(Shot, 4, Ship.MAX_SHOTS),
+//			new Chamber(Missile, 16, 2, {gravity:.05, dir:0}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:0}),
+//			new Chamber(Missile, 16, 2, {gravity:.05, dir:Math.PI}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:Math.PI}),
+		];
+		this.chamberList.forEach(chamber => chamber.reset());
+		this.missileLevel = 0;
+	}
+
+	speedup() {
+		this.speed *= 1.25;
+//		console.log('speed:' + this.speed);
+		if (Ship.MAX_SPEED < this.speed) {
+			this.speed = Ship.MAX_SPEED;
+		}
+	}
+
+	powerUpMissile() {
+		this.missileLevel++;
+		if (this.missileLevel == 1) {
+			this.chamberList.push(new Chamber(Missile, 16, 2, {gravity:.05, dir:0}));
+		} else if (this.missileLevel == 2) {
+			this.chamberList.push(new Chamber(Missile, 16, 2, {gravity:-.05, dir:0}));
+		} else if (this.missileLevel == 3) {
+			this.chamberList.push(new Chamber(Missile, 16, 2, {gravity:.05, dir:Math.PI}));
+			this.chamberList.push(new Chamber(Missile, 16, 2, {gravity:-.05, dir:Math.PI}));
+		}
 	}
 
 	inkey(keys) {
@@ -110,5 +130,7 @@ class Ship extends Actor {
 		}
 	}
 }
+Ship.MIN_SPEED = 1.5;
+Ship.MAX_SPEED = 5;
 Ship.MAX_SHOTS = 7;
 Ship.PATTERNS = 2;

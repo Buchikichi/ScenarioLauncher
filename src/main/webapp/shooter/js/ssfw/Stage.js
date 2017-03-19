@@ -45,7 +45,7 @@ class Stage {
 	}
 
 	reset() {
-		this.checkPoint = 0;
+		this.checkPoint = Stage.CHECK_POINT[0];
 		this.retry();
 	}
 
@@ -160,7 +160,7 @@ Stage.SCROLL = {
 	BOTTOM: 8
 };
 Stage.LIST = [];
-Stage.CHECK_POINT = [660, 1440];
+Stage.CHECK_POINT = [0, 660, 1440];
 
 /**
  * Foreground and Background.

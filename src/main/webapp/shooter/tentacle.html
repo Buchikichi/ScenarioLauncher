@@ -20,6 +20,15 @@ body {
 	text-align: center;
 	background-color: #F0F0F0;
 }
+#view {
+	position: relative;
+	width: 512px;
+	height: 224px;
+	overflow: hidden;
+	transform-origin: 0px 0px;
+	transform: scale(2);
+	background-color: #222;
+}
 #canvas {
 	/*display: inline;*/
 	user-select: none;
@@ -37,18 +46,10 @@ body {
       <a href="/" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-back ui-btn-icon-notext"></a>
       <h1>Tentacle</h1>
     </div>
-    <div style="display: table; table-layout: fixed; width: 100%;">
-        <div id="content">
-          <canvas id="canvas"></canvas>
-        </div>
+    <div id="view">
+      <canvas id="canvas"></canvas>
     </div>
-    <div data-role="content">
-<!--
-      <div class="ui-body-a ui-corner-all">
-        <input id="magni" type="range" value="1" min="-20" max="20" step="1"/>
-      </div>
--->
-    </div>
+    <div id="gameOver"></div>
   </div>
 <!--  -->
 <script>

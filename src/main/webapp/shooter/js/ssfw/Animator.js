@@ -19,9 +19,7 @@ class Animator {
 			this.hH = this.height / 2;
 			actor.width = this.width;
 			actor.height = this.height;
-			if (actor.recalculation) {
-				actor.recalculation();
-			}
+			actor.recalculation();
 			return;
 		}
 		// TODO 仮実装なので直す
@@ -32,11 +30,10 @@ ImageManager.Instance.reserve([src]);
 			this.height = this.img.height / this.numY;
 			this.hW = this.width / 2;
 			this.hH = this.height / 2;
+//console.log('loadImage:' + src);
 			actor.width = this.width;
 			actor.height = this.height;
-			if (actor.recalculation) {
-				actor.recalculation();
-			}
+			actor.recalculation();
 		};
 		this.img.src = 'img/' + src;
 	}

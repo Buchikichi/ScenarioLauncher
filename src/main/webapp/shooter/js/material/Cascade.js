@@ -5,8 +5,8 @@ class Cascade extends Chain {
 		this.radian = Math.SQ;
 		this.radius = Cascade.RADIUS;
 		this.appears = false;
-		for (var cnt = 0; cnt < Cascade.MAX_JOINT; cnt++) {
-			var weight = (Cascade.MAX_JOINT - cnt) * 3;
+		for (let cnt = 0; cnt < Cascade.MAX_JOINT; cnt++) {
+			let weight = (Cascade.MAX_JOINT - cnt) * 3;
 
 			this.push(new CascadeChild(x, y, weight));
 		}
@@ -18,8 +18,8 @@ class Cascade extends Chain {
 			return;
 		}
 		this.appears = true;
-		var result = [];
-		var joint = this.next;
+		let result = [];
+		let joint = this.next;
 
 		while (joint) {
 			result.push(joint);
@@ -40,13 +40,15 @@ Cascade.MAX_JOINT = 12;
 class CascadeChild extends Chain {
 	constructor(x, y, weight) {
 		super(x, y);
-		this.maxX = Field.Instance.width + 100;
 		this.effectH = false;
 		this.effectV = false;
 		this.weight = weight;
 		this.radian = Math.SQ * .9;
 		this.radius = Cascade.RADIUS;
 		this.step = 0;
+		if (Field.Instance) {
+			this.maxX = Field.Instance.width + 100;
+		}
 	}
 
 	addRadian(rad) {
@@ -58,14 +60,14 @@ class CascadeChild extends Chain {
 	}
 
 	move(target) {
-		var prev = this.prev;
-		var diff = Math.trim(Math.SQ - this.radian) / (300 + this.weight * 10);
+		let prev = this.prev;
+		let diff = Math.trim(Math.SQ - this.radian) / (300 + this.weight * 10);
 		this.step += diff;
 		if (parseInt(diff * 1000) == 0) {
 			this.step *= .98;
 		}
-		var radian = Math.trim(this.radian + this.step);
-		var dist = this.radius + prev.radius;
+		let radian = Math.trim(this.radian + this.step);
+		let dist = this.radius + prev.radius;
 
 		if (radian < 0) {
 			radian = 0;
@@ -86,10 +88,10 @@ class CascadeChild extends Chain {
 	}
 
 	fate(target) {
-		var radian = Math.PI / 200;
+		let radian = Math.PI / 200;
 
 		this.step -= radian;
-		var joint = this.next;
+		let joint = this.next;
 
 		while (joint) {
 			joint.step -= radian * .8;

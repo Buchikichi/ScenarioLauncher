@@ -10,6 +10,7 @@ class DragonHead extends Enemy {
 		} else {
 			this.x -= 50;
 		}
+		this.hasBounds = false;
 		this.speed = .9;
 		this.effectH = false;
 		this.hitPoint = 200;
@@ -28,16 +29,6 @@ class DragonHead extends Enemy {
 			}
 		}
 		this.chamberList = [new Chamber(TitanShot, 80, 1)];
-	}
-
-	recalculation() {
-		let field = Field.Instance;
-
-		super.recalculation();
-		this.minX = -field.width;
-		this.minY = -field.height;
-		this.maxX = field.width * 2;
-		this.maxY = field.height * 2;
 	}
 
 	eject() {
@@ -90,3 +81,4 @@ class DragonHead extends Enemy {
 }
 DragonHead.CNT_OF_BODY = 10;
 DragonHead.STP_OF_BODY = 32;
+ImageManager.Instance.reserve(['enemy/dragonHead.png', 'enemy/dragonBody.png']);

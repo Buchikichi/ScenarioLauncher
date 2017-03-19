@@ -71,13 +71,15 @@ class Actor extends Matter {
 
 	recalculation() {
 		let field = Field.Instance;
-		let margin = this.hasBounds ? 0 : field.hW;
 
-		this.minX = -this.width - margin;
-		this.minY = -this.height - margin;
 		if (field) {
+			let margin = this.hasBounds ? 0 : field.width;
+
+			this.minX = -this.width - margin;
+			this.minY = -this.height - margin;
 			this.maxX = field.width + this.width + margin;
 			this.maxY = field.height + this.height + margin;
+//console.log('recalculation:' + margin);
 		}
 	}
 

@@ -26,9 +26,11 @@ function Landform(canvas) {
 		this.height = this.img.height;
 		this.bw = this.img.width / Landform.BRICK_WIDTH;
 		this.bh = this.img.height / Landform.BRICK_WIDTH;
-		this.viewX = this.img.width - field.hW;
-		this.arrivX = this.img.width - field.width;
-		this.noticeX = this.arrivX - field.hW;
+		if (field) {
+			this.viewX = this.img.width - field.hW;
+			this.arrivX = this.img.width - field.width;
+			this.noticeX = this.arrivX - field.hW;
+		}
 	}
 	this.reverse = new Image();
 	this.reverse.src = './img/reverse.png';

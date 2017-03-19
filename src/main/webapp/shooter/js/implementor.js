@@ -66,7 +66,7 @@ Stage.LIST = [
 			new StageBg('stage01bg1.png', .3), new StageFg('stage3.1.1.png', .5, 0, .02), new StageFg('stage3.1.0.png'),
 		]).setBgm('bgm-YourDream-R', 'bgm-edo-omega-zero'),
 	new Stage(Stage.SCROLL.LOOP, 'stage4.map.png', [
-			new StageBg('stage01bg1.png', .3), new StageFg('stage01bg0.png', .5, 0, .02), new StageFg('stage4.1.0.png', .45),
+			new StageBg('stage01bg1.png', .3), new StageFg('stage01bg0.png', .5, 0, .02), new StageFg('stage4.1.0.png', .3),
 		]).setBgm('bgm-MadNightDance', 'bgm-edo-omega-zero'),
 ];
 AudioMixer.INSTANCE.reserve([

@@ -207,6 +207,9 @@ class Field extends Matter {
 		let debugNode = document.querySelector('#score > div:nth-child(3)');
 		let remainNode = document.querySelector('#remain > div > div:nth-child(1)');
 
+		if (!scoreNode) {
+			return;
+		}
 		scoreNode.innerHTML = this.score;
 		hiscoreNode.innerHTML = this.hiscore;
 //		debugNode.innerHTML = this.actorList.length + ':' + parseInt(this.loosingRate);

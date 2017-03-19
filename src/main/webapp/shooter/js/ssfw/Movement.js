@@ -1,9 +1,10 @@
 /**
  * Gizmo.
  */
-function Gizmo(type, destination) {
+function Gizmo(type, destination, param = null) {
 	this.type = type;
 	this.destination = destination;
+	this.param = param;
 }
 Gizmo.TYPE = {
 	FIXED: 0,
@@ -71,7 +72,7 @@ Gizmo.prototype.tick = function(src, target) {
 			let dist = src.calcDistance(target);
 
 			if (src.speed < dist) {
-				let step = Math.PI / 30;
+				let step = this.param ? this.param : Math.PI / 30;
 
 				src.radian = Math.close(src.radian, Math.atan2(dy, dx), step);
 				src.radian = Math.trim(src.radian);
@@ -110,8 +111,8 @@ Movement.COND = {
 	Y: 'y'
 };
 
-Movement.prototype.add = function(type, target) {
-	this.list.push(new Gizmo(type, target));
+Movement.prototype.add = function(type, target, param) {
+	this.list.push(new Gizmo(type, target, param));
 	return this;
 };
 

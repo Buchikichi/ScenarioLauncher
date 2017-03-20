@@ -2,18 +2,20 @@
  * Controller.
  */
 class Controller {
-	constructor() {
+	constructor(isEdit = false) {
 		this.keys = {};
 		this.point = {};
 		this.touch = false;
-		this.init();
+		this.init(isEdit);
 		Controller.Instance = this;
 	}
 
-	init() {
-		window.addEventListener('contextmenu', event => {
-			event.preventDefault();
-		});
+	init(isEdit) {
+		if (!isEdit) {
+			window.addEventListener('contextmenu', event => {
+				event.preventDefault();
+			});
+		}
 		this.initKeys();
 		this.initPointingDevice();
 		this.initGameOverPanel();
@@ -95,22 +97,24 @@ class Controller {
 	}
 
 	initGameOverPanel() {
-		let gameOver = document.getElementById('gameOver');
-		let startGame = ()=> {
-			Field.Instance.startGame();
-			gameOver.classList.add('hidden');
-		};
+		let gameOverPanel = document.getElementById('gameOver');
 
-		gameOver.addEventListener('mousedown', event => {
-//console.log('gameOver:mousedown');
-			startGame();
-		});
-		window.addEventListener('keydown', event => {
-			let isGameOver = !gameOver.classList.contains('hidden');
+		if (gameOverPanel) {
+			let startGame = ()=> {
+				Field.Instance.startGame();
+				gameOverPanel.classList.add('hidden');
+			};
 
-			if (isGameOver && (this.keys[' '] || this.keys['k32'])) {
+			gameOverPanel.addEventListener('mousedown', event => {
 				startGame();
-			}
-		});
+			});
+			window.addEventListener('keydown', event => {
+				let isGameOver = !gameOverPanel.classList.contains('hidden');
+
+				if (isGameOver && (this.keys[' '] || this.keys['k32'])) {
+					startGame();
+				}
+			});
+		}
 	}
 }

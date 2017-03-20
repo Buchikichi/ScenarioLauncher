@@ -1,41 +1,43 @@
 /**
  * Landform.
  */
-function Landform(canvas) {
-	this.canvas = canvas;
-	this.ctx = canvas.getContext('2d');
-	this.effectH = 0;
-	this.next = Landform.NEXT.NONE;
-	this.col = 0;
-	this.colDir = 1;
-	this.magni = 1;
-	this.target = null;
-	this.tx = 0;
-	this.ty = 0;
-	this.selection = 'b0';
-	this.which = null;
-	this.brick = null;
-	this.brickVal = null;
-	this.lastScan = null;
-	this.touch = false;
-	this.img = new Image();
-	this.img.onload = ()=> {
-		let field = Field.Instance;
+class Landform {
+	constructor(canvas, isEdit = false) {
+		this.canvas = canvas;
+		this.ctx = canvas.getContext('2d');
+		this.isEdit = isEdit;
+		this.effectH = 0;
+		this.next = Landform.NEXT.NONE;
+		this.col = 0;
+		this.colDir = 1;
+		this.magni = 1;
+		this.target = null;
+		this.tx = 0;
+		this.ty = 0;
+		this.selection = 'b0';
+		this.which = null;
+		this.brick = null;
+		this.brickVal = null;
+		this.lastScan = null;
+		this.touch = false;
+		this.img = new Image();
+		this.img.onload = ()=> {
+			let field = Field.Instance;
 
-		this.width = this.img.width;
-		this.height = this.img.height;
-		this.bw = this.img.width / Landform.BRICK_WIDTH;
-		this.bh = this.img.height / Landform.BRICK_WIDTH;
-		if (field) {
-			this.viewX = this.img.width - field.hW;
-			this.arrivX = this.img.width - field.width;
-			this.noticeX = this.arrivX - field.hW;
+			this.width = this.img.width;
+			this.height = this.img.height;
+			this.bw = this.img.width / Landform.BRICK_WIDTH;
+			this.bh = this.img.height / Landform.BRICK_WIDTH;
+			if (field) {
+				this.viewX = this.img.width - (field.hW * 1.5);
+				this.arrivX = this.img.width - field.width;
+				this.noticeX = this.arrivX - field.hW;
+			}
 		}
+		this.reverse = new Image();
+		this.reverse.src = './img/reverse.png';
+		this.touch = false;
 	}
-	this.reverse = new Image();
-	this.reverse.src = './img/reverse.png';
-	this.isEdit = false;
-	this.touch = false;
 }
 Landform.BRICK_WIDTH = 8;
 Landform.BRICK_HALF = Landform.BRICK_WIDTH / 2;
@@ -339,7 +341,7 @@ Landform.prototype.wheel = function(delta) {
 	var fg = this.stage.getFg();
 
 	if (delta < 0){
-		fg.y += Landform.BRICK_WIDTH;
+		fg.y += Landform.BRICK_WIDTH * 2;
 		if (this.height <= fg.y) {
 			fg.y = 0;
 		}
@@ -347,7 +349,7 @@ Landform.prototype.wheel = function(delta) {
 		if (fg.y == 0) {
 			fg.y = this.height;
 		}
-		fg.y -= Landform.BRICK_WIDTH;
+		fg.y -= Landform.BRICK_WIDTH * 2;
 	}
 };
 

@@ -11,6 +11,13 @@
 <script type="text/javascript" defer src="js/implementor-min.js"></script>
 <script type="text/javascript" defer src="js/edit.js"></script>
 <style type="text/css">
+#view {
+	position: relative;
+	overflow: hidden;
+	transform-origin: 0px 0px;
+	transform: scale(2);
+	background-color: #222;
+}
 canvas {
 	border: 1px lightgray solid;
 	background-color: black;
@@ -29,12 +36,10 @@ canvas {
       <h1>Edit</h1>
       <a href="#editPanel" class="ui-btn ui-btn-right ui-corner-all ui-btn-inline ui-btn-icon-left ui-icon-edit ui-btn-icon-notext"></a>
     </div>
-    <div style="display: table; table-layout: fixed; width: 100%;">
-        <div id="content">
-          <canvas id="canvas" width="1024" height="224"></canvas>
-        </div>
+    <div id="view">
+      <canvas id="canvas"></canvas>
     </div>
-    <div id="controls" data-role="content">
+    <div data-role="footer" data-theme="a" data-position="fixed">
       <input id="slider" min="0" max="0" value="0" type="range" readonly/>
       <input id="bg" type="file" accept="image/*"/>
       <button id="generateButton">Generate</button>

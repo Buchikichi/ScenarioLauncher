@@ -1,14 +1,13 @@
 $(document).ready(function() {
-	var win = $(window);
-	var body = $('body');
-	var canvas = document.getElementById('canvas');
-	var ctx = canvas.getContext('2d');
-	var slider = $('#slider');
-	var landform = new Landform(canvas);
+	let canvas = document.getElementById('canvas');
+	let ctx = canvas.getContext('2d');
+	let slider = $('#slider');
+	let field = new Field(512, 224);
+	let landform = new Landform(canvas, true);
 
-	landform.isEdit = true;
+	new Controller(true);
 	$('#bg').change(function() {
-		var file = this.files[0];
+		let file = this.files[0];
 
 		landform.load(file);
 	});
@@ -18,7 +17,7 @@ $(document).ready(function() {
 		slider.slider('refresh');
 	});
 	slider.change(function() {
-		var fg = landform.stage.getFg();
+		let fg = landform.stage.getFg();
 
 		fg.x = slider.val() * Landform.BRICK_WIDTH;
 	});
@@ -26,47 +25,35 @@ $(document).ready(function() {
 		landform.generateBrick(ctx);
 	});
 	$('#map').change(function() {
-		var file = this.files[0];
+		let file = this.files[0];
 
 		landform.loadMapData(file);
 	});
 	setupActorList(landform);
 	setupMouse(landform);
-	win.resize(function() {
-		var body = $('body');
-		var header = $('#header');
-		var controls = $('#controls');
-		var height = body.height() - header.outerHeight(true) - controls.outerHeight(true) - 4;
-		var magniH = body.width() / Field.WIDTH;
-		var magniV = height / Field.HEIGHT;
-		var magni = Math.min(magniH, magniV);
-
-		canvas.width = Field.WIDTH * magni;
-		canvas.height = Field.HEIGHT * magni;
-		landform.magni = magni;
+	window.addEventListener('resize', ()=> {
+		field.resize();
 	});
-	win.resize();
-
 //	landform.loadStage(new Stage(Stage.SCROLL.LOOP, 'stage1.map.png', [ new StageFg('stage1.1.0.png') ]));
-	var activate = function() {
+	let activate = function() {
+		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		landform.draw();
-		setTimeout(function() {
-			activate();
-		}, 33);
+		requestAnimationFrame(activate);
 	};
 	activate();
 });
 
 function setupActorList(landform) {
-	var actorList = $('#actorList');
-	var container = actorList.controlgroup('container');
+	let actorList = $('#actorList');
+	let container = actorList.controlgroup('container');
 
 	Enemy.LIST.forEach(function(rec, ix) {
-		var id = 'actor' + ix;
-		var input = $('<input type="radio" name="actor"/>').attr('id', id).val(ix + 1);
-		var label = $('<label></label>').text(rec.name).attr('for', id);
-		var img = $('<img/>').attr('src', 'img/' + rec.img);
+		let id = 'actor' + ix;
+		let input = $('<input type="radio" name="actor"/>').attr('id', id).val(ix + 1);
+		let label = $('<label></label>').text(rec.name).attr('for', id);
+		let img = $('<img/>').attr('src', 'img/' + rec.img);
 
 		label.css('background-image', 'url("./img/' + rec.img + '")');
 		if (rec.h) {
@@ -84,16 +71,16 @@ function setupActorList(landform) {
 }
 
 function setupMouse(landform) {
-	var canvas = $(landform.canvas);
+	let canvas = $(landform.canvas);
 
 	canvas.mousedown(function(e) {
-		var magni = landform.magni;
+		let magni = landform.magni;
 
 		landform.target = {x: e.offsetX / magni, y: e.offsetY / magni};
 		landform.which = e.which;
 	});
 	canvas.mousemove(function(e) {
-		var magni = landform.magni;
+		let magni = landform.magni;
 
 		landform.target = {x: e.offsetX / magni, y: e.offsetY / magni};
 	});
@@ -103,10 +90,10 @@ function setupMouse(landform) {
 	canvas.mouseleave(function() {
 		landform.target = null;
 	});
-	var mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
+	let mousewheelevent = 'onwheel' in document ? 'wheel' : 'onmousewheel' in document ? 'mousewheel' : 'DOMMouseScroll';
 	canvas.on(mousewheelevent,function(e){
 		e.preventDefault();
-		var delta = e.originalEvent.deltaY ? -(e.originalEvent.deltaY) : e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta : -(e.originalEvent.detail);
+		let delta = e.originalEvent.deltaY ? -(e.originalEvent.deltaY) : e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta : -(e.originalEvent.detail);
 
 		landform.wheel(delta);
 	});

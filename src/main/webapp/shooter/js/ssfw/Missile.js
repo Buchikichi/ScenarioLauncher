@@ -9,6 +9,7 @@ class Missile extends Actor {
 		this.width = 2.5;
 		this.gravity = opt.gravity;
 		this.recalculation();
+		this.shuttle = 3;
 		this.fillStyle = 'rgba(200, 200, 255, 0.6)';
 	}
 
@@ -22,8 +23,15 @@ class Missile extends Actor {
 //		}
 //	}
 
+	reactX(y) {
+		super.reactX(y);
+		this.shuttle--;
+		if (this.shuttle < 0) {
+			this.fate();
+		}
+	}
+
 	fate() {
-		this.x = Field.Instance.width + this.width;
-		this.isGone = true;
+		this.eject();
 	}
 }

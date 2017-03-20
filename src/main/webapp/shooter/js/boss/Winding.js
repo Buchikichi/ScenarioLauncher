@@ -22,12 +22,12 @@ class Winding extends Chain {
 	}
 
 	move(target) {
-		var result = super.move(target);
-		var rad = Math.trim(this.dir - Math.SQ / 2);
+		let result = super.move(target);
+		let rad = Math.trim(this.dir - Math.SQ / 2);
 
 		this.rad = Math.trim(this.dir + Math.SQ);
 		if (this.appears) {
-			var joint = this.next;
+			let joint = this.next;
 
 			while (joint) {
 				rad += Winding.RADIAN_STEP * this.ratio / 100;
@@ -46,7 +46,7 @@ class Winding extends Chain {
 			return result;
 		}
 		this.appears = true;
-		var joint = this.next;
+		let joint = this.next;
 
 		while (joint) {
 			result.push(joint);
@@ -59,8 +59,6 @@ class Winding extends Chain {
 		super.fate(target);
 		this.uncoil = true;
 	}
-
-	//Winding.prototype.trigger = NOP;
 }
 Winding.RADIUS = 16;
 Winding.RADIAN_STEP = Math.SQ;
@@ -80,14 +78,13 @@ class WindingChild extends Chain {
 	}
 
 	move(target) {
-		var prev = this.prev;
-		var dist = this.radius + prev.radius;
+		let prev = this.prev;
+		let dist = this.radius + prev.radius;
 
 		this.x = prev.x + Math.cos(this.radian) * dist;
 		this.y = prev.y + Math.sin(this.radian) * dist;
 	};
 
 	fate() {}
-	trigger() {}
 }
 WindingChild.RADIUS = 4;

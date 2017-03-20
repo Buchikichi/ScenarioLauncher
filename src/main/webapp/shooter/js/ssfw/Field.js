@@ -135,6 +135,7 @@ class Field extends Matter {
 		let field = this;
 		let ctx = this.ctx;
 		let ship = this.ship;
+		let shotList = [];
 		let enemyList = [];
 		let validActors = [];
 		let score = 0;
@@ -144,15 +145,23 @@ class Field extends Matter {
 		this.actorList.sort(function(a, b) {
 			return a.z - b.z;
 		});
-		this.actorList.forEach(function(actor) {
+		this.actorList.forEach(actor => {
 			if (actor.isGone) {
 				return;
 			}
-			actor.constraint = parseInt(Math.random() * field.loosingRate / 10) != 0;
+			if (actor instanceof Bullet) {
+				actor.isHit(ship);
+			} else if (actor instanceof Enemy) {
+				actor.triggered = parseInt(Math.random() * field.loosingRate / 10) == 0;
+				actor.isHit(ship);
+				enemyList.push(actor);
+			} else if (actor instanceof Shot || actor instanceof Missile) {
+				shotList.push(actor);
+			}
 			let child = actor.move(ship);
 
 			if (child instanceof Array) {
-				child.forEach(function(enemy) {
+				child.forEach(enemy => {
 					validActors.push(enemy);
 				});
 			}
@@ -160,21 +169,13 @@ class Field extends Matter {
 			field.landform.hitTest(actor);
 			actor.draw(ctx);
 			validActors.push(actor);
-			if (actor instanceof Bullet) {
-				actor.isHit(ship);
-			} else if (actor instanceof Enemy) {
-				actor.isHit(ship);
-				enemyList.push(actor);
-			}
 			if (actor.explosion && actor.score) {
 				score += actor.score;
 				actor.score = 0;
 			}
 		});
-		this.ship.shotList.forEach(function(shot) {
-			enemyList.forEach(function(enemy) {
-				enemy.isHit(shot);
-			});
+		shotList.forEach(shot => {
+			enemyList.forEach(enemy => enemy.isHit(shot));
 		});
 		if (this.phase == Field.PHASE.BOSS && enemyList.length == 0) {
 			this.phase = Field.PHASE.NORMAL;
@@ -191,7 +192,7 @@ class Field extends Matter {
 			}
 			if (0 < --this.shipRemain) {
 				this.retry();
-//++this.shipRemain;
+++this.shipRemain;
 			} else {
 				this.endGame();
 			}
@@ -224,7 +225,7 @@ Field.HALF_WIDTH = Field.WIDTH / 2;
 Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;
-Field.MAX_LOOSING_RATE = 200;
+Field.MAX_LOOSING_RATE = 20000;
 Field.MAX_SHIP = 7;
 Field.MAX_HIBERNATE = Actor.MAX_EXPLOSION * 5;
 Field.PHASE = {

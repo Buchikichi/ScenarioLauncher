@@ -13,5 +13,7 @@ class DragonBody extends Enemy {
 		this.anim = new Animator(this, 'enemy/dragonBody.png');
 	}
 
-	trigger() {}
+	get triggered() {
+		return false;
+	}
 }

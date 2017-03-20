@@ -21,12 +21,11 @@ class Ship extends Actor {
 
 	reset() {
 		this.speed = Ship.MIN_SPEED;
-		this.trigger = false;
-		this.shotList = [];
+		this.triggered = false;
 		this.chamberList = [
 			new Chamber(Shot, 4, Ship.MAX_SHOTS),
-//			new Chamber(Missile, 16, 2, {gravity:.05, dir:0}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:0}),
-//			new Chamber(Missile, 16, 2, {gravity:.05, dir:Math.PI}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:Math.PI}),
+//new Chamber(Missile, 16, 2, {gravity:.05, dir:0}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:0}),
+//new Chamber(Missile, 16, 2, {gravity:.05, dir:Math.PI}), new Chamber(Missile, 16, 2, {gravity:-.05, dir:Math.PI}),
 		];
 		this.chamberList.forEach(chamber => chamber.reset());
 		this.missileLevel = 0;
@@ -74,28 +73,18 @@ class Ship extends Actor {
 			this.dir = (dir + 1) * Math.SQ;
 		}
 		if (keys['Control'] || keys['Shift'] || keys['k16'] || keys['k17']) {
-			this.trigger = true;
+			this.triggered = true;
 		}
-	}
-
-	sieveShots() {
-		let shotList = [];
-
-		this.shotList.forEach(shot => {
-			if (shot.isGone) {
-				return;
-			}
-			shotList.push(shot);
-		});
-		this.shotList = shotList;
 	}
 
 	move() {
 		this.dir = null;
 		this.aim(Controller.Instance.point);
 		this.inkey(Controller.Instance.keys);
-		super.move();
-		this.chamberList.forEach(chamber => chamber.probe());
+		if (Controller.Instance.touch) {
+			this.triggered = true;
+		}
+		let result = super.move();
 		if (this.isGone) {
 			return;
 		}
@@ -109,25 +98,7 @@ class Ship extends Actor {
 		if (this.y < this.hH || this.bottom < this.y) {
 			this.y = this.svY;
 		}
-		if (Controller.Instance.touch) {
-			this.trigger = true;
-		}
-		// shot & missile
-		this.sieveShots();
-		if (this.trigger) {
-			let result = [];
-
-			this.trigger = false;
-			this.chamberList.forEach(chamber => {
-				let shot = chamber.fire(this);
-
-				if (shot) {
-					this.shotList.push(shot);
-					result.push(shot);
-				}
-			});
-			return result;
-		}
+		return result;
 	}
 }
 Ship.MIN_SPEED = 1.5;

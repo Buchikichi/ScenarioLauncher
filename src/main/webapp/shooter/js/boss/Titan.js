@@ -88,7 +88,6 @@ class Titan extends Enemy {
 			titanBone.y = y;
 			titanBone.z = bone.cz;
 			titanBone.radian = bone.radian;
-			titanBone.constraint = true;
 			if (titanBone.hitPoint == 0) {
 				isDestroy = true;
 			}
@@ -148,7 +147,9 @@ class TitanBone extends Enemy {
 		this.anim = new Animator(this, img);
 	}
 
-	trigger() {}
+	get triggered() {
+		return false;
+	}
 
 	drawNormal(ctx) {
 		super.drawNormal(ctx);

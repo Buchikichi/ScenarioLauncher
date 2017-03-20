@@ -11,10 +11,12 @@ class TitanBall extends Enemy {
 		this.anim = new Animator(this, 'boss/titan/titan.ball.png');
 	}
 
-	trigger() {}
+	get triggered() {
+		return false;
+	}
 
-	react() {
-		super.react();
+	reactY(y) {
+		super.reactY(y);
 		this.fate(this);
 	}
 }

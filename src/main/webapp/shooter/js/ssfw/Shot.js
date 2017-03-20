@@ -17,8 +17,7 @@ class Shot extends Actor {
 	}
 
 	fate() {
-		this.x = Field.Instance.width + this.width;
-		this.isGone = true;
+		this.eject();
 	}
 
 	move(target) {

@@ -57,8 +57,6 @@ class Tentacle extends Chain {
 		}
 		return result;
 	}
-
-	trigger() {};
 }
 Tentacle.MAX_JOINT = 8;
 Tentacle.MAX_RADIUS = 16;
@@ -121,7 +119,6 @@ class TentacleJoint extends Chain {
 	}
 
 	fate() {}
-	trigger() {};
 }
 TentacleJoint.DEG_STEP = Math.PI / (180 * 45);
 TentacleJoint.MAX_RAD = Math.PI / 6;
@@ -133,6 +130,7 @@ class TentacleHead extends TentacleJoint {
 	constructor(speed) {
 		super(speed);
 		this.anim = new Animator(this, 'enemy/tentacleHead.png');
+		this.chamberList = [new Chamber(Bullet, TentacleHead.TRIGGER_CYCLE)];
 	}
 
 	rotate(target) {
@@ -143,5 +141,6 @@ class TentacleHead extends TentacleJoint {
 		this.radian = rad;
 	}
 }
+TentacleHead.TRIGGER_CYCLE = 10;
 TentacleHead.DEG_STEP = Math.PI / 100;
 ImageManager.Instance.reserve(['enemy/tentacle.png', 'enemy/tentacleHead.png']);

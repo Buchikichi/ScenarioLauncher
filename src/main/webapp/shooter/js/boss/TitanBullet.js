@@ -10,5 +10,8 @@ class TitanBullet extends Enemy {
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.anim = new Animator(this, 'boss/titan/titan.bullet.png');
 	}
-	trigger() {}
+
+	get triggered() {
+		return false;
+	}
 }

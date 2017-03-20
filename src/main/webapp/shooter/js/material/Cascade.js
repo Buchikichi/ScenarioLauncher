@@ -29,7 +29,6 @@ class Cascade extends Chain {
 	}
 
 	fate() {}
-	trigger() {}
 }
 Cascade.RADIUS = 4;
 Cascade.MAX_JOINT = 12;
@@ -98,6 +97,4 @@ class CascadeChild extends Chain {
 			joint = joint.next;
 		}
 	}
-
-	trigger() {}
 }

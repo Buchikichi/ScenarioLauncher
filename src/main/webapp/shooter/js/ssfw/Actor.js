@@ -5,7 +5,6 @@ class Matter {
 		this.z = z;
 		this.w = 0;
 		this.h = 0;
-		this.dx = 0;
 		this.dy = 0;
 		this.dir = null;
 		this.radian = 0;
@@ -40,6 +39,7 @@ class Actor extends Matter {
 		this.width = 16;
 		this.height = 16;
 		this.animList = [];
+		this.chamberList = [];
 		this.hasBounds = true;
 		this.reaction = 0;
 		this.effectH = true;
@@ -90,7 +90,7 @@ class Actor extends Matter {
 
 	eject() {
 		this.isGone = true;
-		this.x = -Field.Instance.width;
+		this.x = Number.MIN_SAFE_INTEGER;
 	}
 
 	aim(target) {
@@ -128,11 +128,13 @@ class Actor extends Matter {
 	 * @param target
 	 */
 	move(target) {
+		let result = [];
+
 		if (0 < this.explosion) {
 			this.explosion--;
 			if (this.explosion == 0) {
 				this.eject();
-				return;
+				return result;
 			}
 		}
 		this.svX = this.x;
@@ -164,21 +166,36 @@ class Actor extends Matter {
 				let diff = Math.abs(this.y - y);
 
 				if (Landform.BRICK_WIDTH * 2 < diff) {
-					this.dir = Math.trim(this.dir + Math.PI);
+					this.reactX(y);
 				} else {
-					this.y = y;
-					this.react();
+					this.reactY(y);
 				}
 			}
 		}
-		this.x += this.dx * this.speed;
 		this.y += this.dy * this.speed;
 		this.animList.forEach(anim => {
 			anim.next(this.dir);
 		});
+		this.chamberList.forEach(chamber => chamber.probe());
+		if (this.triggered) {
+			this.triggered = false;
+			this.chamberList.forEach(chamber => {
+				let shot = chamber.fire(this, target);
+
+				if (shot) {
+					result.push(shot);
+				}
+			});
+		}
+		return result;
 	}
 
-	react() {
+	reactX(y) {
+		this.dir = Math.trim(this.dir + Math.PI);
+	}
+
+	reactY(y) {
+		this.y = y;
 		this.dy *= -this.reaction;
 		this.radian = Field.Instance.landform.getHorizontalAngle(this);
 	}

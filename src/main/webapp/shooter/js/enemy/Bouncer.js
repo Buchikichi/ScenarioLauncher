@@ -18,7 +18,6 @@ class Bouncer extends Enemy {
 		if (this.shuttle && (this.x < 0 || Field.Instance.width + Landform.BRICK_WIDTH < this.x)) {
 			this.dir = Math.trim(this.dir + Math.PI);
 			this.x = this.svX;
-			this.dx = -this.dx;
 			this.shuttle--;
 		}
 		if (this.walled) {

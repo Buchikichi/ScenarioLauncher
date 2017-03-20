@@ -8,28 +8,7 @@ class Enemy extends Actor {
 		this.routine = null;
 		this.routineIx = 0;
 		this.routineCnt = 0;
-		this.triggerCycle = 0;
-		this.constraint = false;
-	}
-
-	trigger() {
-		if (this.triggerCycle++ < Enemy.TRIGGER_CYCLE) {
-			return false;
-		}
-		this.triggerCycle = 0;
-		return true;
-	}
-
-	fire(target) {
-		let bullet = new Bullet(this.x, this.y);
-		let dist = this.calcDistance(target);
-		let fg = Field.Instance.stage.getFg();
-		let estimation = dist / bullet.speed * fg.speed;
-		let dx = target.x - this.x + estimation;
-		let dy = target.y - this.y;
-
-		bullet.dir = Math.atan2(dy, dx);
-		return [bullet];
+		this.chamberList = [new Chamber(Bullet, Enemy.TRIGGER_CYCLE)];
 	}
 
 	move(target) {
@@ -38,15 +17,12 @@ class Enemy extends Actor {
 
 			mov.tick(this, target);
 		}
+		let result = super.move(target);
 //console.log('enemy[' + this.x + ',' + this.y + ']');
-		super.move(target);
-		if (this.trigger() && Enemy.TRIGGER_ALLOWANCE < this.calcDistance(target)) {
-			if (this.constraint) {
-				return [];
-			}
-			return this.fire(target);
+		if (!(target instanceof Enemy) && this.calcDistance(target) < Enemy.TRIGGER_ALLOWANCE) {
+			result = [];
 		}
-		return [];
+		return result;
 	}
 }
 Enemy.TRIGGER_CYCLE = 50;

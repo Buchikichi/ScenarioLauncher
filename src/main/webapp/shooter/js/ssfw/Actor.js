@@ -123,18 +123,43 @@ class Actor extends Matter {
 		return Actor.DEG_STEP;
 	}
 
+	reactX(y) {
+		this.dir = Math.trim(this.dir + Math.PI);
+	}
+
+	reactY(y) {
+		this.y = y;
+		this.dy *= -this.reaction;
+		this.radian = Field.Instance.landform.getHorizontalAngle(this);
+	}
+
+	trigger(target, force = false) {
+		let result = [];
+
+		this.chamberList.forEach(chamber => chamber.probe());
+		if (this.triggered || force) {
+			this.triggered = false;
+			this.chamberList.forEach(chamber => {
+				let shot = chamber.fire(this, target);
+
+				if (shot) {
+					result.push(shot);
+				}
+			});
+		}
+		return result;
+	}
+
 	/**
 	 * Move.
 	 * @param target
 	 */
 	move(target) {
-		let result = [];
-
 		if (0 < this.explosion) {
 			this.explosion--;
 			if (this.explosion == 0) {
 				this.eject();
-				return result;
+				return;
 			}
 		}
 		this.svX = this.x;
@@ -176,28 +201,7 @@ class Actor extends Matter {
 		this.animList.forEach(anim => {
 			anim.next(this.dir);
 		});
-		this.chamberList.forEach(chamber => chamber.probe());
-		if (this.triggered) {
-			this.triggered = false;
-			this.chamberList.forEach(chamber => {
-				let shot = chamber.fire(this, target);
-
-				if (shot) {
-					result.push(shot);
-				}
-			});
-		}
-		return result;
-	}
-
-	reactX(y) {
-		this.dir = Math.trim(this.dir + Math.PI);
-	}
-
-	reactY(y) {
-		this.y = y;
-		this.dy *= -this.reaction;
-		this.radian = Field.Instance.landform.getHorizontalAngle(this);
+		return this.trigger(target);
 	}
 
 	drawCircle(ctx) {

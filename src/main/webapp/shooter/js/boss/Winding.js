@@ -1,23 +1,29 @@
 class Winding extends Chain {
 	constructor(x, y) {
 		super(x, y);
+		this.region = new Region(this, 12);
 		this.dir = -Math.PI;
 		this.step = Math.SQ / 100;
 		this.radius = Winding.RADIUS;
-		this.speed = .9;
-		this.hitPoint = 150;
+		this.speed = .5;
+		this.hitPoint = 100;
 		this.hasBounds = false;
 		this.ratio = Winding.RATIO_MAX;
 		this.delta = -1;
 		this.uncoil = false;
 		this.anim = new Animator(this, 'boss/winding.png');
 		this.routine = [
-			new Movement(200).add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE),
+			new Movement(200).add(Gizmo.TYPE.CHASE, Gizmo.DEST.ROTATE, Math.PI / 180),
 			new Movement(20).add(Gizmo.TYPE.OWN, Gizmo.DEST.ROTATE_R),
 		];
+		this.chamberList = [new Chamber(Slur, Winding.TRIGGER_CYCLE)];
+		this.init();
+	}
+
+	init() {
 		this.appears = false;
-		for (var cnt = 0; cnt < Winding.MAX_JOINT; cnt++) {
-			this.push(new WindingChild(x, y));
+		for (let cnt = 0; cnt < Winding.MAX_JOINT; cnt++) {
+			this.push(new WindingChild(this.x, this.y));
 		}
 	}
 
@@ -41,6 +47,11 @@ class Winding extends Chain {
 				} else if (Winding.RATIO_MAX <= this.ratio) {
 					this.uncoil = false;
 					this.delta *= -1;
+					result = this.trigger(target, true);
+					result.forEach(elem => {
+						elem.aim(target);
+						elem.dir = Math.trim(elem.dir + Math.PI);
+					});
 				}
 			}
 			return result;
@@ -64,6 +75,7 @@ Winding.RADIUS = 16;
 Winding.RADIAN_STEP = Math.SQ;
 Winding.RATIO_MAX = 50;
 Winding.MAX_JOINT = 20;
+Winding.TRIGGER_CYCLE = 20;
 
 /**
  * WindingChild.

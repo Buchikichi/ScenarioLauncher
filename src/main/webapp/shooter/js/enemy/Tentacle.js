@@ -4,6 +4,7 @@
 class Tentacle extends Chain {
 	constructor(x, y) {
 		super(x, y);
+		this.hasBounds = false;
 		this.speed = .1;
 		this.hitPoint = 16;
 		this.appears = false;
@@ -43,6 +44,7 @@ class Tentacle extends Chain {
 	move(target) {
 		this.radius = this.hitPoint / 2 + 8;
 		this.scale = this.radius / Tentacle.MAX_RADIUS;
+		this.region = new Region(this, this.radius);
 		super.move(target);
 		if (this.appears) {
 			return;
@@ -60,7 +62,7 @@ class Tentacle extends Chain {
 }
 Tentacle.MAX_JOINT = 8;
 Tentacle.MAX_RADIUS = 16;
-Tentacle.DEG_STEP = Math.PI / (180 * 4);
+Tentacle.DEG_STEP = Math.PI / (180 * 5);
 
 /**
  * TentacleJoint.
@@ -81,14 +83,6 @@ class TentacleJoint extends Chain {
 
 	calcRelative() {
 		return Math.trim(this.radian - this.prev.calcRadian());
-	}
-
-	addRadian(rad) {
-		this.radian = Math.trim(this.radian + rad);
-//		if (this.next) {
-//			this.next.addRadian(rad);
-//		}
-		return this.radian;
 	}
 
 	rotate(target) {
@@ -115,13 +109,26 @@ class TentacleJoint extends Chain {
 
 		this.x = prev.x + Math.cos(radian) * distance;
 		this.y = prev.y + Math.sin(radian) * distance;
-		this.rotate(target);
+		return this.rotate(target);
 	}
 
 	fate() {}
 }
-TentacleJoint.DEG_STEP = Math.PI / (180 * 45);
+TentacleJoint.DEG_STEP = Math.PI / (180 * 100);
 TentacleJoint.MAX_RAD = Math.PI / 6;
+
+/**
+ * TentacleBullet.
+ */
+class TentacleBullet extends Bullet {
+	constructor(x, y) {
+		super(x, y);
+		this.region = new Region(this, 1);
+		this.speed = .5;
+		this.width = 2;
+		this.fillStyle = 'rgba(255, 200, 200, 0.7)';
+	}
+}
 
 /**
  * TentacleHead.
@@ -130,7 +137,7 @@ class TentacleHead extends TentacleJoint {
 	constructor(speed) {
 		super(speed);
 		this.anim = new Animator(this, 'enemy/tentacleHead.png');
-		this.chamberList = [new Chamber(Bullet, TentacleHead.TRIGGER_CYCLE)];
+		this.chamberList = [new Chamber(TentacleBullet, TentacleHead.TRIGGER_CYCLE)];
 	}
 
 	rotate(target) {
@@ -139,6 +146,7 @@ class TentacleHead extends TentacleJoint {
 		let rad = Math.close(this.radian, Math.atan2(dy, dx), TentacleHead.DEG_STEP);
 
 		this.radian = rad;
+		return this.trigger(target);
 	}
 }
 TentacleHead.TRIGGER_CYCLE = 10;

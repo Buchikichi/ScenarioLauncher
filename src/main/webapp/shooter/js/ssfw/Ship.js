@@ -14,7 +14,7 @@ class Ship extends Actor {
 
 		super.recalculation();
 		if (field) {
-			this.right = field.width - this.width * 3;
+			this.right = field.width - this.width * 2;
 			this.bottom = field.height - this.hH;
 		}
 	}

@@ -88,7 +88,7 @@ Gizmo.prototype.tick = function(src, target) {
 		} else if (this.destination == Gizmo.DEST.TO_Y && dy) {
 			src.dir = Math.atan2(dy, 0);
 		} else if (this.destination == Gizmo.DEST.ROTATE) {
-			let step = Math.PI / 60;
+			let step = this.param ? this.param : Math.PI / 60;
 
 			src.dir = Math.close(src.dir, Math.atan2(dy, dx), step);
 			src.radian = src.dir;

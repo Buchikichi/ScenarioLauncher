@@ -7,7 +7,7 @@ class Molten extends Enemy {
 		this.region = new Region(this, 14);
 		this.hasBounds = false;
 		this.dir = 0;
-		this.speed = .5;
+		this.speed = .4;
 		this.effectH = false;
 		this.hitPoint = Number.MAX_SAFE_INTEGER;
 		this.cycle = 0;
@@ -67,7 +67,7 @@ class MoltenRock extends Enemy {
 		this.hasBounds = false;
 		this.parent = parent;
 		this.dir = 0;
-		this.speed = .7;
+		this.speed = .6;
 		this.hitPoint = 5;
 		this.score = 10;
 		this.anim = new Animator(this, 'boss/moltenRock.png');

@@ -4,6 +4,7 @@
 class Hatch extends Enemy {
 	constructor( x, y) {
 		super(x, y);
+		this.region = new Region(this, 12);
 		this.speed = 0;
 		this.hitPoint = 10;
 		this.score = 200;

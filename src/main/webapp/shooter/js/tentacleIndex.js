@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', ()=> {
 		let body = $('body');
 		let header = $('#header');
 		let height = body.height() - header.outerHeight(true);
-		let magniH = body.width() / Field.WIDTH;
-		let magniV = height / Field.HEIGHT;
+		let magniH = body.width() / field.width;
+		let magniV = height / field.height;
 		let magni = Math.min(magniH, magniV);
 
 		field.resize(magni);

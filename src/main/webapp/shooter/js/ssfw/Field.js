@@ -192,7 +192,7 @@ class Field extends Matter {
 			}
 			if (0 < --this.shipRemain) {
 				this.retry();
-++this.shipRemain;
+//++this.shipRemain;
 			} else {
 				this.endGame();
 			}
@@ -219,9 +219,6 @@ class Field extends Matter {
 		}
 	}
 }
-Field.WIDTH = 512;
-Field.HEIGHT = 224;
-Field.HALF_WIDTH = Field.WIDTH / 2;
 Field.MAX_ENEMIES = 100;
 Field.ENEMY_CYCLE = 10;
 Field.MIN_LOOSING_RATE = 1;

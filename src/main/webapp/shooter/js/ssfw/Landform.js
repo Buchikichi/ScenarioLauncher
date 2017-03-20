@@ -61,12 +61,12 @@ Landform.prototype.load = function(file) {
 };
 
 Landform.prototype.loadMapData = function(file) {
-	var landform = this;
-	var img = new Image();
+	let landform = this;
+	let img = new Image();
 
 	img.onload = function() {
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext('2d');
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
 
 		canvas.width = this.width;
 		canvas.height = this.height;
@@ -82,7 +82,7 @@ Landform.prototype.loadMapData = function(file) {
 };
 
 Landform.prototype.loadStage = function(stage) {
-	var fg = stage.getFg();
+	let fg = stage.getFg();
 
 	this.stage = stage;
 	this.loadMapData('./img/' + stage.map);
@@ -109,7 +109,7 @@ Landform.prototype.retry = function() {
 };
 
 Landform.prototype.effect = function(target) {
-	var maxX = Math.max(Field.Instance.width + target.width, target.maxX);
+	let maxX = Math.max(Field.Instance.width + target.width, target.maxX);
 
 	if (target.effectH) {
 		target.x -= this.effectH;
@@ -136,7 +136,7 @@ Landform.prototype.effect = function(target) {
 	}
 	// Stage.SCROLL.LOOP
 	if (target.gravity) {
-		var dy = Math.abs(target.dy * target.speed);
+		let dy = Math.abs(target.dy * target.speed);
 
 		if (Landform.BRICK_WIDTH + Landform.BRICK_HALF < dy) {
 //console.log('dy:' + dy);
@@ -155,7 +155,7 @@ Landform.prototype.forward = function(target) {
 	if (!this.width) {
 		return Landform.NEXT.NONE;
 	}
-	var fg = this.stage.getFg();
+	let fg = this.stage.getFg();
 
 	if (this.next != Landform.NEXT.ARRIV) {
 		this.stage.scrollV(target);
@@ -191,16 +191,17 @@ Landform.prototype.forward = function(target) {
 };
 
 Landform.prototype.scanEnemy = function() {
-	var result = [];
+	let result = [];
 
 	if (!this.brick || this.next == Landform.NEXT.IDLE) {
 		return result;
 	}
-	var fg = this.stage.getFg();
-	var gx = fg.x;
-	var gy = fg.y;
+	let field = Field.Instance;
+	let fg = this.stage.getFg();
+	let gx = fg.x;
+	let gy = fg.y;
 	// right
-	var tx = Math.round((gx + Field.WIDTH - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+	let tx = Math.round((gx + field.width - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
 
 	if (tx < 0) {
 		return result;
@@ -209,13 +210,13 @@ Landform.prototype.scanEnemy = function() {
 		return result;
 	}
 	this.lastScan = tx;
-	var x = Field.WIDTH + Landform.BRICK_WIDTH;
-	for (var ty = 0; ty < this.bh; ty++) {
-		var ix = ty * this.bw * 4 + tx * 4;
-		var brick = this.brick.data[ix + 1];
+	let x = field.width + Landform.BRICK_WIDTH;
+	for (let ty = 0; ty < this.bh; ty++) {
+		let ix = ty * this.bw * 4 + tx * 4;
+		let brick = this.brick.data[ix + 1];
 
 		if (0 < brick && brick <= Enemy.MAX_TYPE) {
-			var y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
+			let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
 
 			result.push(Enemy.assign(brick - 1, x, y));
 		}
@@ -225,12 +226,12 @@ Landform.prototype.scanEnemy = function() {
 	if (tx < 0) {
 		return result;
 	}
-	for (var ty = 0; ty < this.bh; ty++) {
-		var ix = ty * this.bw * 4 + tx * 4;
-		var brick = this.brick.data[ix + 1];
+	for (let ty = 0; ty < this.bh; ty++) {
+		let ix = ty * this.bw * 4 + tx * 4;
+		let brick = this.brick.data[ix + 1];
 
 		if (Enemy.MAX_TYPE < brick) {
-			var y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
+			let y = -gy + (ty + 1) * Landform.BRICK_WIDTH;
 
 			result.push(Enemy.assign(brick - 1 - Enemy.MAX_TYPE, 0, y));
 		}
@@ -247,7 +248,7 @@ Landform.prototype.hitTest = function(target) {
 };
 
 Landform.prototype.smashWall = function(target) {
-	var fg = this.stage.getFg();
+	let fg = this.stage.getFg();
 
 	fg.smashWall(target);
 	this.putBrick(target, 2, 0);
@@ -257,15 +258,15 @@ Landform.prototype.scanFloor = function(target) {
 	if (!this.brick) {
 		return;
 	}
-	var y = target.y;
-	var brick = this.getBrick(target, 2);
-	var sign = target.gravity < 0 ? -1 : 1;
+	let y = target.y;
+	let brick = this.getBrick(target, 2);
+	let sign = target.gravity < 0 ? -1 : 1;
 
 	if (0 < brick) {
 		y = Math.floor(target.y / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
 		while (0 < brick) {
 			y -= Landform.BRICK_WIDTH * sign;
-			var temp = {x:target.x, y:y};
+			let temp = {x:target.x, y:y};
 			brick = this.getBrick(temp, 2);
 		}
 		y += Landform.BRICK_WIDTH * sign;
@@ -275,7 +276,7 @@ Landform.prototype.scanFloor = function(target) {
 			// top
 			while (0 < y && !brick) {
 				y -= Landform.BRICK_WIDTH;
-				var temp = {x:target.x, y:y};
+				let temp = {x:target.x, y:y};
 
 				brick = this.getBrick(temp, 2);
 			}
@@ -287,7 +288,7 @@ Landform.prototype.scanFloor = function(target) {
 			// bottom
 			while (y < this.height && !brick) {
 				y += Landform.BRICK_WIDTH;
-				var temp = {x:target.x, y:y};
+				let temp = {x:target.x, y:y};
 
 				brick = this.getBrick(temp, 2);
 			}
@@ -301,23 +302,23 @@ Landform.prototype.scanFloor = function(target) {
 };
 
 Landform.prototype.getHorizontalAngle = function(target) {
-	var left = {x:target.x - Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
-	var right = {x:target.x + Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
-	var leftY = this.scanFloor(left);
-	var rightY = this.scanFloor(right);
+	let left = {x:target.x - Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
+	let right = {x:target.x + Landform.BRICK_WIDTH, y:target.y - Landform.BRICK_WIDTH*2};
+	let leftY = this.scanFloor(left);
+	let rightY = this.scanFloor(right);
 
 	return Math.atan2(rightY - leftY, target.width);
 };
 
 Landform.prototype.getBrickIndex = function(target) {
-	var fg = this.stage.getFg();
-	var gx = fg.x;
-	var gy = fg.y;
-	var tx = Math.round((gx + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+	let fg = this.stage.getFg();
+	let gx = fg.x;
+	let gy = fg.y;
+	let tx = Math.round((gx + target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
 	if (tx < 0 || this.bw < tx) {
 		return -1;
 	}
-	var ty = Math.round((gy + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
+	let ty = Math.round((gy + target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH);
 	ty %= this.bh;
 	return ty * this.bw * 4 + tx * 4;
 };
@@ -326,7 +327,7 @@ Landform.prototype.getBrick = function(target, c) {
 	if (!this.brick) {
 		return null;
 	}
-	var ix = this.getBrickIndex(target);
+	let ix = this.getBrickIndex(target);
 
 	if (ix < 0) {
 		return null;
@@ -338,7 +339,7 @@ Landform.prototype.getBrick = function(target, c) {
  * for edit
  */
 Landform.prototype.wheel = function(delta) {
-	var fg = this.stage.getFg();
+	let fg = this.stage.getFg();
 
 	if (delta < 0){
 		fg.y += Landform.BRICK_WIDTH * 2;
@@ -354,7 +355,7 @@ Landform.prototype.wheel = function(delta) {
 };
 
 Landform.prototype.putBrick = function(target, c, val) {
-	var ix = this.getBrickIndex(target);
+	let ix = this.getBrickIndex(target);
 
 	if (ix < 0) {
 		return;
@@ -364,12 +365,12 @@ Landform.prototype.putBrick = function(target, c, val) {
 };
 
 Landform.prototype.drawEnemy = function(num, x, y) {
-	var reverse = Enemy.MAX_TYPE < num;
-	var ix = reverse ? num - Enemy.MAX_TYPE : num;
-	var obj = Enemy.LIST[ix - 1];
-	var cnt = obj.formation ? 3 : 1;
-	var enemy = obj.instance;
-	var ctx = this.ctx;
+	let reverse = Enemy.MAX_TYPE < num;
+	let ix = reverse ? num - Enemy.MAX_TYPE : num;
+	let obj = Enemy.LIST[ix - 1];
+	let cnt = obj.formation ? 3 : 1;
+	let enemy = obj.instance;
+	let ctx = this.ctx;
 
 	if (!obj.instance) {
 		return null;
@@ -394,14 +395,14 @@ Landform.prototype.drawTarget = function() {
 	if (!this.isEdit || !this.target) {
 		return;
 	}
-	var tx = Math.round((this.target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	var ty = Math.round((this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	var ctx = this.ctx;
-	var bw = Landform.BRICK_WIDTH;
-	var selection = parseInt(this.selection);
+	let tx = Math.round((this.target.x - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	let ty = Math.round((this.target.y - Landform.BRICK_HALF) / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	let ctx = this.ctx;
+	let bw = Landform.BRICK_WIDTH;
+	let selection = parseInt(this.selection);
 
 	if (0 < selection) {
-		var enemy = this.drawEnemy(selection, tx, ty);
+		let enemy = this.drawEnemy(selection, tx, ty);
 
 		if (enemy) {
 			bw = enemy.width;
@@ -424,11 +425,11 @@ Landform.prototype.touchDown = function(tx, ty) {
 	if (this.tx == tx && this.ty == ty) {
 		return;
 	}
-	var selection = parseInt(this.selection);
+	let selection = parseInt(this.selection);
 	if (0 < selection) {
 		// enemy
-		var brick = this.getBrick(this.target, 1);
-		var reverse = brick - Enemy.MAX_TYPE;
+		let brick = this.getBrick(this.target, 1);
+		let reverse = brick - Enemy.MAX_TYPE;
 
 		if (!brick || (brick != selection && reverse != selection)) {
 			this.putBrick(this.target, 1, selection);
@@ -438,7 +439,7 @@ Landform.prototype.touchDown = function(tx, ty) {
 			this.putBrick(this.target, 1, 0);
 		}
 	} else {
-		var brick = this.getBrick(this.target, 2);
+		let brick = this.getBrick(this.target, 2);
 
 		selection = this.selection.substr(1);
 		if (this.brickVal == null) {
@@ -455,43 +456,44 @@ Landform.prototype.drawBrick = function() {
 	if (!this.brick || !this.isEdit) {
 		return;
 	}
-	var fg = this.stage.getFg();
-	var gx = fg.x;
-	var gy = fg.y;
-	var ctx = this.ctx;
-	var red = 255 < this.col ? this.col - 256 : 0;
-	var green = 255 < this.col ? 255 : this.col % 256;
-	var brickWidth = Landform.BRICK_WIDTH - 2;
-	var sx = Math.round(gx / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	var startX = sx / Landform.BRICK_WIDTH;
-	var endX = Math.min(startX + 512 / Landform.BRICK_WIDTH, this.bw);
-	var sy = Math.round(gy / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
-	var startY = sy / Landform.BRICK_WIDTH;
-	var bd = this.brick.data;
+	let field = Field.Instance;
+	let fg = this.stage.getFg();
+	let gx = fg.x;
+	let gy = fg.y;
+	let ctx = this.ctx;
+	let red = 255 < this.col ? this.col - 256 : 0;
+	let green = 255 < this.col ? 255 : this.col % 256;
+	let brickWidth = Landform.BRICK_WIDTH - 2;
+	let sx = Math.round(gx / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	let startX = sx / Landform.BRICK_WIDTH;
+	let endX = Math.min(startX + 512 / Landform.BRICK_WIDTH, this.bw);
+	let sy = Math.round(gy / Landform.BRICK_WIDTH) * Landform.BRICK_WIDTH;
+	let startY = sy / Landform.BRICK_WIDTH;
+	let bd = this.brick.data;
 
 	ctx.save();
 	ctx.translate(-gx, -gy);
 	ctx.strokeStyle = 'rgba(' + red + ', ' + green + ', 255, .4)';
 	ctx.fillStyle = ctx.strokeStyle;
-	for (var y = 0; y < this.bh; y++) {
-		var iy = startY + y;
-		var ry = iy * Landform.BRICK_WIDTH;
-		var ix = ((iy % this.bh) * this.bw + startX) * 4;
+	for (let y = 0; y < this.bh; y++) {
+		let iy = startY + y;
+		let ry = iy * Landform.BRICK_WIDTH;
+		let ix = ((iy % this.bh) * this.bw + startX) * 4;
 
-		for (var x = startX, rx = sx; x < endX; x++, rx += Landform.BRICK_WIDTH, ix += 4) {
+		for (let x = startX, rx = sx; x < endX; x++, rx += Landform.BRICK_WIDTH, ix += 4) {
 			if (x < 0) {
 				continue;
 			}
-			var enemyNum = bd[ix + 1];
+			let enemyNum = bd[ix + 1];
 			if (enemyNum) {
 				this.drawEnemy(enemyNum, rx, ry);
 			}
-			var brickNum = bd[ix + 2];
+			let brickNum = bd[ix + 2];
 			if (brickNum == 255) {
 				ctx.fillRect(rx, ry, brickWidth, brickWidth);
 			} else if (brickNum == 254) {
-				var ax = rx + Landform.BRICK_HALF - 1;
-				var ay = ry + Landform.BRICK_HALF - 1;
+				let ax = rx + Landform.BRICK_HALF - 1;
+				let ay = ry + Landform.BRICK_HALF - 1;
 
 				ctx.beginPath();
 				ctx.arc(ax, ay, brickWidth / 2, 0, Math.PI2, false);
@@ -500,8 +502,8 @@ Landform.prototype.drawBrick = function() {
 			}
 		}
 	}
-	if (this.width - Field.WIDTH <= gx) {
-		var x = this.width - Landform.BRICK_WIDTH;
+	if (this.width - field.width <= gx) {
+		let x = this.width - Landform.BRICK_WIDTH;
 		ctx.fillStyle = 'rgba(255, 0, 0, .4)';
 		ctx.fillRect(x, 0, Landform.BRICK_WIDTH, this.height);
 	}
@@ -526,8 +528,8 @@ Landform.prototype.draw = function() {
 	if (!this.stage) {
 		return;
 	}
-	var landform = this;
-	var ctx = this.ctx;
+	let landform = this;
+	let ctx = this.ctx;
 
 	ctx.save();
 	ctx.scale(this.magni, this.magni);
@@ -545,11 +547,11 @@ Landform.prototype.draw = function() {
 };
 
 Landform.prototype.updateMap = function() {
-	var mapImage = document.getElementById('mapImage');
+	let mapImage = document.getElementById('mapImage');
 
 	if (mapImage) {
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext('2d');
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
 
 		canvas.width = this.brick.width;
 		canvas.height = this.brick.height;
@@ -559,8 +561,8 @@ Landform.prototype.updateMap = function() {
 };
 
 Landform.prototype.getImageData = function() {
-	var canvas = document.createElement('canvas');
-	var ctx = canvas.getContext('2d');
+	let canvas = document.createElement('canvas');
+	let ctx = canvas.getContext('2d');
 
 	canvas.width = this.width;
 	canvas.height = this.height;
@@ -572,8 +574,8 @@ Landform.prototype.getBrickData = function(ctx) {
 	if (this.brick != null) {
 		return this.brick;
 	}
-	var bw = this.width / Landform.BRICK_WIDTH;
-	var bh = this.height / Landform.BRICK_WIDTH;
+	let bw = this.width / Landform.BRICK_WIDTH;
+	let bh = this.height / Landform.BRICK_WIDTH;
 	return ctx.createImageData(bw, bh);
 };
 
@@ -581,26 +583,26 @@ Landform.prototype.generateBrick = function(ctx) {
 	if (!this.img.src || !this.img.complete) {
 		return;
 	}
-	var img = this.getImageData();
-	var bw = this.width / Landform.BRICK_WIDTH;
-	var bh = this.height / Landform.BRICK_WIDTH;
-	var brick = this.getBrickData(ctx);
-	var dst = brick.data;
-	var sx = this.width * Landform.BRICK_HALF + Landform.BRICK_HALF * 4;
-	var ix = 0;
+	let img = this.getImageData();
+	let bw = this.width / Landform.BRICK_WIDTH;
+	let bh = this.height / Landform.BRICK_WIDTH;
+	let brick = this.getBrickData(ctx);
+	let dst = brick.data;
+	let sx = this.width * Landform.BRICK_HALF + Landform.BRICK_HALF * 4;
+	let ix = 0;
 
 console.log(this.width + ' x ' + this.height + ' | ' + (this.width * this.height * 4));
 console.log(bw + ' x ' + bh + ' | ' + dst.length);
-	for (var y = 0; y < bh; y++) {
-		for (var x = 0; x < bw; x++) {
-			var dot = false;
+	for (let y = 0; y < bh; y++) {
+		for (let x = 0; x < bw; x++) {
+			let dot = false;
 
-			for (var c = 0; c < 4; c++) {
+			for (let c = 0; c < 4; c++) {
 				if (img.data[sx + c]) {
 					dot = true;
 				}
 			}
-			var val = dot ? 255 : 0;
+			let val = dot ? 255 : 0;
 			dst[ix + 2] = val;
 			dst[ix + 3] = val;
 			sx += Landform.BRICK_WIDTH * 4;

@@ -19,7 +19,7 @@ AudioMixer.INSTANCE = new AudioMixer();
 AudioMixer.prototype.makeName = function(key) {
 	var ua = navigator.userAgent.toLowerCase();
 
-	if (ua.indexOf('edge') !== -1) {
+	if (ua.indexOf('edge') !== -1 || ua.indexOf('safari') !== -1) {
 		return 'audio/' + key + '.mp3';
 	}
 	return 'audio/' + key + '.webm';

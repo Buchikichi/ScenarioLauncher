@@ -6,20 +6,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
 	let view = document.getElementById('view');
 	let repositories = [ImageManager.Instance, AudioMixer.INSTANCE, MotionManager.INSTANCE];
 	let field = new Field(512, 224);
-
-	new Controller();
-	window.addEventListener('resize', ()=> {
-		field.resize();
-	});
-	window.addEventListener('keydown', ()=> {
-		if (!view.classList.contains('addicting')) {
-			view.classList.add('addicting');
-		}
-	});
-	window.addEventListener('mousemove', ()=> {
-		view.classList.remove('addicting');
-	});
-
 	let activate = ()=> {
 		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
@@ -47,5 +33,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
 		}
 		setTimeout(checkLoading, 125);
 	};
+
+	new Controller();
 	checkLoading();
 });

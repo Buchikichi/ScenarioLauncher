@@ -4,6 +4,7 @@
 class Field extends Matter {
 	constructor(width, height) {
 		super(0, 0);
+		this.view = new FlexibleView(width, height);
 		this.width = width;
 		this.height = height;
 		this.ship = new Ship(-100, 100);
@@ -15,29 +16,12 @@ class Field extends Matter {
 		this.enemyCycle = 0;
 		this.stage = Stage.LIST[0];
 		this.stageNum = 0;
-		this.setup();
+		this.landform = new Landform(this.view.canvas);
 		Field.Instance = this;
 	}
 
-	setup() {
-		let canvas = document.getElementById('canvas');
-
-		canvas.width = this.width;
-		canvas.height = this.height;
-		this.ctx = canvas.getContext('2d');
-		this.landform = new Landform(canvas);
-		this.resize();
-	}
-
-	resize() {
-		let scaleW = document.body.clientWidth / this.width;
-		let scaleH = window.innerHeight / this.height;
-		let view = document.getElementById('view');
-
-		this.scale = scaleH < scaleW ? scaleH : scaleW;
-//console.log('scale:' + this.scale);
-		// transform: scale(2);
-		view.setAttribute('style', 'transform: scale(' + this.scale + ');');
+	get ctx() {
+		return this.view.ctx;
 	}
 
 	nextStage() {
@@ -140,7 +124,8 @@ class Field extends Matter {
 		let validActors = [];
 		let score = 0;
 
-		ctx.clearRect(0, 0, this.width, this.height);
+		this.view.clear();
+//		ctx.clearRect(0, 0, this.width, this.height);
 		this.landform.drawBg(ctx);
 		this.actorList.sort(function(a, b) {
 			return a.z - b.z;

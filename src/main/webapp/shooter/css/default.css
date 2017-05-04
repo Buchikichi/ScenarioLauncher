@@ -5,8 +5,6 @@
 }
 #view {
 	position: relative;
-	width: 512px;
-	height: 224px;
 	overflow: hidden;
 	z-index: 0;
 	transform-origin: 0px 0px;
@@ -20,21 +18,6 @@
 }
 #view.addicting {
 	cursor: none;
-}
-div.bg {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-color: transparent;
-}
-#bg1 {
-	z-index: 1;
-}
-#bg2 {
-	z-index: 2;
-}
-#bg3 {
-	z-index: 3;
 }
 #canvas {
 	position: absolute;
@@ -60,12 +43,12 @@ div.bg {
 	top: 0px;
 	left: 0px;
 	width: 100%;
-	height: 224px;
+	height: 90%;
 	background-color: transparent;
 	z-index: 1100;
 }
 #gameOver div:FIRST-CHILD {
-	font-size: x-large;
+	font-size: large;
 	margin-top: 100px;
 }
 #gameOver.hidden {
@@ -89,6 +72,7 @@ div.bg {
 	display: table-cell;
 }
 #score div {
+	font-size: small;
 	text-align: left;
 	width: 100%;
 }

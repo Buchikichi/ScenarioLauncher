@@ -43,9 +43,14 @@ class FlexibleView {
 		let scaleH = (window.innerHeight - this.margin) / this.height;
 
 		this.scale = scaleH < scaleW ? scaleH : scaleW;
-//console.log('scale:' + this.scale);
 		// transform: scale(2);
-		this.view.setAttribute('style', 'transform: scale(' + this.scale + ');');
+//console.log('scale:' + this.scale);
+		let style = [
+			'width:' + this.width + 'px',
+			'height:' + this.height + 'px',
+			'transform: scale(' + this.scale + ')',
+		];
+		this.view.setAttribute('style', style.join(';'));
 	}
 
 	convert(x, y) {

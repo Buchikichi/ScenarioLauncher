@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
 	let view = document.getElementById('view');
 	let repositories = [ImageManager.Instance, AudioMixer.INSTANCE, MotionManager.INSTANCE];
 	let field = new Field(512, 224);
+	let controller = new Controller();
 	let activate = ()=> {
 		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
@@ -33,7 +34,22 @@ document.addEventListener('DOMContentLoaded', ()=> {
 		}
 		setTimeout(checkLoading, 125);
 	};
+	let gameOverPanel = document.getElementById('gameOver');
+	let startGame = ()=> {
+		field.startGame();
+		gameOverPanel.classList.add('hidden');
+	};
 
-	new Controller();
+	gameOverPanel.addEventListener('mousedown', event => {
+		startGame();
+	});
+	window.addEventListener('keydown', event => {
+		let isGameOver = !gameOverPanel.classList.contains('hidden');
+		let keys = controller.keys;
+
+		if (isGameOver && (keys[' '] || keys['k32'])) {
+			startGame();
+		}
+	});
 	checkLoading();
 });

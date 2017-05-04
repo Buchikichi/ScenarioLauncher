@@ -1,11 +1,12 @@
 class FlexibleView {
 	constructor(width, height) {
+		this.view = document.getElementById('view');
 		this.canvas = document.getElementById('canvas');
 		this.ctx = this.canvas.getContext('2d');
-		this.view = document.getElementById('view');
 		this.scale = 1;
 		this.init();
 		this.setSize(width, height);
+		FlexibleView.Instance = this;
 	}
 
 	setSize(width, height) {

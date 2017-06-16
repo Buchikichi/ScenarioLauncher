@@ -82,7 +82,13 @@ $(document).ready(function() {
 	// init
 	slider.change();
 	constellationSwitch.change();
-	activate(field);
+	let activate = ()=> {
+		let requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+		field.draw();
+		requestAnimationFrame(activate);
+	};
+	activate();
 	$(window).resize();
 	loadNames(field);
 });
@@ -112,14 +118,4 @@ function loadNames(field) {
 			ul.filterable('refresh');
 		}
 	});
-}
-
-/**
- * 実行.
- */
-function activate(field) {
-	setTimeout(function() {
-		field.draw();
-		activate(field);
-	}, 33);
 }

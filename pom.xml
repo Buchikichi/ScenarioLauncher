@@ -2,12 +2,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>to.kit.scenario</groupId>
   <artifactId>ScenarioLauncher</artifactId>
-  <version>0.1.54</version>
+  <version>0.1.63</version>
   <packaging>war</packaging>
   <name>ScenarioLauncher</name>
 
   <properties>
-    <appengine.version>1.9.54</appengine.version>
+    <appengine.version>1.9.63</appengine.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -35,8 +35,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
